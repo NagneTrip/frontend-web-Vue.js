@@ -1,13 +1,20 @@
 <template>
   <div class="header">
     <div class="navbar">
+      <div class="white-space"></div>
       <div class="navbar-logo">
         <div class="left-logo1"></div>
         <div class="left-logo2"></div>
       </div>
       <div class="navbar-icons">
-        <div class="navbar-icons-wrapper">
-          <font-awesome-icon class="icon" id="navbar-search-btn" :icon="faMagnifyingGlass" />
+        <div
+          class="navbar-icons-wrapper"
+        >
+          <font-awesome-icon
+            class="icon"
+            id="navbar-search-btn"
+            :icon="faMagnifyingGlass"
+          />
         </div>
         <div class="navbar-icons-wrapper" id="bell-wrapper">
           <font-awesome-icon class="icon" :icon="faBell" id="navbar-bell" />
@@ -15,25 +22,44 @@
         <div class="navbar-icons-wrapper">
           <font-awesome-icon class="icon" :icon="faMap" id="navbar-map" />
         </div>
-        <div class="navbar-icons-wrapper">
+        <div
+          class="navbar-icons-wrapper"
+        >
           <font-awesome-icon class="icon" :icon="faUser" id="navbar-user" />
         </div>
         <div class="navbar-icons-wrapper" id="navbar-write-icon-wrapper">
-          <font-awesome-icon :icon="faPen" class="icon" id="navbar-write-icon" />
+          <font-awesome-icon
+            :icon="faPen"
+            class="icon"
+            id="navbar-write-icon"
+          />
         </div>
         <div class="navbar-icons-wrapper navbar-write-button-wrapper">
           <div class="navbar-write-button jua-regular-large">작성하기</div>
         </div>
-        
       </div>
-      <!-- <div class="search-menu">검색 기능 추가</div> -->
-      <div class="navbar-icons-wrapper" id="burger-menu-icon-wrapper">
-          <font-awesome-icon :icon="faBars" class="top-arrow-button" />
+      
+      <!-- phoneSize  -->
+      <div class="phone-size-navmenu">
+        <div class="navbar-icons-wrapper burger-menu-icon-wrapper">
+          <font-awesome-icon
+            class="icon burger-menu-icon"
+            id="navbar-search-btn"
+            :icon="faMagnifyingGlass"
+          />
         </div>
+        <div
+          class="navbar-icons-wrapper burger-menu-icon-wrapper"
+          @click="toggleSidebar"
+        >
+          <font-awesome-icon :icon="faBars" class="burger-menu-icon" />
+        </div>
+      </div>
     </div>
-    
+    <!-- phoneSize - SideBar  -->
+    <HeaderSidebar :showSidebar="showSidebar" @updateShowSidebar="toggleSidebar" :class="{ 'off-display': !showSidebar }"/>
   </div>
-  
+
   <div class="navbar-icons-wrapper" id="faArrowUp-button">
     <font-awesome-icon :icon="faArrowUp" class="icon" id="faArrowUp" />
   </div>
@@ -49,8 +75,13 @@ import {
   faBars,
   faArrowUp,
 } from "@fortawesome/free-solid-svg-icons";
+import HeaderSidebar from "./HeaderSidebar.vue";
+import { ref } from "vue";
+const showSidebar = ref(false);
 
-
+function toggleSidebar() {
+  showSidebar.value = !showSidebar.value;
+}
 </script>
 
 <style>
@@ -99,7 +130,6 @@ a {
   margin: 5px;
 }
 
-
 .navbar-icons {
   display: flex;
   height: 100%;
@@ -123,8 +153,8 @@ a {
   cursor: pointer;
   background-color: rgb(118, 189, 255);
   .icon {
-    color : white;
-    scale:1.1;
+    color: white;
+    scale: 1.1;
     transition: all 200ms;
   }
 }
@@ -161,7 +191,14 @@ a {
   display: none;
 }
 
-#burger-menu-icon-wrapper {
+.burger-menu-icon {
+  width: 28px;
+  height: 28px;
+  color: #707070;
+  margin: 15px;
+}
+
+.phone-size-navmenu {
   display: none;
 }
 
@@ -188,6 +225,17 @@ a {
   height: 30px;
 }
 
+.white-space {
+  width: 50px;
+  height: 50px;
+  background-color: none;
+  display: none;
+}
+
+.off-display {
+  display: none;
+}
+
 @media screen and (max-width: 1300px) {
   /* header */
 
@@ -207,10 +255,10 @@ a {
 @media screen and (max-width: 840px) {
   .navbar {
     width: 100%;
-    transition: 0.5s
+    transition: 0.5s;
   }
-  .navbar-write-button-wrapper{
-    display:none;
+  .navbar-write-button-wrapper {
+    display: none;
   }
 
   #navbar-write-icon-wrapper {
@@ -220,17 +268,30 @@ a {
 @media screen and (max-width: 640px) {
   .navbar-icons {
     display: none;
-    transition: all 0.5s
+    transition: all 0.5s;
   }
 
   .navbar {
-    justify-content: center;
-    transition: all 0.5s
+    justify-content: space-between;
+    margin: 0px 30px 0px 30px;
+    transition: all 0.5s;
   }
 
-  #burger-menu-icon-wrapper {
+  .phone-size-navmenu {
     display: flex;
+    margin: 0px 5px 0px 5px;
+    gap: 6px;
   }
-  
+
+  .white-space {
+    display: flex;
+    width: 95px;
+  }
+
+  .phone-size-sidebar {
+    width: 100%;
+    height: 400px;
+    background-color: red;
+  }
 }
 </style>
