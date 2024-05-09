@@ -57,7 +57,7 @@
       </div>
     </div>
     <!-- phoneSize - SideBar  -->
-    <HeaderSidebar :showSidebar="showSidebar" @updateShowSidebar="toggleSidebar" :class="{ 'off-display': !showSidebar }"/>
+    <!-- <HeaderSidebar :showSidebar="showSidebar" @updateShowSidebar="toggleSidebar" :class="{ 'off-display': !showSidebar }"/> -->
   </div>
 
   <div class="navbar-icons-wrapper" id="faArrowUp-button">
@@ -75,7 +75,7 @@ import {
   faBars,
   faArrowUp,
 } from "@fortawesome/free-solid-svg-icons";
-import HeaderSidebar from "./HeaderSidebar.vue";
+// import HeaderSidebar from "./HeaderSidebar.vue";
 import { ref } from "vue";
 const showSidebar = ref(false);
 
