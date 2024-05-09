@@ -2,7 +2,7 @@
   <div class="header">
     <div class="navbar">
       <div class="white-space"></div>
-      <div class="navbar-logo" @click="moveMain">
+      <div class="navbar-logo" @click="()=>move('main')">
         <div class="left-logo1"></div>
         <div class="left-logo2"></div>
       </div>
@@ -63,11 +63,11 @@
     
     <!-- UserMenu -->
     <ul v-show="showUserMenu" class="user-menu list-group" ref="userMenu">
-      <li class="list-group-item">An item</li>
-      <li class="list-group-item">A second item</li>
-      <li class="list-group-item">A third item</li>
-      <li class="list-group-item">A fourth item</li>
-      <li class="list-group-item">And a fifth one</li>
+      <li v-show="isLogin" class="list-group-item" @click="()=>move('login')">로그인</li>
+      <li v-show="!isLogin" class="list-group-item">A second item</li>
+      <li v-show="!isLogin" class="list-group-item">A third item</li>
+      <li v-show="!isLogin" class="list-group-item">A fourth item</li>
+      <li v-show="!isLogin" class="list-group-item">And a fifth one</li>
     </ul>
   </div>
 
@@ -91,8 +91,15 @@ import {
 import { ref } from "vue";
 import {useRouter} from "vue-router";
 const router = useRouter();
-const moveMain = ()=>{
-  router.push({name:'main'})
+
+const isLogin = ref(true);
+
+const move = (path)=>{
+  if (path==='login') {
+    showUserMenu.value = !showUserMenu.value;
+  }
+
+  router.push({name:path});
 }
 
 const showSidebar = ref(false);
