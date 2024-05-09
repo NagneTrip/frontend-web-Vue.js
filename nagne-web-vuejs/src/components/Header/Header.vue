@@ -2,7 +2,7 @@
   <div class="header">
     <div class="navbar">
       <div class="white-space"></div>
-      <div class="navbar-logo">
+      <div class="navbar-logo" @click="moveMain">
         <div class="left-logo1"></div>
         <div class="left-logo2"></div>
       </div>
@@ -24,6 +24,7 @@
         </div>
         <div
           class="navbar-icons-wrapper"
+          @click="toggleUserMenu"
         >
           <font-awesome-icon class="icon" :icon="faUser" id="navbar-user" />
         </div>
@@ -38,6 +39,7 @@
           <div class="navbar-write-button jua-regular-large">작성하기</div>
         </div>
       </div>
+      
       
       <!-- phoneSize  -->
       <div class="phone-size-navmenu">
@@ -58,11 +60,21 @@
     </div>
     <!-- phoneSize - SideBar  -->
     <!-- <HeaderSidebar :showSidebar="showSidebar" @updateShowSidebar="toggleSidebar" :class="{ 'off-display': !showSidebar }"/> -->
+    
+    <!-- UserMenu -->
+    <ul v-show="showUserMenu" class="user-menu list-group" ref="userMenu">
+      <li class="list-group-item">An item</li>
+      <li class="list-group-item">A second item</li>
+      <li class="list-group-item">A third item</li>
+      <li class="list-group-item">A fourth item</li>
+      <li class="list-group-item">And a fifth one</li>
+    </ul>
   </div>
 
   <div class="navbar-icons-wrapper" id="faArrowUp-button">
     <font-awesome-icon :icon="faArrowUp" class="icon" id="faArrowUp" />
   </div>
+  <div class="horizon-border"></div>
 </template>
 
 <script setup>
@@ -77,11 +89,23 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 // import HeaderSidebar from "./HeaderSidebar.vue";
 import { ref } from "vue";
-const showSidebar = ref(false);
+import {useRouter} from "vue-router";
+const router = useRouter();
+const moveMain = ()=>{
+  router.push({name:'main'})
+}
 
+const showSidebar = ref(false);
 function toggleSidebar() {
   showSidebar.value = !showSidebar.value;
 }
+
+const showUserMenu = ref(false);
+function toggleUserMenu() {
+  showUserMenu.value = !showUserMenu.value;
+}
+
+
 </script>
 
 <style>
@@ -96,6 +120,11 @@ a {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+.horizon-border {
+  height: 2px;
+  width: 100%;
+  border-bottom: 3px solid #AACDFF;
 }
 
 .navbar {
@@ -114,6 +143,7 @@ a {
   margin: 10px 0px 10px 0px;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
 }
 
 .left-logo1 {
@@ -146,7 +176,24 @@ a {
   justify-content: center;
   align-items: center;
   transition: all 200ms;
+  position: relative;
 }
+
+.user-menu {
+  position: absolute;
+  top: 13%;
+  left: 80%; /* 중앙 정렬을 위한 왼쪽 여백 설정 */
+  transform: translateX(-50%); /* X축 기준 중앙 정렬 */
+  width: auto;
+  z-index: 100;
+}
+
+.list-group-item {
+  cursor: pointer;
+  background-color: #fff;
+  border: 1px solid #ccc;
+}
+
 .navbar-icons-wrapper:hover {
   scale: 1.1;
   transition: all 100ms;
@@ -266,6 +313,11 @@ a {
   }
 }
 @media screen and (max-width: 640px) {
+
+  .navbar {
+    width: 100%;
+    transition: 0.5s;
+  }
   .navbar-icons {
     display: none;
     transition: all 0.5s;
