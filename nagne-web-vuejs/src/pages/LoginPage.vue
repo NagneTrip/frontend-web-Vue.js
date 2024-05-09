@@ -14,11 +14,11 @@
     </form>
     <div class="notice-social">
       <p>또는</p>
-      <h3>소셜로그인</h3>
+      <h4>소셜로그인</h4>
     </div>
     <div class="img-group">
-      <img src="@/assets/web_neutral_sq_ctn@3x.png" alt="">
-      <img src='@/assets/kakao_login_large_wide (1).png' alt="">
+      <img src="@/assets/social/web_neutral_sq_na.svg" alt="">
+      <img src='@/assets/social/480px-KakaoTalk_logo.svg.png' alt="">
     </div>
     
     <div class="link-container">
@@ -33,10 +33,10 @@
 
 <style scoped>
 .login-page {
-  margin: 50px auto auto auto;
+  margin: 80px auto auto auto;
   border-radius: 20px;
   width: 480px;
-  height: 720px;
+  height: 700px;
   border: 3px solid rgb(118, 189, 255);
   box-shadow: 7px 7px 39px 0px #AACDFF;
   display: flex;
@@ -100,7 +100,11 @@
 }
 
 .login-page label {
+  font-family: Noto Sans CJK KR;
+  font-weight: 600;
+  font-size: 18px;
   justify-content: flex-start;
+  color:rgb(118, 189, 255);
 }
 
 .login-page input {
@@ -132,19 +136,21 @@
   margin: 0px
 }
 
-.notice-social h3 {
-  margin: 10px;
+.notice-social h4 {
+  margin: 20px 0 0 0;
+  font-family: Noto Sans CJK KR;
+  font-weight: 600;
+  font-size: 20px;
 }
 
 .img-group{
   display: flex;
-  flex-direction: column;
   gap: 12px;
 }
 .img-group img {
   cursor: pointer;
-  width: 300px;
-  height: 56px;
+  width: 40px;
+  height: 40px;
 }
 .img-group img:hover {
   scale: 1.02;
