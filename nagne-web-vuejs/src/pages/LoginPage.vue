@@ -36,9 +36,9 @@ import { useRouter, useRoute } from "vue-router";
 
 const router = useRouter();
 const route = useRoute();
-const beforePageByQuery = route.query.before;
+const beforePageByQuery = route.query;
 
-const token = ref();
+const token = ref('');
 const getLoginHandler = () => {
   axios.post('http://localhost:8080/api/users/login', {
     "username": "test1@gmail.com",
@@ -48,7 +48,7 @@ const getLoginHandler = () => {
       token.value = data.response.token;
       window.localStorage.setItem('token', token.value)
 
-      router.push({ name: beforePageByQuery });
+      router.go(-1);
     })
     .catch(rej => {
       alert("잘못함")
