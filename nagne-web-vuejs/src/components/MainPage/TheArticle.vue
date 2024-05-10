@@ -10,9 +10,27 @@
 </template>
 
 <script setup>
+import axios from 'axios';
+import { onMounted } from 'vue';
 
 const props = defineProps({
   article: Object,
+})
+
+// 백엔드 수정되면 삭제 예정
+onMounted(() => {
+  const token = window.localStorage.getItem('token'); //로컬스토리지에서 토큰 로드
+
+  axios.get(`http://localhost:8080/api/users/${props.article.id}`, { //게사글 작성자 정보 불러오기
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  })
+    .then(({ data }) => {
+      console.log(data);
+    })
+    .catch(error => {
+    });
 })
 </script>
 
