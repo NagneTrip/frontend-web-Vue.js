@@ -5,12 +5,13 @@
       <p>정보를 입력해주세요.</p>
     </div>
 
-    <form action="">
+    <form action="" @submit.prevent="getLoginHandler">
       <label for="">E-mail</label>
       <input type="text">
       <label for="">Password</label>
       <input type="password">
       <button class="login-button">LOGIN</button>
+      <RouterLink :to="{ name: '' }">비밀번호 찾기</RouterLink>
     </form>
     <div class="notice-social">
       <p>또는</p>
@@ -20,15 +21,40 @@
       <img src="@/assets/social/web_neutral_sq_na.svg" alt="">
       <img src='@/assets/social/480px-KakaoTalk_logo.svg.png' alt="">
     </div>
-    
+
     <div class="link-container">
-      <RouterLink :to="{name : 'signup'}">회원가입</RouterLink>
-      <RouterLink :to="{name : 'main'}">고객센터</RouterLink>
+      <RouterLink :to="{ name: 'signup' }">회원가입</RouterLink>
+      <RouterLink :to="{ name: 'main' }">고객센터</RouterLink>
     </div>
   </div>
 </template>
 
 <script setup>
+import axios from "axios";
+import { ref } from "vue";
+import { useRouter, useRoute } from "vue-router";
+
+const router = useRouter();
+const route = useRoute();
+const beforePageByQuery = route.query.before;
+
+const token = ref();
+const getLoginHandler = () => {
+  axios.post('http://localhost:8080/api/users/login', {
+    "username": "test1@gmail.com",
+    "password": "1234"
+  })
+    .then(({ data }) => {
+      token.value = data.response.token;
+      window.localStorage.setItem('token', token.value)
+
+      router.push({ name: beforePageByQuery });
+    })
+    .catch(rej => {
+      alert("잘못함")
+    })
+}
+
 </script>
 
 <style scoped>
@@ -104,7 +130,7 @@
   font-weight: 600;
   font-size: 18px;
   justify-content: flex-start;
-  color:rgb(118, 189, 255);
+  color: rgb(118, 189, 255);
 }
 
 .login-page input {
@@ -143,15 +169,17 @@
   font-size: 20px;
 }
 
-.img-group{
+.img-group {
   display: flex;
   gap: 12px;
 }
+
 .img-group img {
   cursor: pointer;
   width: 40px;
   height: 40px;
 }
+
 .img-group img:hover {
   scale: 1.02;
   transition: all 0.1s;
@@ -163,9 +191,10 @@
   margin-bottom: 20px;
   font-size: 14px;
   font-weight: 600;
-  
+
   font-family: Noto Sans CJK KR;
 }
+
 .link-container a:hover {
   color: #0068FF
 }

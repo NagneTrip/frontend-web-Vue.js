@@ -1,13 +1,13 @@
 <template>
   <div class="app">
-    <Header />
+    <TheHeader />
     <router-view></router-view>
   </div>
   
 </template>
 
 <script setup>
-import Header from "./components/Header/Header.vue"
+import TheHeader from "./components/Header/TheHeader.vue"
 </script>
 
 <style scoped>

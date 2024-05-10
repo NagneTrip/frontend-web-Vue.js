@@ -70,7 +70,7 @@
   font-weight: 700;
   line-height: 47.36px;
   text-align: left;
-  margin-top: 10px;
+  margin-top: 20px;
   cursor: default
 }
 
