@@ -27,11 +27,14 @@
         </div>
       </div>
 
-
       <!-- phoneSize  -->
       <div class="phone-size-navmenu">
-        <div class="navbar-icons-wrapper burger-menu-icon-wrapper">
-          <font-awesome-icon class="icon burger-menu-icon" id="navbar-search-btn" :icon="faMagnifyingGlass" />
+        <div class="navbar-icons-wrapper burger-menu-icon-wrapper" id="navbar-search-btn-wrapper">
+          <font-awesome-icon
+            class="icon burger-menu-icon"
+            id="navbar-search-btn"
+            :icon="faMagnifyingGlass"
+          />
         </div>
         <div class="navbar-icons-wrapper burger-menu-icon-wrapper" @click="toggleSidebar">
           <font-awesome-icon :icon="faBars" class="burger-menu-icon" />
@@ -69,22 +72,22 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 // import HeaderSidebar from "./HeaderSidebar.vue";
 import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 const router = useRouter();
+const route = useRouter();
 
 const isLogin = ref(true);
 
-const move = (path, now) => {
+const move = (path) => {
   const moveTo = { name: path };
-  if (path === 'login') {
+  if (path === "login") {
     showUserMenu.value = !showUserMenu.value;
-    moveTo.query = { from: now, to: path };
   }
   //페이지 이동 시 열려있는 메뉴 전부 닫기
   showUserMenu.value = false;
   showSidebar.value = false;
   router.push(moveTo);
-}
+};
 
 const showSidebar = ref(false);
 function toggleSidebar() {
@@ -95,9 +98,6 @@ const showUserMenu = ref(false);
 function toggleUserMenu() {
   showUserMenu.value = !showUserMenu.value;
 }
-
-
-
 </script>
 
 <style>
@@ -117,7 +117,7 @@ a {
 .horizon-border {
   height: 2px;
   width: 100%;
-  border-bottom: 3px solid #AACDFF;
+  border-bottom: 3px solid #aacdff;
 }
 
 .navbar {
@@ -326,7 +326,6 @@ a {
 }
 
 @media screen and (max-width: 640px) {
-
   .navbar {
     width: 100%;
     transition: 0.5s;
@@ -358,6 +357,14 @@ a {
     width: 100%;
     height: 400px;
     background-color: red;
+  }
+  @media screen and (max-width: 456px) {
+    .white-space {
+      width: 45px;
+    }
+    #navbar-search-btn-wrapper {
+      display: none;
+    }
   }
 }
 </style>
