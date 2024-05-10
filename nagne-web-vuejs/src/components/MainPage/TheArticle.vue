@@ -25,7 +25,7 @@ const props = defineProps({
 }
 
 .article {
-  width: 80%;
+  width: 100%;
   display: flex;
   flex-direction: column;
   padding-bottom: 15px;
@@ -37,6 +37,8 @@ const props = defineProps({
   border-radius: 25px;
   background-color: rgb(194, 194, 194);
   margin-bottom: 30px;
-
+  width: 100%;
 }
+
+
 </style>

@@ -25,9 +25,10 @@
         <Advertisement /> -->
           </div>
         </div>
-
+        <div class="vertical-line">
+        </div>
         <!-- 사이드바 -->
-        <div class="side">
+        <div class="side" :style="{paddingTop : scrollY*0.9-500+'px' ? scrollY*0.9-500+'px' : 0, Transition : '0.01s all'}">
           <!-- <Weather /> -->
           <div class="side-notice"></div>
           <div class="side-bestarticle"></div>
@@ -44,18 +45,18 @@ import {
   faPen,
 } from "@fortawesome/free-solid-svg-icons";
 import TheArticle from "@/components/MainPage/TheArticle.vue";
-import { onMounted, ref } from "vue"
+import { onMounted, ref,onUnmounted,watch, Transition } from "vue"
 import axios from "axios";
 
 const articles = ref([]);
-const token = ref('eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJuYWduZSIsImlhdCI6MTcxNTMyNDU1NCwidXNlcktleSI6MSwibmFtZSI6InRlc3QxQGdtYWlsLmNvbSIsInJvbGVzIjpbIlJPTEVfVVNFUiJdfQ.TASTzXziB4WUikaym-o9fQE5OhbpP40R_spPeDjAyl5TBSlddk4wI06PzUIoU5RCJdhND0--DWQ6glN0sP3jPA')
 onMounted(() => {
+  const token = window.localStorage.getItem('token');
   axios.get('http://localhost:8080/api/articles', {
     params: {
       tags: '#태그1',
     },
     headers: {
-      'Authorization': `Bearer ${token.value}`
+      'Authorization': `Bearer ${token}`
     }
   })
     .then(({ data }) => {
@@ -65,6 +66,18 @@ onMounted(() => {
       console.error(error);
     });
 })
+const scrollY = ref(0); // 스크롤 X 위치
+
+function updateScrollPosition() {
+  scrollY.value = window.scrollY; // 현재 문서의 수평 스크롤 위치를 업데이트
+  console.log(scrollY.value)
+}
+onMounted(() => {
+  window.addEventListener('scroll', updateScrollPosition); // 컴포넌트 마운트 시 스크롤 이벤트 리스너 추가
+});
+onUnmounted(() => {
+  window.removeEventListener('scroll', updateScrollPosition); // 컴포넌트 언마운트 시 리스너 제거
+});
 
 
 </script>
@@ -80,7 +93,7 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 30px;
+  gap: 20px;
 }
 
 .bookmark {
@@ -101,7 +114,7 @@ onMounted(() => {
 }
 
 .content {
-  max-width: 880px;
+  max-width: 700px;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -109,7 +122,7 @@ onMounted(() => {
 }
 
 .write-article-box {
-  width: 80%;
+  width: 100%;
   height: 70px;
   background-color: #eeeeee;
   border-radius: 45px;
@@ -118,7 +131,6 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
   padding: 0px 25px 0px 15px;
-  margin: 0 auto 0 auto;
 }
 
 .write-article-left-box {
@@ -161,14 +173,18 @@ onMounted(() => {
 }
 
 .article-container {
-  width: 880px;
+  width: 700px;
   height: 100%;
   border-radius: 15px 15px 0px 0px;
 }
 
+.vertical-line {
+  width: 1.2px;
+  background-color: rgb(194, 194, 194);
+}
+
 .side {
   width: 380px;
-  height: 100%;
   display: flex;
   flex-direction: column;
   gap: 15px;
@@ -235,7 +251,7 @@ onMounted(() => {
 
   .bookmark {
     width: 100%;
-    max-width: 880px;
+    max-width: 700px;
     height: 25vw;
     border: 2px solid rgb(118, 189, 255);
     border-radius: 20px;
@@ -255,12 +271,16 @@ onMounted(() => {
   }
 
   .write-article-box {
-    width: 80%;
+    width: 100%;
     margin-top: 15px;
   }
 
   .article-container {
     width: 100%;
+  }
+
+  .vertical-line {
+    display: none;
   }
 
   .side {
@@ -292,6 +312,18 @@ onMounted(() => {
 @media screen and (max-width: 640px) {
   .bookmark {
     display: none;
+  }
+  .write-article-left-box p {
+    font-size: 18px;
+  }
+}
+
+@media screen and (max-width: 456px) {
+  .write-article-box {
+    display: none;
+  }
+  .article-container {
+    margin-top: 20px;
   }
 }
 </style>
