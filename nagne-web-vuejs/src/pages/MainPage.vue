@@ -28,11 +28,13 @@
         <div class="vertical-line">
         </div>
         <!-- 사이드바 -->
-        <div class="side" :style="{paddingTop : scrollY*0.9-500+'px' ? scrollY*0.9-500+'px' : 0, Transition : '0.01s all'}">
-          <!-- <Weather /> -->
-          <div class="side-notice"></div>
-          <div class="side-bestarticle"></div>
-          <div class="side-footer"></div>
+        <div class="side">
+          <div class="side-content">
+            <TheWeather />
+            <div class="side-notice"></div>
+            <div class="side-bestarticle"></div>
+            <div class="side-footer"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -45,13 +47,15 @@ import {
   faPen,
 } from "@fortawesome/free-solid-svg-icons";
 import TheArticle from "@/components/MainPage/TheArticle.vue";
-import { onMounted, ref,onUnmounted,watch, Transition } from "vue"
+import { onMounted, ref } from "vue"
 import axios from "axios";
+import TheWeather from "@/components/MainPage/TheWeather.vue";
 
 const articles = ref([]);
 onMounted(() => {
-  const token = window.localStorage.getItem('token');
-  axios.get('http://localhost:8080/api/articles', {
+  const token = window.localStorage.getItem('token'); //로컬스토리지에서 토큰 로드
+
+  axios.get('http://localhost:8080/api/articles', { //게시글 받아오기
     params: {
       tags: '#태그1',
     },
@@ -66,19 +70,6 @@ onMounted(() => {
       console.error(error);
     });
 })
-const scrollY = ref(0); // 스크롤 X 위치
-
-function updateScrollPosition() {
-  scrollY.value = window.scrollY; // 현재 문서의 수평 스크롤 위치를 업데이트
-  console.log(scrollY.value)
-}
-onMounted(() => {
-  window.addEventListener('scroll', updateScrollPosition); // 컴포넌트 마운트 시 스크롤 이벤트 리스너 추가
-});
-onUnmounted(() => {
-  window.removeEventListener('scroll', updateScrollPosition); // 컴포넌트 언마운트 시 리스너 제거
-});
-
 
 </script>
 
@@ -111,6 +102,7 @@ onUnmounted(() => {
   display: flex;
   gap: 20px;
   justify-content: center;
+  align-items: flex-start;
 }
 
 .content {
@@ -185,53 +177,46 @@ onUnmounted(() => {
 
 .side {
   width: 380px;
+  height: 1200px;
   display: flex;
-  flex-direction: column;
   gap: 15px;
-}
+  position: sticky;
+  top: 10px;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  scrollbar-width: none;
+  border-left: 1.7px solid rgb(228, 228, 228);
 
-.side-weather {
-  width: 100%;
-  height: 80px;
-  border-radius: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  padding: 5px 30px 5px 30px;
+  /* 스크롤바 숨기기 */
+  ::-webkit-scrollbar {
+    display: none;
+    /* Chrome, Safari, Opera */
+  }
 }
-
-.weather-text {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  color: #5b5c5c;
-}
-
-.weather-icon {
-  width: 100px;
-  height: 100px;
-  border-radius: 15px;
+.side-content {
+  width: 340px;
+  /* display: flex;
+  flex-direction: column; */
+  margin-left: 40px;
+  gap :20px;
 }
 
 .side-notice {
   width: 100%;
   height: 160px;
-  background-color: #eeeeee;
-  border-radius: 15px;
+  background-color: #a6afab;
 }
 
 .side-bestarticle {
   width: 100%;
   height: 720px;
-  background-color: #eeeeee;
-  border-radius: 15px;
+  background-color: #cfadad;
 }
 
 .side-footer {
   width: 100%;
   height: 400px;
-  border-radius: 15px;
-  background-color: #eeeeee;
+  background-color: #cccbcb;
 }
 
 
@@ -286,33 +271,13 @@ onUnmounted(() => {
   .side {
     display: none;
   }
-
-  .side-weather {
-    width: 90px;
-    height: 90px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 2px solid var(--ssafy-blue);
-    box-shadow: #96999c 1px 2px 3px 1px;
-    cursor: pointer;
-  }
-
-  .weather-text {
-    display: none;
-  }
-
-  .weather-icon {
-    width: 100px;
-    height: 100px;
-    display: flex;
-  }
 }
 
 @media screen and (max-width: 640px) {
   .bookmark {
     display: none;
   }
+
   .write-article-left-box p {
     font-size: 18px;
   }
@@ -322,6 +287,7 @@ onUnmounted(() => {
   .write-article-box {
     display: none;
   }
+
   .article-container {
     margin-top: 20px;
   }
