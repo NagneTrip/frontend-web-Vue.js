@@ -1,5 +1,8 @@
 <template>
-  <div class="app"><Header /></div>
+  <div class="app">
+    <Header />
+    <router-view></router-view>
+  </div>
   
 </template>
 
@@ -25,8 +28,4 @@ import Header from "./components/Header/Header.vue"
   font-style: normal;
   font-size: large;
 }
-.app {
-    display: flex;
-    flex-direction: column;
-  }
 </style>
