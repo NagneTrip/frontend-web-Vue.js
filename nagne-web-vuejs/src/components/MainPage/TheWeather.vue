@@ -21,7 +21,6 @@ const isWeatherLoding = ref(true);
 const getUserLocaWeather = async ()=>{
   await axios.get(`https://api.openweathermap.org/data/2.5/weather?lat=${userLocation.value.lat}&lon=${userLocation.value.lon}&units=metric&appid=${import.meta.env.VITE_WEATHER_API_KEY}`)
     .then(({ data }) => {
-      console.log(data);
       userWeather.value = {
         loaction : data.name === 'Yach’on' ? 'Gwangju' : data.name,
         temp : data.main.temp.toFixed(1),
@@ -39,7 +38,6 @@ onMounted(async() => {
   navigator.geolocation.getCurrentPosition((position) => {
       let lat = position.coords.latitude;
       let lon = position.coords.longitude;
-      console.log(lat, lon)
       userLocation.value = {lat, lon}
       getUserLocaWeather();
   })
