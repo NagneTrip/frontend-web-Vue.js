@@ -2,7 +2,7 @@
   <div class="main">
     <!--  메인 영역 -->
     <div class="main-container">
-      <div class="bookmark"></div>
+      <TheSwipper />
       <div class="wrapper">
         <div class="content">
           <div class="write-article-box">
@@ -31,9 +31,9 @@
         <div class="side" ref="sideSection">
           <div class="side-content">
             <TheWeather />
-            <div class="side-notice"></div>
-            <div class="side-bestarticle"></div>
-            <div class="side-footer"></div>
+            <TheNotice />
+            <TheBestArticle />
+            <TheFooter />
           </div>
         </div>
       </div>
@@ -50,6 +50,10 @@ import TheArticle from "@/components/MainPage/TheArticle.vue";
 import { onMounted, ref, onUnmounted } from "vue"
 import axios from "axios";
 import TheWeather from "@/components/MainPage/TheWeather.vue";
+import TheNotice from "@/components/MainPage/TheNotice.vue";
+import TheBestArticle from "@/components/MainPage/TheBestArticle.vue";
+import TheFooter from "@/components/MainPage/TheFooter.vue";
+import TheSwipper from "../components/MainPage/TheSwipper.vue";
 
 const articles = ref([]);
 onMounted(() => {
@@ -76,7 +80,10 @@ const sideSection = ref(null);
 onMounted(() => {
   const handleScroll = () => {
     if (sideSection.value) {
-      sideSection.value.scrollTop = window.scrollY;  // window의 스크롤 위치를 side 영역에 적용
+      sideSection.value.scrollTo({
+        top: window.scrollY,
+        behavior: 'smooth'  // 부드러운 스크롤
+      });
     }
   };
 
@@ -104,14 +111,6 @@ onMounted(() => {
   gap: 20px;
 }
 
-.bookmark {
-  max-width: 1280px;
-  width: 100%;
-  height: 360px;
-  border: 2px solid rgb(118, 189, 255);
-  border-radius: 20px;
-  margin: 30px 0px 10px 0px;
-}
 
 .wrapper {
   width: 100%;
@@ -216,25 +215,6 @@ onMounted(() => {
   gap :20px;
 }
 
-.side-notice {
-  width: 100%;
-  height: 160px;
-  background-color: #a6afab;
-}
-
-.side-bestarticle {
-  width: 100%;
-  height: 720px;
-  background-color: #cfadad;
-}
-
-.side-footer {
-  width: 100%;
-  height: 400px;
-  background-color: #cccbcb;
-}
-
-
 @media screen and (max-width: 1300px) {
   .main {
     width: 100%;
@@ -249,13 +229,7 @@ onMounted(() => {
     gap: 10px;
   }
 
-  .bookmark {
-    width: 100%;
-    max-width: 700px;
-    height: 25vw;
-    border: 2px solid rgb(118, 189, 255);
-    border-radius: 20px;
-  }
+  
 
   .wrapper {
     max-width: 880px;
@@ -289,9 +263,6 @@ onMounted(() => {
 }
 
 @media screen and (max-width: 640px) {
-  .bookmark {
-    display: none;
-  }
 
   .write-article-left-box p {
     font-size: 18px;
