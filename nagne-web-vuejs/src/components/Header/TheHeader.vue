@@ -54,7 +54,7 @@
     </ul>
   </div>
 
-  <div class="navbar-icons-wrapper" id="faArrowUp-button">
+  <div class="navbar-icons-wrapper" id="faArrowUp-button" @click="scrollToTop">
     <font-awesome-icon :icon="faArrowUp" class="icon" id="faArrowUp" />
   </div>
   <div class="horizon-border"></div>
@@ -98,6 +98,13 @@ const showUserMenu = ref(false);
 function toggleUserMenu() {
   showUserMenu.value = !showUserMenu.value;
 }
+
+const scrollToTop = () => {
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
+};
 </script>
 
 <style>
@@ -142,14 +149,14 @@ a {
 .left-logo1 {
   width: 70px;
   height: 50px;
-  background-image: url("@/assets/logo_img.png");
+  background-image: url("@/assets/logo/logo_img.png");
   background-size: cover;
 }
 
 .left-logo2 {
   width: 140px;
   height: 50px;
-  background-image: url("@/assets/logo_text.png");
+  background-image: url("@/assets/logo/logo_text.png");
   background-size: cover;
   margin: 5px;
 }
@@ -254,23 +261,14 @@ a {
   background-color: rgb(118, 189, 255);
   color: white;
   position: fixed;
-  /* 고정 위치 */
   bottom: 20px;
-  /* 하단에서 20px 위 */
   right: 30px;
-  /* 우측에서 30px 왼쪽 */
   z-index: 99;
-  /* 다른 내용물 위에 보이도록 z-index 설정 */
   border: none;
-  /* 테두리 없음 */
   outline: none;
-  /* 외곽선 없음 */
   cursor: pointer;
-  /* 커서 모양을 손가락 모양으로 */
   padding: 5px;
-  /* 내부 여백 */
   border-radius: 50px;
-  /* 테두리 둥글게 */
 }
 
 #faArrowUp-button:active {
