@@ -1,7 +1,7 @@
 <template>
   <div class="article-wrapper">
     <div class="article">
-      <img src="@/assets/logo.png" />
+      <img src="@/assets/logo/logo.png" />
       <p>{{ article.content }}</p>
       <p>좋아요 : {{ article.likeCount }}</p>
       <p>북마크 : {{ article.isBookmarked }}</p>

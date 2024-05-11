@@ -28,7 +28,7 @@
         <div class="vertical-line">
         </div>
         <!-- 사이드바 -->
-        <div class="side">
+        <div class="side" ref="sideSection">
           <div class="side-content">
             <TheWeather />
             <div class="side-notice"></div>
@@ -47,7 +47,7 @@ import {
   faPen,
 } from "@fortawesome/free-solid-svg-icons";
 import TheArticle from "@/components/MainPage/TheArticle.vue";
-import { onMounted, ref } from "vue"
+import { onMounted, ref, onUnmounted } from "vue"
 import axios from "axios";
 import TheWeather from "@/components/MainPage/TheWeather.vue";
 
@@ -70,6 +70,23 @@ onMounted(() => {
       console.error(error);
     });
 })
+
+const sideSection = ref(null);
+
+onMounted(() => {
+  const handleScroll = () => {
+    if (sideSection.value) {
+      sideSection.value.scrollTop = window.scrollY;  // window의 스크롤 위치를 side 영역에 적용
+    }
+  };
+
+  window.addEventListener('scroll', handleScroll);
+
+  // 컴포넌트가 언마운트될 때 이벤트 리스너 제거
+  onUnmounted(() => {
+    window.removeEventListener('scroll', handleScroll);
+  });
+});
 
 </script>
 
@@ -177,27 +194,25 @@ onMounted(() => {
 
 .side {
   width: 380px;
-  height: 1200px;
+  height: 100vh;
   display: flex;
   gap: 15px;
   position: sticky;
-  top: 10px;
+  top : 20px;
   overflow-y: auto;
   overscroll-behavior-y: contain;
   scrollbar-width: none;
   border-left: 1.7px solid rgb(228, 228, 228);
 
-  /* 스크롤바 숨기기 */
   ::-webkit-scrollbar {
     display: none;
-    /* Chrome, Safari, Opera */
   }
 }
 .side-content {
   width: 340px;
-  /* display: flex;
-  flex-direction: column; */
+  height: 1500px;
   margin-left: 40px;
+  
   gap :20px;
 }
 
