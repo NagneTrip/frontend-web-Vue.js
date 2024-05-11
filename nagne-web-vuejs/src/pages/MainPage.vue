@@ -17,7 +17,12 @@
             </div>
           </div>
           <div class="article-container">
-            <TheArticle v-for="(article, index) in articles" :article="article" :key="article.id" />
+            <TheArticle
+              v-for="(article, index) in articles"
+              :article="article"
+              :key="article.id"
+              @open-article-modal="openModal"
+            />
             <!-- <Article />
         <Article />
         <RecomendFriends />
@@ -25,8 +30,7 @@
         <Advertisement /> -->
           </div>
         </div>
-        <div class="vertical-line">
-        </div>
+        <div class="vertical-line"></div>
         <!-- 사이드바 -->
         <div class="side" ref="sideSection">
           <div class="side-content">
@@ -39,41 +43,43 @@
       </div>
     </div>
   </div>
+  <ArticleDetailModal v-if="isOpenModal" :article="modalArticle" @close-modal="closeModal" />
 </template>
 
 <script setup>
-import {
-  faUser,
-  faPen,
-} from "@fortawesome/free-solid-svg-icons";
+import { faUser, faPen } from "@fortawesome/free-solid-svg-icons";
 import TheArticle from "@/components/MainPage/TheArticle.vue";
-import { onMounted, ref, onUnmounted } from "vue"
+import { onMounted, ref, onUnmounted } from "vue";
 import axios from "axios";
 import TheWeather from "@/components/MainPage/TheWeather.vue";
 import TheNotice from "@/components/MainPage/TheNotice.vue";
 import TheBestArticle from "@/components/MainPage/TheBestArticle.vue";
 import TheFooter from "@/components/MainPage/TheFooter.vue";
 import TheSwipper from "../components/MainPage/TheSwipper.vue";
+import ArticleDetailModal from "@/components/MainPage/ArticleDetailModal.vue";
 
 const articles = ref([]);
+const token = ref('');
 onMounted(() => {
-  const token = window.localStorage.getItem('token'); //로컬스토리지에서 토큰 로드
+  token.value = window.localStorage.getItem("token"); //로컬스토리지에서 토큰 로드
 
-  axios.get('http://localhost:8080/api/articles', { //게시글 받아오기
-    params: {
-      tags: '#태그1',
-    },
-    headers: {
-      'Authorization': `Bearer ${token}`
-    }
-  })
+  axios
+    .get("http://localhost:8080/api/articles", {
+      //게시글 받아오기
+      params: {
+        tags: "#태그1",
+      },
+      headers: {
+        Authorization: `Bearer ${token.value}`,
+      },
+    })
     .then(({ data }) => {
       articles.value = data.response.articles;
     })
-    .catch(error => {
+    .catch((error) => {
       console.error(error);
     });
-})
+});
 
 const sideSection = ref(null);
 
@@ -82,19 +88,32 @@ onMounted(() => {
     if (sideSection.value) {
       sideSection.value.scrollTo({
         top: window.scrollY,
-        behavior: 'smooth'  // 부드러운 스크롤
+        behavior: "smooth", // 부드러운 스크롤
       });
     }
   };
 
-  window.addEventListener('scroll', handleScroll);
+  window.addEventListener("scroll", handleScroll);
 
   // 컴포넌트가 언마운트될 때 이벤트 리스너 제거
   onUnmounted(() => {
-    window.removeEventListener('scroll', handleScroll);
+    window.removeEventListener("scroll", handleScroll);
   });
 });
 
+const isOpenModal = ref(false);
+const modalArticle = ref({});
+const openModal = (id) => {
+  if (token.value) {
+    //로그인 상태이면 게시글 로드
+    isOpenModal.value = true;
+    modalArticle.value = articles.value.filter(a=>a.id===id);
+  }
+};
+const closeModal =()=>{
+  isOpenModal.value = false;
+  modalArticle.value = {};
+}
 </script>
 
 <style scoped>
@@ -110,7 +129,6 @@ onMounted(() => {
   align-items: center;
   gap: 20px;
 }
-
 
 .wrapper {
   width: 100%;
@@ -197,7 +215,7 @@ onMounted(() => {
   display: flex;
   gap: 15px;
   position: sticky;
-  top : 20px;
+  top: 20px;
   overflow-y: auto;
   overscroll-behavior-y: contain;
   scrollbar-width: none;
@@ -211,8 +229,8 @@ onMounted(() => {
   width: 340px;
   height: 1500px;
   margin-left: 40px;
-  
-  gap :20px;
+
+  gap: 20px;
 }
 
 @media screen and (max-width: 1300px) {
@@ -228,8 +246,6 @@ onMounted(() => {
     align-items: center;
     gap: 10px;
   }
-
-  
 
   .wrapper {
     max-width: 880px;
@@ -263,7 +279,6 @@ onMounted(() => {
 }
 
 @media screen and (max-width: 640px) {
-
   .write-article-left-box p {
     font-size: 18px;
   }
