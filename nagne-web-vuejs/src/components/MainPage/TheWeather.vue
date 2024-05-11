@@ -2,8 +2,7 @@
   <div class="side-weather">
     <img :src="userWeather.icon" :width="100" alt="">
     <p>{{ userWeather.temp }} °C</p>
-    <p>{{ userWeather.humidity }}</p>
-    <p>{{ userWeather.condition }}</p>
+    <p>{{ userWeather.humidity }} %</p>
     
   </div>
 </template>
@@ -17,7 +16,7 @@ const userLocation = ref({});
 const userWeather = ref({});
 
 const getUserLocaWeather = async ()=>{
-  await axios.get(`https://api.openweathermap.org/data/2.5/weather?lat=${userLocation.value.lat}&lon=${userLocation.value.lon}&units=metric&lang=kr&appid=${import.meta.env.VITE_WEATHER_API_KEY}`)
+  await axios.get(`https://api.openweathermap.org/data/2.5/weather?lat=${userLocation.value.lat}&lon=${userLocation.value.lon}&units=metric&appid=${import.meta.env.VITE_WEATHER_API_KEY}`)
     .then(({ data }) => {
       console.log(data);
       userWeather.value = {
