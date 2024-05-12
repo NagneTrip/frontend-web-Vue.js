@@ -45,7 +45,7 @@
     <!-- <HeaderSidebar :showSidebar="showSidebar" @updateShowSidebar="toggleSidebar" :class="{ 'off-display': !showSidebar }"/> -->
 
     <!-- UserMenu -->
-    <ul v-show="showUserMenu" class="user-menu list-group" ref="userMenu">
+    <ul v-show="showUserMenu" class="user-menu list-group" :style="userMenuStyle">
       <li v-show="isLogin" class="list-group-item" @click="() => move('login')">로그인</li>
       <li v-show="!isLogin" class="list-group-item">A second item</li>
       <li v-show="!isLogin" class="list-group-item">A third item</li>
@@ -70,7 +70,6 @@ import {
   faBars,
   faArrowUp,
 } from "@fortawesome/free-solid-svg-icons";
-// import HeaderSidebar from "./HeaderSidebar.vue";
 import { ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 const router = useRouter();
@@ -95,8 +94,17 @@ function toggleSidebar() {
 }
 
 const showUserMenu = ref(false);
-function toggleUserMenu() {
+const userMenuStyle = ref({});
+function toggleUserMenu(event) {
   showUserMenu.value = !showUserMenu.value;
+
+  //userMenu 클릭한 마우스 포인터의 위치에서 menu-list 열기
+  if (showUserMenu.value) {
+    userMenuStyle.value = {
+      top: `${event.clientY + 20}px`,
+      left: `${event.clientX}px`
+    };
+  }
 }
 
 const scrollToTop = () => {
@@ -128,6 +136,7 @@ a {
 }
 
 .navbar {
+  min-width: 280px;
   max-width: 1280px;
   transition: 0.5s;
   width: 100%;
@@ -183,8 +192,6 @@ a {
 
 .user-menu {
   position: absolute;
-  top: 8%;
-  left: 75%;
   /* 중앙 정렬을 위한 왼쪽 여백 설정 */
   transform: translateX(-50%);
   /* X축 기준 중앙 정렬 */
@@ -361,6 +368,12 @@ a {
       width: 45px;
     }
     #navbar-search-btn-wrapper {
+      display: none;
+    }
+  }
+
+  @media screen and (max-width: 360px) {
+    .left-logo1 {
       display: none;
     }
   }
