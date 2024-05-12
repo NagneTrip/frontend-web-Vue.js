@@ -2,7 +2,7 @@
   <div class="article-wrapper">
     <div class="article">
       <div class="img-container">
-        <img src="@/assets/logo/logo.png" />
+        <img :src="article.imageUrls.length ? article.imageUrls : './src/assets/logo/logo.png'" />
         <div class="image-overlay"></div>
         <p>{{ article.content }}</p>
         <div class="article-bottom">
