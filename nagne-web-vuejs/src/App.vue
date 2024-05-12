@@ -11,6 +11,7 @@ import TheHeader from "./components/Header/TheHeader.vue"
 </script>
 
 <style scoped>
+
 @font-face {
   font-family: "BMJUA";
   src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/BMJUA.woff") format("woff");
