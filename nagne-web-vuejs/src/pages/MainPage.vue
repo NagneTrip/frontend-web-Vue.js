@@ -43,7 +43,7 @@
       </div>
     </div>
   </div>
-  <ArticleDetailModal v-if="isOpenModal" :article="modalArticle" @close-modal="closeModal" />
+  <ArticleDetailModal v-if="isOpenModal" :key="modalArticle[0].id" :article="modalArticle[0]" @close-modal="closeModal" />
 </template>
 
 <script setup>
