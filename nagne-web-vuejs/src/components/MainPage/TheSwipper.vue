@@ -59,7 +59,7 @@ const modules = ref([Navigation, Pagination, Autoplay]);
 .swipe-img {
   max-width: 1120px;
   width: 100%;
-  height: 480px;
+  height: 100%;
   background-size: cover;
   background-repeat: no-repeat;
 }
@@ -68,7 +68,8 @@ const modules = ref([Navigation, Pagination, Autoplay]);
   .mySwiper {
     width: 100%;
     max-width: 700px;
-    height: 25vw;
+    height: 35vw;
+    max-height: 360px;
     border-radius: 20px;
   }
 }
