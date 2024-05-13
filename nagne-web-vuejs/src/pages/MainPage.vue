@@ -17,12 +17,8 @@
             </div>
           </div>
           <div class="article-container">
-            <TheArticle
-              v-for="(article, index) in articles"
-              :article="article"
-              :key="article.id"
-              @open-article-modal="openModal"
-            />
+            <TheArticle v-for="(article, index) in articles" :articleId="article.id" :key="article.id"
+              @open-article-modal="openModal" />
             <!-- <Article />
         <Article />
         <RecomendFriends />
@@ -43,13 +39,15 @@
       </div>
     </div>
   </div>
-  <ArticleDetailModal v-if="isOpenModal" :key="modalArticle[0].id" :article="modalArticle[0]" @close-modal="closeModal" />
+  <ArticleDetailModal v-if="isOpenModal" :key="modalArticle[0].id" :articleId="modalArticle[0].id"
+    @close-modal="closeModal"/>
 </template>
 
 <script setup>
 import { faUser, faPen } from "@fortawesome/free-solid-svg-icons";
 import TheArticle from "@/components/MainPage/TheArticle.vue";
 import { onMounted, ref, onUnmounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import axios from "axios";
 import TheWeather from "@/components/MainPage/TheWeather.vue";
 import TheNotice from "@/components/MainPage/TheNotice.vue";
@@ -57,25 +55,36 @@ import TheBestArticle from "@/components/MainPage/TheBestArticle.vue";
 import TheFooter from "@/components/MainPage/TheFooter.vue";
 import TheSwipper from "../components/MainPage/TheSwipper.vue";
 import ArticleDetailModal from "@/components/MainPage/ArticleDetailModal.vue";
-
+import { useAuthStore } from "@/store/auth";
+import { storeToRefs } from "pinia";
+const { token, isAuthenticated } = storeToRefs(useAuthStore());
 const articles = ref([]);
-const token = ref('');
 onMounted(() => {
-  token.value = window.localStorage.getItem("token"); //로컬스토리지에서 토큰 로드
-
-  axios
-    .get("http://localhost:8080/api/articles?size=7", {
-      //게시글 받아오기
-      headers: {
-        Authorization: `Bearer ${token.value}`,
-      },
-    })
-    .then(({ data }) => {
-      articles.value = data.response.articles;
-    })
-    .catch((error) => {
-      console.error(error);
-    });
+  if (isAuthenticated) { //로그인 o
+    axios
+      .get("http://localhost:8080/api/articles?size=7", {
+        //토큰 넣어서게시글 받아오기
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(({ data }) => {
+        articles.value = data.response.articles;
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  } else { //로그인 x
+    axios
+      .get("http://localhost:8080/api/articles?size=7", {
+      })
+      .then(({ data }) => {
+        articles.value = data.response.articles;
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
 });
 
 const sideSection = ref(null);
@@ -101,13 +110,14 @@ onMounted(() => {
 const isOpenModal = ref(false);
 const modalArticle = ref({});
 const openModal = (id) => {
-  if (token.value) {
+  if (isAuthenticated) {
     //로그인 상태이면 게시글 로드
     isOpenModal.value = true;
-    modalArticle.value = articles.value.filter(a=>a.id===id);
+    modalArticle.value = articles.value.filter(a => a.id === id);
   }
 };
-const closeModal =()=>{
+const router = useRouter();
+const closeModal = () => {
   isOpenModal.value = false;
   modalArticle.value = {};
 }
@@ -222,6 +232,7 @@ const closeModal =()=>{
     display: none;
   }
 }
+
 .side-content {
   width: 340px;
   height: 1500px;
