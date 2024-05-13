@@ -5,7 +5,7 @@
       <p>정보를 입력해주세요.</p>
     </div>
 
-    <form action="" @submit.prevent="() => getLoginHandler(userEmail, password)">
+    <form action="" @submit.prevent="() => getLoginHandler()">
       <label for="">E-mail</label>
       <input type="text" v-model="userEmail">
       <label for="">Password</label>
@@ -36,24 +36,21 @@ import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
-const userEmail = ref("");
-const password = ref("");
 const { getToken } = useAuthStore();
-// const token = ref("");
-const { isAuthenticated } = storeToRefs(useAuthStore());
+const { isAuthenticated, userEmail, password } = storeToRefs(useAuthStore());
 
-const getLoginHandler = async (email, pw) => {
-  if (email === "" || pw === "") {
+const getLoginHandler = async () => {
+  if (userEmail.value === "" || password.value === "") {
     alert("입력하신 정보를 다시 확인하세요.");
     userEmail.value = "";
     password.value = "";
     return;
+  } else {
+    await getToken(); //store에 로그인 요청
   }
-
-  await getToken(email, pw); //store에 로그인 요청
 }
 
-watch(isAuthenticated, ()=>{
+watch(isAuthenticated, () => {
   if (isAuthenticated) {
     alert('로그인 성공');
     router.push({ name: 'main' }); // 성공 시 홈 페이지로 리다이렉트
