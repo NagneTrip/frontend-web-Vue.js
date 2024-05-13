@@ -33,7 +33,7 @@
 import { useAuthStore } from "@/store/auth";
 import { storeToRefs } from "pinia";
 import { ref, watch } from "vue";
-import { onBeforeRouteLeave, useRouter } from "vue-router";
+import { useRouter } from "vue-router";
 
 const router = useRouter();
 const userEmail = ref("");
