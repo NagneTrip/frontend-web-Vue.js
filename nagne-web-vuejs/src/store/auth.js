@@ -5,9 +5,11 @@ import { ref } from "vue";
 export const useAuthStore = defineStore("auth", () => {
   const isAuthenticated = ref(false);
   const token = ref("");
+  const userEmail = ref("");
+  const password = ref("");
 
-  const getToken = async (username, password) => {
-    const result = await login(username, password);
+  const getToken = async () => {
+    const result = await login(userEmail, password);
     if (result != "") {
       //로그인 성공시
       token.value = result;
@@ -19,5 +21,5 @@ export const useAuthStore = defineStore("auth", () => {
     }
   };
 
-  return { getToken, isAuthenticated, token };
+  return { getToken, isAuthenticated, token, userEmail, password };
 });
