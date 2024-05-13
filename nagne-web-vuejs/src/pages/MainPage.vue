@@ -64,11 +64,8 @@ onMounted(() => {
   token.value = window.localStorage.getItem("token"); //로컬스토리지에서 토큰 로드
 
   axios
-    .get("http://localhost:8080/api/articles", {
+    .get("http://localhost:8080/api/articles?size=7", {
       //게시글 받아오기
-      params: {
-        tags: "#태그1",
-      },
       headers: {
         Authorization: `Bearer ${token.value}`,
       },
