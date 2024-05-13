@@ -8,13 +8,10 @@ export const useAuthStore = defineStore("auth", () => {
 
   const getToken = async (username, password) => {
     const result = await login(username, password);
-    if (result !== "") {
+    if (result != "") {
       //로그인 성공시
-      console.log("auth.js에서 로그인 성공함");
       token.value = result;
       isAuthenticated.value = true;
-      console.log(isAuthenticated.value);
-      // return token.value;
     } else {
       //로그인 실패
       token.value = "";

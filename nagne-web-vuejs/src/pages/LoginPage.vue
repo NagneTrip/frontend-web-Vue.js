@@ -33,19 +33,16 @@
 import { useAuthStore } from "@/store/auth";
 import { storeToRefs } from "pinia";
 import { ref, watch } from "vue";
-import { useRouter } from "vue-router";
+import { onBeforeRouteLeave, useRouter } from "vue-router";
 
 const router = useRouter();
 const userEmail = ref("");
 const password = ref("");
 const { getToken } = useAuthStore();
 // const token = ref("");
-const token = storeToRefs(useAuthStore().token);
 const { isAuthenticated } = storeToRefs(useAuthStore());
-console.log(isAuthenticated)
-// const isAuth = isAuthenticated;
-// console.log(isAuth)
-const getLoginHandler = (email, pw) => {
+
+const getLoginHandler = async (email, pw) => {
   if (email === "" || pw === "") {
     alert("입력하신 정보를 다시 확인하세요.");
     userEmail.value = "";
@@ -53,22 +50,16 @@ const getLoginHandler = (email, pw) => {
     return;
   }
 
-  getToken(email, pw)
-
-  // if (isAuthenticated.value) {
-  //   alert('로그인 성공');
-  //   userEmail.value = "";
-  //   password.value = "";
-  //   router.push({ name: 'main' }); // 예시로 'home' 라우트로 이동
-  // } else {
-  //   alert("왜안대");
-  //   userEmail.value = "";
-  //   password.value = "";
-  // }
+  await getToken(email, pw); //store에 로그인 요청
 }
 
-watch(isAuthenticated, () => {
-  console.log("로그인 되었습니다.")
+watch(isAuthenticated, ()=>{
+  if (isAuthenticated) {
+    alert('로그인 성공');
+    router.push({ name: 'main' }); // 성공 시 홈 페이지로 리다이렉트
+  } else {
+    alert('로그인 실패! 입력 정보를 다시 확인하세요!');
+  }
 })
 </script>
 
