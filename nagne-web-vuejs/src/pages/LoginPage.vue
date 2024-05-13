@@ -5,11 +5,11 @@
       <p>정보를 입력해주세요.</p>
     </div>
 
-    <form action="" @submit.prevent="getLoginHandler">
+    <form action="" @submit.prevent="() => getLoginHandler(userEmail, password)">
       <label for="">E-mail</label>
-      <input type="text">
+      <input type="text" v-model="userEmail">
       <label for="">Password</label>
-      <input type="password">
+      <input type="password" v-model="password">
       <button class="login-button">LOGIN</button>
       <RouterLink :to="{ name: '' }">비밀번호 찾기</RouterLink>
     </form>
@@ -30,32 +30,46 @@
 </template>
 
 <script setup>
-import axios from "axios";
-import { ref } from "vue";
-import { useRouter, useRoute } from "vue-router";
+import { useAuthStore } from "@/store/auth";
+import { ref, watch } from "vue";
+import { useRouter } from "vue-router";
 
 const router = useRouter();
-const route = useRoute();
-const beforePageByQuery = route.query;
+const userEmail = ref("");
+const password = ref("");
+const { isAuthenticated, getToken, token } = useAuthStore();
+// const token = ref("");
 
-const token = ref('');
-const getLoginHandler = () => {
-  axios.post('http://localhost:8080/api/users/login', {
-    "username": "test1@gmail.com",
-    "password": "1234"
-  })
-    .then(({ data }) => {
-      token.value = data.response.token;
-      window.localStorage.setItem('token', token.value)
+const isAuth = isAuthenticated;
+console.log(isAuth)
+const getLoginHandler = (email, pw) => {
+  if (email === "" || pw === "") {
+    alert("입력하신 정보를 다시 확인하세요.");
+    userEmail.value = "";
+    password.value = "";
+    return;
+  }
 
-      router.go(-1);
-    })
-    .catch(rej => {
-      alert("잘못함")
-    })
+  getToken(email, pw)
+
+  // if (isAuthenticated.value) {
+  //   alert('로그인 성공');
+  //   userEmail.value = "";
+  //   password.value = "";
+  //   router.push({ name: 'main' }); // 예시로 'home' 라우트로 이동
+  // } else {
+  //   alert("왜안대");
+  //   userEmail.value = "";
+  //   password.value = "";
+  // }
 }
 
+watch(isAuth, () => {
+  console.log("로그인 되었습니다.")
+  return isAuth
+})
 </script>
+
 
 <style scoped>
 .login-page {
