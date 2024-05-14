@@ -77,7 +77,7 @@
 
 <script setup>
 import CommentListItem from "./CommentListItem.vue"
-import axios from "Axios";
+import axios from "axios";
 import { onMounted } from "vue";
 import { ref, watch } from "vue";
 

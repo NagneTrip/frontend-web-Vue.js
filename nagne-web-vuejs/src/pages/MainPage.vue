@@ -48,7 +48,7 @@ import { faUser, faPen } from "@fortawesome/free-solid-svg-icons";
 import TheArticle from "@/components/MainPage/Article/TheArticle.vue";
 import { onMounted, ref, onUnmounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import axios from "Axios";
+import axios from "axios";
 import TheWeather from "@/components/MainPage/SideBar/TheWeather.vue";
 import TheNotice from "@/components/MainPage/SideBar/TheNotice.vue";
 import TheBestArticle from "@/components/MainPage/SideBar/TheBestArticle.vue";

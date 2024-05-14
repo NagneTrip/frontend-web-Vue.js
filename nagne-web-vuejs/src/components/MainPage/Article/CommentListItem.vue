@@ -39,7 +39,7 @@
 
 <script setup>
 import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
-import axios from "Axios";
+import axios from "axios";
 import { ref, onMounted } from "vue";
 import { useAuthStore } from "@/store/auth";
 import { storeToRefs } from "pinia";
