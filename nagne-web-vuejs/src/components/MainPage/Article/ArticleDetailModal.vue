@@ -99,7 +99,7 @@
 
 <script setup>
 import { faXmark, faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
-import axios from "axios";
+import axios from "Axios";
 import { onMounted, ref, watch } from "vue";
 import CommentList from "./CommentList.vue";
 import { useAuthStore } from "@/store/auth";
@@ -129,7 +129,7 @@ onMounted(async () => {
 const props = defineProps({
   articleId: Number,
 });
-const emit = defineEmits(["closeModal"]);
+const emit = defineEmits(["closeModal", "changed"]);
 const closeModal = () => {
   emit("closeModal");
 };
@@ -140,12 +140,12 @@ const isDotMenuOpen = ref(false);
 const dotMenuStyle = ref({});
 const commentInput = ref(null);
 
-watch(isLiked, async () => {
+//좋아요, 북마크 클릭시 갯수 렌더링을 위한 비동기
+watch([isLiked, isBookmarked], async () => {
   if (isAuthenticated) { //이미 로그인 되어 있으면 토큰 갱신
     await useAuthStore().getToken();
   }
-
-  axios.get(`http://localhost:8080/api/articles/${props.articleId}`, {
+  await axios.get(`http://localhost:8080/api/articles/${props.articleId}`, {
     headers: {
       Authorization: `Bearer ${token.value}`,
     },
@@ -156,10 +156,8 @@ watch(isLiked, async () => {
       isBookmarked.value = article.value.isBookmarked; // 데이터 로딩 후 isBookmarked 업데이트
     })
     .catch()
+  emit('changed');
 })
-
-
-
 
 const clickSocialBtn = (btnName) => {
   if (!isAuthenticated || token === '') {
@@ -181,6 +179,8 @@ const clickSocialBtn = (btnName) => {
           { headers: { Authorization: `Bearer ${token.value}` } }).then()
           .catch(({ error }) => console.log('이미 좋아요 취소한 게시글입니다.'))
       }
+
+      emit('changed');
       break;
     case 'bookMark':
       if (!isBookmarked.value) { //좋아요 누르기
@@ -196,6 +196,8 @@ const clickSocialBtn = (btnName) => {
           { headers: { Authorization: `Bearer ${token.value}` } }).then()
           .catch(({ error }) => console.log('이미 좋아요 취소한 게시글입니다.'))
       }
+
+      emit('changed');
       break;
     case 'comment':
       if (commentInput.value) {
