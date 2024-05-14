@@ -30,11 +30,7 @@
       <!-- phoneSize  -->
       <div class="phone-size-navmenu">
         <div class="navbar-icons-wrapper burger-menu-icon-wrapper" id="navbar-search-btn-wrapper">
-          <font-awesome-icon
-            class="icon burger-menu-icon"
-            id="navbar-search-btn"
-            :icon="faMagnifyingGlass"
-          />
+          <font-awesome-icon class="icon burger-menu-icon" id="navbar-search-btn" :icon="faMagnifyingGlass" />
         </div>
         <div class="navbar-icons-wrapper burger-menu-icon-wrapper" @click="toggleSidebar">
           <font-awesome-icon :icon="faBars" class="burger-menu-icon" />
@@ -46,11 +42,12 @@
 
     <!-- UserMenu -->
     <ul v-show="showUserMenu" class="user-menu list-group" :style="userMenuStyle">
-      <li v-show="isLogin" class="list-group-item" @click="() => move('login')">로그인</li>
-      <li v-show="!isLogin" class="list-group-item">A second item</li>
-      <li v-show="!isLogin" class="list-group-item">A third item</li>
-      <li v-show="!isLogin" class="list-group-item">A fourth item</li>
-      <li v-show="!isLogin" class="list-group-item">And a fifth one</li>
+      <li v-show="!store.isAuthenticated" class="list-group-item" @click="() => move('login')">로그인</li>
+      <li v-show="store.isAuthenticated" class="list-group-item">내 프로필</li>
+      <li v-show="store.isAuthenticated" class="list-group-item">저장한 게시물</li>
+      <li v-show="store.isAuthenticated" class="list-group-item">내정보 수정</li>
+      <li v-show="store.isAuthenticated" class="list-group-item" style="border-top: 1px solid black;">고객센터</li>
+      <li v-show="store.isAuthenticated" class="list-group-item" @click="() => move('logout')">로그아웃</li>
     </ul>
   </div>
 
@@ -70,19 +67,36 @@ import {
   faBars,
   faArrowUp,
 } from "@fortawesome/free-solid-svg-icons";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { useAuthStore } from "@/store/auth";
+const store = useAuthStore();
 const router = useRouter();
 const route = useRouter();
 
-const isLogin = ref(true);
+onMounted(async () => {
+  if (store.isAuthenticated) { //이미 로그인 되어 있으면 토큰 갱신
+    await store.getToken();
+  }
+})
 
 const move = (path) => {
-  const moveTo = { name: path };
-  if (path === "login") {
-    showUserMenu.value = !showUserMenu.value;
+  let moveTo = { name: path };
+  switch (path) {
+    case 'login': //로그인
+      if (store.isAuthenticated) {
+        alert('이미 로그인 중입니다!');
+        return;
+      }
+      break;
+    case 'logout': //로그아웃. 토큰과 인증 정보를 초기화
+      store.getLogout();
+      console.log(store.isAuthenticated);
+      moveTo = { name: 'logout' }
+      break;
   }
   //페이지 이동 시 열려있는 메뉴 전부 닫기
+  showUserMenu.value = false;
   showUserMenu.value = false;
   showSidebar.value = false;
   router.push(moveTo);
@@ -363,10 +377,12 @@ a {
     height: 400px;
     background-color: red;
   }
+
   @media screen and (max-width: 456px) {
     .white-space {
       width: 45px;
     }
+
     #navbar-search-btn-wrapper {
       display: none;
     }
