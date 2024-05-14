@@ -16,8 +16,7 @@
       <div class="img-container">
         <img class="main-img" :src="'./src/assets/logo/logo.png'" />
         <div class="image-overlay"></div>
-        <p class="noto-sans-kr-regular img-container-text">{{ article.content
-          }}</p>
+        <p class="noto-sans-kr-regular img-container-text">{{ article.content }}</p>
         <div class=" article-bottom">
           <div class="social-box">
             <div class="social-left-box">
@@ -78,17 +77,17 @@
 
 <script setup>
 import CommentListItem from "./CommentListItem.vue"
-import axios from "axios";
+import axios from "Axios";
 import { onMounted } from "vue";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 
 import { useAuthStore } from "@/store/auth";
 import { storeToRefs } from "pinia";
 const { token, isAuthenticated } = storeToRefs(useAuthStore());
 const article = ref({});
 const comments = ref({});
-const isLiked = article.value.isLiked;
-const isBookmarked = article.value.isBookmarked;
+const isLiked = ref(false);
+const isBookmarked = ref(false);
 
 
 onMounted(async () => {
@@ -96,13 +95,15 @@ onMounted(async () => {
     await useAuthStore().getToken();
   }
   //게시물 정보 받아오기
-  axios.get(`http://localhost:8080/api/articles/${props.articleId}`, {
+  axios.get(`http://localhost:8080/api/articles/${props.article.id}`, {
     headers: {
       Authorization: `Bearer ${token.value}`,
     },
   })
     .then(({ data }) => {
       article.value = data.response.articleInfo;
+      isLiked.value = data.response.articleInfo.isLiked;
+      isBookmarked.value = data.response.articleInfo.isBookmarked;
     })
     .catch()
 
@@ -110,7 +111,41 @@ onMounted(async () => {
     await useAuthStore().getToken();
   }
   //댓글 정보 받아오기
-  axios.get(`http://localhost:8080/api/comments?articleId=${props.articleId}`,
+  axios.get(`http://localhost:8080/api/comments?articleId=${props.article.id}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token.value}`,
+      },
+    }
+  )
+    .then(({ data }) => {
+      comments.value = data.response.comments
+    })
+    .catch
+})
+
+watch(article, async () => {
+  if (isAuthenticated) { //이미 로그인 되어 있으면 토큰 갱신
+    await useAuthStore().getToken();
+  }
+  //게시물 정보 받아오기
+  axios.get(`http://localhost:8080/api/articles/${props.article.id}`, {
+    headers: {
+      Authorization: `Bearer ${token.value}`,
+    },
+  })
+    .then(({ data }) => {
+      article.value = data.response.articleInfo;
+      isLiked.value = data.response.articleInfo.isLiked;
+      isBookmarked.value = data.response.articleInfo.isBookmarked;
+    })
+    .catch()
+
+  if (isAuthenticated) { //이미 로그인 되어 있으면 토큰 갱신
+    await useAuthStore().getToken();
+  }
+  //댓글 정보 받아오기
+  axios.get(`http://localhost:8080/api/comments?articleId=${props.article.id}`,
     {
       headers: {
         Authorization: `Bearer ${token.value}`,
@@ -124,7 +159,7 @@ onMounted(async () => {
 })
 
 const props = defineProps({
-  articleId: Number,
+  article: Object,
 });
 const emit = defineEmits([
   "openArticleModal",
