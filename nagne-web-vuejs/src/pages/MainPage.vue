@@ -17,7 +17,7 @@
             </div>
           </div>
           <div class="article-container">
-            <TheArticle v-for="(article, index) in articles" :articleId="article.id" :key="article.id"
+            <TheArticle v-for="(article, index) in articles" :article="article" :key="article.id"
               @open-article-modal="openModal" />
             <!-- <Article />
         <Article />
@@ -40,15 +40,15 @@
     </div>
   </div>
   <ArticleDetailModal v-if="isOpenModal" :key="modalArticle[0].id" :articleId="modalArticle[0].id"
-    @close-modal="closeModal" />
+    @close-modal="closeModal" @changed="stateChanged" />
 </template>
 
 <script setup>
 import { faUser, faPen } from "@fortawesome/free-solid-svg-icons";
 import TheArticle from "@/components/MainPage/Article/TheArticle.vue";
-import { onMounted, ref, onUnmounted } from "vue";
+import { onMounted, ref, onUnmounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import axios from "axios";
+import axios from "Axios";
 import TheWeather from "@/components/MainPage/SideBar/TheWeather.vue";
 import TheNotice from "@/components/MainPage/SideBar/TheNotice.vue";
 import TheBestArticle from "@/components/MainPage/SideBar/TheBestArticle.vue";
@@ -120,6 +120,25 @@ const router = useRouter();
 const closeModal = () => {
   isOpenModal.value = false;
   modalArticle.value = {};
+}
+//좋아요, 북마크 클릭시 갯수 렌더링을 위한 비동기
+const stateChanged = async () => {
+  if (isAuthenticated) { //이미 로그인 되어 있으면 토큰 갱신
+    await useAuthStore().getToken();
+  }
+
+  await axios.get("http://localhost:8080/api/articles?size=7", {
+    //토큰 넣어서게시글 받아오기
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+    .then(({ data }) => {
+      articles.value = data.response.articles;
+    })
+    .catch((error) => {
+      console.error(error);
+    });
 }
 </script>
 
