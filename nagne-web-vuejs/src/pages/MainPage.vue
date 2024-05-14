@@ -40,21 +40,21 @@
     </div>
   </div>
   <ArticleDetailModal v-if="isOpenModal" :key="modalArticle[0].id" :articleId="modalArticle[0].id"
-    @close-modal="closeModal"/>
+    @close-modal="closeModal" />
 </template>
 
 <script setup>
 import { faUser, faPen } from "@fortawesome/free-solid-svg-icons";
-import TheArticle from "@/components/MainPage/TheArticle.vue";
+import TheArticle from "@/components/MainPage/Article/TheArticle.vue";
 import { onMounted, ref, onUnmounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import axios from "axios";
-import TheWeather from "@/components/MainPage/TheWeather.vue";
-import TheNotice from "@/components/MainPage/TheNotice.vue";
-import TheBestArticle from "@/components/MainPage/TheBestArticle.vue";
-import TheFooter from "@/components/MainPage/TheFooter.vue";
-import TheSwipper from "../components/MainPage/TheSwipper.vue";
-import ArticleDetailModal from "@/components/MainPage/ArticleDetailModal.vue";
+import TheWeather from "@/components/MainPage/SideBar/TheWeather.vue";
+import TheNotice from "@/components/MainPage/SideBar/TheNotice.vue";
+import TheBestArticle from "@/components/MainPage/SideBar/TheBestArticle.vue";
+import TheFooter from "@/components/MainPage/SideBar/TheFooter.vue";
+import TheSwipper from "../components/MainPage/SideBar/TheSwipper.vue";
+import ArticleDetailModal from "@/components/MainPage/Article/ArticleDetailModal.vue";
 import { useAuthStore } from "@/store/auth";
 import { storeToRefs } from "pinia";
 const { token, isAuthenticated } = storeToRefs(useAuthStore());
