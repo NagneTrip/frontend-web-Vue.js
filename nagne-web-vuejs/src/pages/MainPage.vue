@@ -208,6 +208,9 @@ const closeModal = () => {
 .article-container {
   width: 700px;
   height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
   border-radius: 15px 15px 0px 0px;
 }
 

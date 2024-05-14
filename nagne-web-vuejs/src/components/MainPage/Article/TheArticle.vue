@@ -14,10 +14,11 @@
         </div>
       </div>
       <div class="img-container">
-        <img :src="'./src/assets/logo/logo.png'" />
+        <img class="main-img" :src="'./src/assets/logo/logo.png'" />
         <div class="image-overlay"></div>
-        <p>{{ article.content }}</p>
-        <div class="article-bottom">
+        <p class="noto-sans-kr-regular img-container-text">{{ article.content
+          }}</p>
+        <div class=" article-bottom">
           <div class="social-box">
             <div class="social-left-box">
               <div class="social-like">
@@ -67,10 +68,16 @@
         </div>
       </div>
     </div>
+    <template v-if="comments[0]">
+      <CommentListItem class="comment" :comment="comments[0]" />
+    </template>
+
   </div>
+
 </template>
 
 <script setup>
+import CommentListItem from "./CommentListItem.vue"
 import axios from "axios";
 import { onMounted } from "vue";
 import { ref } from "vue";
@@ -79,6 +86,7 @@ import { useAuthStore } from "@/store/auth";
 import { storeToRefs } from "pinia";
 const { token, isAuthenticated } = storeToRefs(useAuthStore());
 const article = ref({});
+const comments = ref({});
 const isLiked = article.value.isLiked;
 const isBookmarked = article.value.isBookmarked;
 
@@ -87,7 +95,7 @@ onMounted(async () => {
   if (isAuthenticated) { //이미 로그인 되어 있으면 토큰 갱신
     await useAuthStore().getToken();
   }
-
+  //게시물 정보 받아오기
   axios.get(`http://localhost:8080/api/articles/${props.articleId}`, {
     headers: {
       Authorization: `Bearer ${token.value}`,
@@ -97,6 +105,22 @@ onMounted(async () => {
       article.value = data.response.articleInfo;
     })
     .catch()
+
+  if (isAuthenticated) { //이미 로그인 되어 있으면 토큰 갱신
+    await useAuthStore().getToken();
+  }
+  //댓글 정보 받아오기
+  axios.get(`http://localhost:8080/api/comments?articleId=${props.articleId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token.value}`,
+      },
+    }
+  )
+    .then(({ data }) => {
+      comments.value = data.response.comments
+    })
+    .catch
 })
 
 const props = defineProps({
@@ -115,7 +139,8 @@ const openArticleModal = () => {
 .article-wrapper {
   width: 100%;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
   margin: 20px 0 20px 0;
 }
 
@@ -124,12 +149,15 @@ const openArticleModal = () => {
   display: flex;
   flex-direction: column;
   padding-bottom: 15px;
-  border-bottom: 1.5px solid rgb(228, 228, 228);
+
 }
 
 .user-info {
   display: flex;
   gap: 7px;
+  padding-top: 50px;
+  margin-bottom: 15px;
+  border-top: 1.5px solid rgb(228, 228, 228);
 }
 
 .user-profile-img {
@@ -164,6 +192,8 @@ const openArticleModal = () => {
 
 .user-info-date {
   color: #797979;
+  font-size: 15px;
+  font-weight: 600;
   padding-left: 2px;
 }
 
@@ -171,8 +201,20 @@ const openArticleModal = () => {
   position: relative;
   width: 100%;
   height: auto;
-  padding: 5px;
-  /* 이미지의 높이에 맞추어 자동 조정 */
+  padding: 15px;
+  background-color: #f1f1f1;
+  border-radius: 25px;
+}
+
+.img-container-text {
+  padding-left: 10px;
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.main-img {
+  margin-bottom: 20px;
 }
 
 .article-main {
@@ -188,9 +230,10 @@ const openArticleModal = () => {
 }
 
 .article .user-info .user-info-main .tier-img {
-  width: 20px;
-  height: 20px;
+  width: 19px;
+  height: 19px;
   border-radius: 0px;
+  margin-top: 3px;
 }
 
 .image-overlay {
@@ -251,6 +294,7 @@ const openArticleModal = () => {
   justify-content: center;
   width: 100%;
   padding-bottom: 10px;
+  margin-top: 40px;
 }
 
 .social-box {
@@ -283,5 +327,15 @@ const openArticleModal = () => {
 .social-bookmark p {
   margin: 0;
   cursor: default;
+}
+
+.comment {
+  width: 100%;
+  padding: 15px;
+  margin: 15px 0 0 5px;
+  border: 2.5px solid rgba(118, 189, 255, 0.5);
+  border-top: none;
+  border-radius: 0 0 18px 18px;
+  box-shadow: 0px 1px 1.5px 0 rgba(0, 0, 0, 0.2);
 }
 </style>
