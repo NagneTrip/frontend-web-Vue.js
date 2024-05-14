@@ -21,5 +21,16 @@ export const useAuthStore = defineStore("auth", () => {
     }
   };
 
-  return { getToken, isAuthenticated, token, userEmail, password };
+  const getLogout = () => {
+    console.log("실행됨");
+    token.value = "";
+    isAuthenticated.value = false;
+    userEmail.value = "";
+    password.value = "";
+
+    console.log("token값 : " + token.value + " " + isAuthenticated.value);
+    return;
+  };
+
+  return { getLogout, getToken, isAuthenticated, token, userEmail, password };
 });
