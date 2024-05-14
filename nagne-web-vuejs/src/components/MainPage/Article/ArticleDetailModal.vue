@@ -15,8 +15,8 @@
                 <div class="user-info-text">
                   <div class="user-info-main">
                     <p class="noto-sans-kr-bold">{{ article?.userNickname }}</p>
-                    <img :src="`src/assets/tier/${article.userTier}.svg`" alt="" class="tier-img" :width="20"
-                      :height="20" />
+                    <img :src="`src/assets/tier/${article.userTier}.svg`" alt="" class="tier-img" :width="17"
+                      :height="17" />
                   </div>
                   <p class="user-info-date noto-sans-kr-regular">{{ article?.createdDate?.split('T')[0] }}</p>
                 </div>
@@ -33,12 +33,9 @@
             <div class="right-content-box">
               <span class="content-main noto-sans-kr-bold">
                 {{ article.content }}
-
               </span>
               <!-- 댓글 컴포넌트 -for -->
-
-              <!-- 인스타처럼 게시글 내용과 댓글 모두 댓글 컴포넌트로 -->
-              <!-- 이 파일에서 props로 받아온 게시글과, api로 호출한 댓글들을 처리 -->
+              <CommentList :articleId="articleId" />
             </div>
             <div class="right-footer">
               <div class="social-box">
@@ -84,7 +81,7 @@
               <div class="write-comment-box">
                 <!-- 댓글 아이콘 -->
                 <div class="comment-input">
-                  <input type="text" class="noto-sans-kr-bold" ref="commentInput"/>
+                  <input type="text" class="noto-sans-kr-bold" ref="commentInput" />
                 </div>
                 <button class="jua-regular">게시</button>
               </div>
@@ -104,9 +101,10 @@
 import { faXmark, faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import { onMounted, ref, watch } from "vue";
-
+import CommentList from "./CommentList.vue";
 import { useAuthStore } from "@/store/auth";
 import { storeToRefs } from "pinia";
+
 const { token, isAuthenticated } = storeToRefs(useAuthStore());
 const article = ref({});
 
@@ -174,33 +172,33 @@ const clickSocialBtn = (btnName) => {
         isLiked.value = true;
         axios.post(`http://localhost:8080/api/articles/like`,
           { articleId: props.articleId },
-          {headers: {Authorization: `Bearer ${token.value}`}}
+          { headers: { Authorization: `Bearer ${token.value}` } }
         ).then()
           .catch(({ error }) => alert('이미 좋아요 한 게시글입니다.'))
       } else { //좋아요 취소하기
         isLiked.value = false;
         axios.delete(`http://localhost:8080/api/articles/like/${props.articleId}`,
-          {headers: {Authorization: `Bearer ${token.value}`}}).then()
+          { headers: { Authorization: `Bearer ${token.value}` } }).then()
           .catch(({ error }) => console.log('이미 좋아요 취소한 게시글입니다.'))
       }
       break;
     case 'bookMark':
-    if (!isBookmarked.value) { //좋아요 누르기
-      isBookmarked.value = true;
+      if (!isBookmarked.value) { //좋아요 누르기
+        isBookmarked.value = true;
         axios.post(`http://localhost:8080/api/bookmark`,
           { articleId: props.articleId },
-          {headers: {Authorization: `Bearer ${token.value}`}}
+          { headers: { Authorization: `Bearer ${token.value}` } }
         ).then()
           .catch(({ error }) => alert('이미 저장한 게시글입니다.'))
       } else { //좋아요 취소하기
         isBookmarked.value = false;
         axios.delete(`http://localhost:8080/api/bookmark/${props.articleId}`,
-          {headers: {Authorization: `Bearer ${token.value}`}}).then()
+          { headers: { Authorization: `Bearer ${token.value}` } }).then()
           .catch(({ error }) => console.log('이미 좋아요 취소한 게시글입니다.'))
       }
       break;
     case 'comment':
-    if (commentInput.value) {
+      if (commentInput.value) {
         commentInput.value.focus(); // commentInput 요소에 포커스 설정
       }
       break;
@@ -356,6 +354,10 @@ const toggleDotMenu = (event) => {
   gap: 2px;
 }
 
+.tier-img {
+  margin-top: 4px;
+}
+
 .user-info-main {
   display: flex;
   align-items: center;
@@ -416,6 +418,8 @@ const toggleDotMenu = (event) => {
   width: 100%;
   display: flex;
   justify-content: center;
+  flex-direction: column;
+  align-items: center;
 }
 
 .content-main {
