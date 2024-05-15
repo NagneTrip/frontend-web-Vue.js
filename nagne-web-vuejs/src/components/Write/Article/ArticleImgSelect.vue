@@ -11,7 +11,7 @@
       <p class="jua-regular selected-text">Selected</p>
       <div class="selected-imgs-list">
         <div class="selected-img" v-for="(img, index) in store.selectedImg" :key="index">
-          <p class="img-text noto-sans-kr-regular">{{ truncatedName(img.name) }}</p>
+          <p class="img-text noto-sans-kr-regular">{{ truncatedName(img) }}</p>
           <button class="delete-img jua-regular" @click="deleteImg">삭제</button>
         </div>
       </div>
@@ -19,7 +19,6 @@
   </div>
 
   <div class="right-footer">
-
     <button class="right-footer-btn back-btn" @click="() => move('back')">
       <font-awesome-icon :icon="faXmark" :width="40" />
     </button>
@@ -31,7 +30,7 @@
 
 <script setup>
 import { faArrowLeft, faArrowRight, faImage, faXmark } from "@fortawesome/free-solid-svg-icons";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useWriteStore } from "@/store/write";
 const store = useWriteStore();
@@ -50,12 +49,20 @@ const move = (path) => {
       break;
   }
 };
+onMounted(() => {
+  store.selectedImg = [];
+  store.tempUrl = [];
+})
 
 
 const fileChangeHandler = (event) => {
   if (event.target.files && event.target.files.length > 0) {
     // store.selectedImg = Array.from(event.target.files);
-    Array.from(event.target.files).map(i=>store.selectedImg.push(i))
+    Array.from(event.target.files).map(i => { 
+      store.selectedImg.push(i);
+      let url = URL.createObjectURL(i); //임시 url 생성
+      store.tempUrl.push(url);
+    })
   }
 };
 
@@ -65,10 +72,14 @@ const inputImg = () => {
 
 const deleteImg = (index) => {
   store.selectedImg.splice(index, 1);
+  store.tempUrl.splice(index, 1);
 };
 
-const truncatedName = (name) => {
-  return name.length > 10 ? name.substring(0, 10) + '..' : name;
+const truncatedName = (img) => {
+  if (img && img.name) {
+    return img.name.length > 10 ? img.name.substring(0, 10) + '..' : img.name;
+  }
+  return
 };
 </script>
 
@@ -162,7 +173,7 @@ const truncatedName = (name) => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-around;
+  justify-content: space-between;
   padding-bottom: 50px;
   gap: 30px;
 }
@@ -400,6 +411,10 @@ input[type="file"] {
 
     .modal-box {
       min-height: 60%;
+    }
+
+    .select-section{
+      flex-direction: column;
     }
   }
 }
