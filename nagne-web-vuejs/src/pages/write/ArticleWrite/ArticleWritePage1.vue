@@ -58,7 +58,6 @@ const move = (path) => {
   } 
 }
 
-
 const baseImg = ref("/src/assets/logo/logo.png");
 const inputFileRef = ref(null);
 const selectedImg = ref([]);
