@@ -6,7 +6,7 @@
                 <font-awesome-icon :icon="faBullhorn" class="add-img-icon" />
                 <p class="jua-regular">공지사항</p>
             </div>
-            <div class="write" @click="() => movePage('articleWrite1')">
+            <div class="write" @click="() => movePage('articleWrite')">
                 <font-awesome-icon :icon="faComments" class="add-img-icon" />
                 <p class="jua-regular">피드 추가</p>
             </div>
@@ -31,13 +31,11 @@ const movePage = (path) => {
         if (window.confirm("로그인 후 이용하세요!")) {
             router.push({name : 'login'});
         }
-
-        
         return;
     }
 
     switch (path) {
-        case 'articleWrite1':
+        case 'articleWrite':
             router.push({name:path})
             break;
         case 'planWrite':
