@@ -39,7 +39,7 @@
       </div>
     </div>
   </div>
-  <ArticleDetailModal v-if="isOpenModal" :key="modalArticle[0].id" :articleId="modalArticle[0].id"
+  <ArticleDetailModal v-if="isOpenModal && store.isAuthenticated" :key="modalArticle[0].id" :articleId="modalArticle[0].id"
     @close-modal="closeModal" @changed="stateChanged" />
 </template>
 
@@ -56,16 +56,16 @@ import TheFooter from "@/components/MainPage/SideBar/TheFooter.vue";
 import TheSwipper from "../components/MainPage/SideBar/TheSwipper.vue";
 import ArticleDetailModal from "@/components/MainPage/Article/ArticleDetailModal.vue";
 import { useAuthStore } from "@/store/auth";
-import { storeToRefs } from "pinia";
-const { token, isAuthenticated } = storeToRefs(useAuthStore());
+const store = useAuthStore();
+
 const articles = ref([]);
 onMounted(() => {
-  if (isAuthenticated) { //로그인 o
+  if (store.isAuthenticated) { //로그인 o
     axios
       .get("http://localhost:8080/api/articles?size=7", {
         //토큰 넣어서게시글 받아오기
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${store.token}`,
         },
       })
       .then(({ data }) => {
@@ -110,7 +110,7 @@ onMounted(() => {
 const isOpenModal = ref(false);
 const modalArticle = ref({});
 const openModal = (id) => {
-  if (isAuthenticated) {
+  if (store.isAuthenticated) {
     //로그인 상태이면 게시글 로드
     isOpenModal.value = true;
     modalArticle.value = articles.value.filter(a => a.id === id);
@@ -123,14 +123,16 @@ const closeModal = () => {
 }
 //좋아요, 북마크 클릭시 갯수 렌더링을 위한 비동기
 const stateChanged = async () => {
-  if (isAuthenticated) { //이미 로그인 되어 있으면 토큰 갱신
-    await useAuthStore().getToken();
+  if (!store.isAuthenticated) { //이미 로그인 되어 있으면 토큰 갱신
+    alert("로그인 후 이용하세요!");
+    return;
   }
+    await useAuthStore().getToken();
 
   await axios.get("http://localhost:8080/api/articles?size=7", {
     //토큰 넣어서게시글 받아오기
     headers: {
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${store.token}`,
     },
   })
     .then(({ data }) => {

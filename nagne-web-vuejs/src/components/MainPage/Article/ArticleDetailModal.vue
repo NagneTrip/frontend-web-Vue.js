@@ -103,19 +103,17 @@ import axios from "axios";
 import { onMounted, ref, watch } from "vue";
 import CommentList from "./CommentList.vue";
 import { useAuthStore } from "@/store/auth";
-import { storeToRefs } from "pinia";
-
-const { token, isAuthenticated } = storeToRefs(useAuthStore());
+const store = useAuthStore();
 const article = ref({});
 
 onMounted(async () => {
-  if (isAuthenticated) { //이미 로그인 되어 있으면 토큰 갱신
-    await useAuthStore().getToken();
-  }
+  if (store.isAuthenticated) { //이미 로그인 되어 있으면 토큰 갱신
+  //   await store.getToken();
+  // }
 
   axios.get(`http://localhost:8080/api/articles/${props.articleId}`, {
     headers: {
-      Authorization: `Bearer ${token.value}`,
+      Authorization: `Bearer ${store.token}`,
     },
   })
     .then(({ data }) => {
@@ -124,6 +122,7 @@ onMounted(async () => {
       isBookmarked.value = article.value.isBookmarked; // 데이터 로딩 후 isBookmarked 업데이트
     })
     .catch()
+  }
 })
 
 const props = defineProps({
@@ -142,12 +141,12 @@ const commentInput = ref(null);
 
 //좋아요, 북마크 클릭시 갯수 렌더링을 위한 비동기
 watch([isLiked, isBookmarked], async () => {
-  if (isAuthenticated) { //이미 로그인 되어 있으면 토큰 갱신
-    await useAuthStore().getToken();
+  if (store.isAuthenticated) { //이미 로그인 되어 있으면 토큰 갱신
+    await store.getToken();
   }
   await axios.get(`http://localhost:8080/api/articles/${props.articleId}`, {
     headers: {
-      Authorization: `Bearer ${token.value}`,
+      Authorization: `Bearer ${store.token}`,
     },
   })
     .then(({ data }) => {
@@ -160,7 +159,7 @@ watch([isLiked, isBookmarked], async () => {
 })
 
 const clickSocialBtn = (btnName) => {
-  if (!isAuthenticated || token === '') {
+  if (!store.isAuthenticated || store.token === '') {
     alert('로그인 후 진행하세요!')
     return
   }
@@ -170,13 +169,13 @@ const clickSocialBtn = (btnName) => {
         isLiked.value = true;
         axios.post(`http://localhost:8080/api/articles/like`,
           { articleId: props.articleId },
-          { headers: { Authorization: `Bearer ${token.value}` } }
+          { headers: { Authorization: `Bearer ${store.token}` } }
         ).then()
           .catch(({ error }) => alert('이미 좋아요 한 게시글입니다.'))
       } else { //좋아요 취소하기
         isLiked.value = false;
         axios.delete(`http://localhost:8080/api/articles/like/${props.articleId}`,
-          { headers: { Authorization: `Bearer ${token.value}` } }).then()
+          { headers: { Authorization: `Bearer ${store.token}` } }).then()
           .catch(({ error }) => console.log('이미 좋아요 취소한 게시글입니다.'))
       }
 
@@ -187,13 +186,13 @@ const clickSocialBtn = (btnName) => {
         isBookmarked.value = true;
         axios.post(`http://localhost:8080/api/bookmark`,
           { articleId: props.articleId },
-          { headers: { Authorization: `Bearer ${token.value}` } }
+          { headers: { Authorization: `Bearer ${store.token}` } }
         ).then()
           .catch(({ error }) => alert('이미 저장한 게시글입니다.'))
       } else { //좋아요 취소하기
         isBookmarked.value = false;
         axios.delete(`http://localhost:8080/api/bookmark/${props.articleId}`,
-          { headers: { Authorization: `Bearer ${token.value}` } }).then()
+          { headers: { Authorization: `Bearer ${store.token}` } }).then()
           .catch(({ error }) => console.log('이미 좋아요 취소한 게시글입니다.'))
       }
 
