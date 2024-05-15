@@ -29,4 +29,10 @@ import TheHeader from "./components/Header/TheHeader.vue"
   font-style: normal;
   font-size: large;
 }
+
+.app {
+  width : 100%;
+  height : 100%;
+}
+
 </style>
