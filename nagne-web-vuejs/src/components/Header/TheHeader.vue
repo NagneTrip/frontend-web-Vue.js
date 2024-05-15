@@ -22,7 +22,7 @@
         <div class="navbar-icons-wrapper" id="navbar-write-icon-wrapper">
           <font-awesome-icon :icon="faPen" class="icon" id="navbar-write-icon" />
         </div>
-        <div class="navbar-icons-wrapper navbar-write-button-wrapper">
+        <div class="navbar-icons-wrapper navbar-write-button-wrapper" @click="() => move('write')">
           <div class="navbar-write-button jua-regular-large">작성하기</div>
         </div>
       </div>

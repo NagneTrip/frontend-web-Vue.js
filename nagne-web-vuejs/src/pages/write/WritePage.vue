@@ -28,8 +28,11 @@ const router = useRouter();
 const movePage = (path) => {
     //로그인 확인 해야함
     if (!store.isAuthenticated || store.token==='') {
-        alert('로그인 후 이용하세요!');
-        router.push({name : 'main'});
+        if (window.confirm("로그인 후 이용하세요!")) {
+            router.push({name : 'login'});
+        }
+
+        
         return;
     }
 

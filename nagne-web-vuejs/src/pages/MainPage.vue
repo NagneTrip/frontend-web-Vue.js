@@ -6,7 +6,7 @@
       <div class="wrapper">
         <div class="content">
           <div class="write-article-box">
-            <div class="write-article-left-box">
+            <div class="write-article-left-box" @click="moveWrite">
               <div class="write-article-icon-box">
                 <font-awesome-icon :icon="faUser" class="write-article-icon" />
               </div>
@@ -141,6 +141,10 @@ const stateChanged = async () => {
     .catch((error) => {
       console.error(error);
     });
+}
+
+const moveWrite = ()=> {
+  router.push({name : 'write'});
 }
 </script>
 

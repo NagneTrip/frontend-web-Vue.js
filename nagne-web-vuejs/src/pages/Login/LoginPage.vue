@@ -56,7 +56,7 @@ const getLoginHandler = async () => {
 watch(()=>store.isAuthenticated, () => {
   if (store.isAuthenticated) {
     alert('로그인 성공');
-    router.push({ name: 'main' }); // 성공 시 홈 페이지로 리다이렉트
+    router.go(-1); // 성공 시 홈 페이지로 리다이렉트
   } else {
     alert('로그인 실패! 입력 정보를 다시 확인하세요!');
     userEmail.value = '';
