@@ -3,38 +3,14 @@
     <div class="modal-wrapper">
       <div class="modal-box" @click.stop>
         <div class="modal-left">
-          <img class="modal-left-img" :src="baseImg" alt="" :width="650" :height="600">
+          <template v-if="renderBaseImg" >
+            <img class="modal-left-img" :src="baseImg" alt="" :width="650" :height="600">
+          </template>
+          <ArticleWriteSwiper v-if="!renderBaseImg"/>
         </div>
         <div class="modal-right">
-          <div class="right-header">
-            <p class="header-text jua-regular">게시물 등록</p>
-          </div>
-          <div class="select-section">
-            <input type="file" @change="fileChangeHandler" ref="inputFileRef" accept=".jpg, .jpeg, .png, .gif, .svg"
-              multiple>
-            <button class="add-img-btn" @click="inputImg">
-              <font-awesome-icon :icon="faImage" class="add-img-icon" />
-            </button>
-            <div class="selected">
-              <p class="jua-regular selected-text">Selected</p>
-              <div class="selected-imgs-list">
-                <div class="selected-img" v-for="(img, index) in selectedImg" :key="index">
-                  <p class="img-text noto-sans-kr-regular">{{ truncatedName(img.name) }}</p>
-                  <button class="delete-img jua-regular" @click="deleteImg">삭제</button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="right-footer">
-
-            <button class="right-footer-btn back-btn" @click="()=>move('back')">
-              <font-awesome-icon :icon="faXmark" :width="40"/>
-            </button>
-            <button class="right-footer-btn next-btn" @click="()=>move('next')">
-              <font-awesome-icon :icon="faArrowRight" :width="40"/>
-            </button>
-          </div>
+          <ArticleImgSelect v-if="store.step==1"/>
+          <ArticleImgFilter v-if="store.step==2"/>
         </div>
       </div>
     </div>
@@ -42,43 +18,35 @@
 </template>
 
 <script setup>
-import { faArrowLeft, faArrowRight, faImage, faXmark } from "@fortawesome/free-solid-svg-icons";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
+import ArticleImgSelect from "@/components/Write/Article/ArticleImgSelect.vue"
+import ArticleImgFilter from "@/components/Write/Article/ArticleImgFilter.vue"
+import ArticleWriteSwiper from "@/components/Write/Article/ArticleWriteSwiper.vue"
+import { useWriteStore } from "@/store/write";
+import {storeToRefs} from 'pinia'
+const store = useWriteStore();
+const { selectedImg } = storeToRefs(store);
 
 const router = useRouter();
-const move = (path) => {
-  switch (path) {
-    case 'back': 
-      router.go(-1);
-      break;
-    case 'next':
-      router.push({name : 'articleWrite2'})
-      break;
-  } 
-}
+const renderBaseImg = ref(true);
 
 const baseImg = ref("/src/assets/logo/logo.png");
-const inputFileRef = ref(null);
-const selectedImg = ref([]);
-
-const fileChangeHandler = (event) => {
-  if (event.target.files && event.target.files.length > 0) {
-    selectedImg.value = Array.from(event.target.files);
+const move = (path) => {
+  switch (path) {
+    case 'back':
+      store.step = 1;
+      router.go(-1);
+      break;
   }
 };
 
-const inputImg = () => {
-  inputFileRef.value.click();
-};
+// watch를 사용하여 store.selectedImg의 변화를 감시합니다.
+watch(selectedImg, (newVal, oldVal) => {
+  console.log("selectedImg changed:", newVal);
+}, { deep: true });
 
-const deleteImg = (index) => {
-  selectedImg.value.splice(index, 1);
-};
 
-const truncatedName = (name) => {
-  return name.length > 10 ? name.substring(0, 10) + '..' : name;
-};
 </script>
 
 <style scoped>
