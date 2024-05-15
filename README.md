@@ -46,6 +46,11 @@
 
   ```
 
+## Trouble Shooting
+1. 토큰 무한 갱신으로 인한 로그아웃 불가
+https://groovy-balaur-25d.notion.site/e106186a1b1b46529de92fb28ea99e3f?pvs=4
+
+
 ### **2024.05.12 - monam2**
 
 1. **메인 페이지**
