@@ -6,11 +6,13 @@
           <template v-if="renderBaseImg" >
             <img class="modal-left-img" :src="baseImg" alt="" :width="650" :height="600">
           </template>
-          <ArticleWriteSwiper v-if="!renderBaseImg"/>
+          <template v-if="!renderBaseImg" >
+            <ArticleWriteSwiper class="modal-left-img" v-if="!renderBaseImg" :width="650" :height="600"/>
+          </template>
         </div>
         <div class="modal-right">
           <ArticleImgSelect v-if="store.step==1"/>
-          <ArticleImgFilter v-if="store.step==2"/>
+          <ArticleContent v-if="store.step==2"/>
         </div>
       </div>
     </div>
@@ -21,12 +23,12 @@
 import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import ArticleImgSelect from "@/components/Write/Article/ArticleImgSelect.vue"
-import ArticleImgFilter from "@/components/Write/Article/ArticleImgFilter.vue"
+import ArticleContent from "@/components/Write/Article/ArticleContent.vue"
 import ArticleWriteSwiper from "@/components/Write/Article/ArticleWriteSwiper.vue"
 import { useWriteStore } from "@/store/write";
 import {storeToRefs} from 'pinia'
 const store = useWriteStore();
-const { selectedImg } = storeToRefs(store);
+const { selectedImg, tempUrl } = storeToRefs(store);
 
 const router = useRouter();
 const renderBaseImg = ref(true);
@@ -36,14 +38,21 @@ const move = (path) => {
   switch (path) {
     case 'back':
       store.step = 1;
+      tempUrl.value = ref([]);
+      selectedImg.value = ref([]);
+      renderBaseImg.value = true;
       router.go(-1);
       break;
   }
 };
 
 // watch를 사용하여 store.selectedImg의 변화를 감시합니다.
-watch(selectedImg, (newVal, oldVal) => {
-  console.log("selectedImg changed:", newVal);
+watch((selectedImg, tempUrl), () => {
+  if (tempUrl.value.length >= 1) {
+    renderBaseImg.value = false;
+  } else {
+    renderBaseImg.value = true;
+  }
 }, { deep: true });
 
 
@@ -111,7 +120,7 @@ watch(selectedImg, (newVal, oldVal) => {
 
 .modal-left {
   width: 880px;
-  height: 100%;
+  height: 880px;
   background-color: #ffffff;
   border-radius: 8px 0 0 8px;
   box-shadow: 6px 0 6px 4px rgba(0, 0, 0, 0.1);
@@ -329,6 +338,7 @@ input[type="file"] {
 @media screen and (max-width: 600px) {
   .modal-wrapper {
     height: 70%;
+    min-width: 70%;
     width: 90%;
     overflow-y: scroll;
     display: flex;
@@ -366,16 +376,6 @@ input[type="file"] {
     border-radius: 0 0 8px 8px;
     box-shadow: 0 6px 6px 4px rgba(0, 0, 0, 0.1);
     padding : 0 0 10px 0;
-  }
-
-  @media screen and (max-width: 464px) {
-    .modal-wrapper {
-      height: 60%;
-    }
-
-    .modal-box {
-      min-height: 60%;
-    }
   }
 }
 </style>
