@@ -12,8 +12,7 @@ import CommentListItem from "./CommentListItem.vue"
 import axios from "axios";
 import { ref, onMounted } from "vue";
 import { useAuthStore } from "@/store/auth";
-import { storeToRefs } from "pinia";
-const { token, isAuthenticated } = storeToRefs(useAuthStore());
+const store = useAuthStore();
 
 const props = defineProps({
   articleId: Number,
@@ -21,13 +20,13 @@ const props = defineProps({
 
 const comments = ref([]);
 onMounted(async () => {
-  if (isAuthenticated) { //이미 로그인 되어 있으면 토큰 갱신
-    await useAuthStore().getToken();
-  }
+  // if (store.isAuthenticated) { //이미 로그인 되어 있으면 토큰 갱신
+  //   await store.getToken();
+  // }
   axios.get(`http://localhost:8080/api/comments?articleId=${props.articleId}`,
     {
       headers: {
-        Authorization: `Bearer ${token.value}`,
+        Authorization: `Bearer ${store.token}`,
       },
     }
   )

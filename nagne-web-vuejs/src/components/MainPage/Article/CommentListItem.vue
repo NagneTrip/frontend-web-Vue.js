@@ -42,8 +42,7 @@ import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import { ref, onMounted } from "vue";
 import { useAuthStore } from "@/store/auth";
-import { storeToRefs } from "pinia";
-const { token, isAuthenticated } = storeToRefs(useAuthStore());
+const store = useAuthStore();
 
 const props = defineProps({
   comment: Object,
@@ -51,13 +50,13 @@ const props = defineProps({
 
 const userInfo = ref({});
 onMounted(async () => {
-  if (isAuthenticated) { //이미 로그인 되어 있으면 토큰 갱신
-    await useAuthStore().getToken();
-  }
+  // if (store.isAuthenticated) { //이미 로그인 되어 있으면 토큰 갱신
+  //   await store.getToken();
+  // }
   //게시글 객체 속 유저id로 유저 정보 받아오기
   axios.get(`http://localhost:8080/api/users/${props.comment.userId}`, {
     headers: {
-      Authorization: `Bearer ${token.value}`,
+      Authorization: `Bearer ${store.token}`,
     },
   }).then(({ data }) => userInfo.value = data.response.userInfo).catch()
 })

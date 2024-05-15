@@ -21,11 +21,17 @@
 <script setup>
 import { faBullhorn, faComments, faEarthAsia } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "vue-router";
+import { useAuthStore } from "@/store/auth";
+const store = useAuthStore();
 
 const router = useRouter();
 const movePage = (path) => {
     //로그인 확인 해야함
-
+    if (!store.isAuthenticated || store.token==='') {
+        alert('로그인 후 이용하세요!');
+        router.push({name : 'main'});
+        return;
+    }
 
     switch (path) {
         case 'articleWrite1':
