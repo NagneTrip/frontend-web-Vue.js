@@ -67,36 +67,40 @@ import {
   faBars,
   faArrowUp,
 } from "@fortawesome/free-solid-svg-icons";
-import { ref, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { ref, watch } from "vue";
+import { useRouter } from "vue-router";
 import { useAuthStore } from "@/store/auth";
+
 const store = useAuthStore();
 const router = useRouter();
-const route = useRouter();
 
-onMounted(async () => {
-  if (store.isAuthenticated) { //이미 로그인 되어 있으면 토큰 갱신
-    await store.getToken();
-  }
-})
+// 상태 변경을 추적하기 위해 watch 추가
+watch(() => store.isAuthenticated, (newVal) => {
+  console.log('isAuthenticated 변경됨: ', newVal);
+});
+
+watch(() => store.token, (newVal) => {
+  console.log('token 변경됨: ', newVal);
+});
 
 const move = (path) => {
   let moveTo = { name: path };
   switch (path) {
-    case 'login': //로그인
+    case 'login': // 로그인
       if (store.isAuthenticated) {
         alert('이미 로그인 중입니다!');
         return;
       }
       break;
-    case 'logout': //로그아웃. 토큰과 인증 정보를 초기화
-      store.getLogout();
-      console.log(store.isAuthenticated);
+    case 'logout': // 로그아웃. 토큰과 인증 정보를 초기화
+      console.log('로그아웃 클릭됨');
+      store.getLogout(); // 액션 호출
+      console.log('isAuthenticated 상태: ', store.isAuthenticated.value);
+      console.log('token 상태: ', store.token.value);
       moveTo = { name: 'logout' }
       break;
   }
-  //페이지 이동 시 열려있는 메뉴 전부 닫기
-  showUserMenu.value = false;
+  // 페이지 이동 시 열려있는 메뉴 전부 닫기
   showUserMenu.value = false;
   showSidebar.value = false;
   router.push(moveTo);
@@ -112,7 +116,7 @@ const userMenuStyle = ref({});
 function toggleUserMenu(event) {
   showUserMenu.value = !showUserMenu.value;
 
-  //userMenu 클릭한 마우스 포인터의 위치에서 menu-list 열기
+  // userMenu 클릭한 마우스 포인터의 위치에서 menu-list 열기
   if (showUserMenu.value) {
     userMenuStyle.value = {
       top: `${event.clientY + 20}px`,
@@ -128,6 +132,7 @@ const scrollToTop = () => {
   });
 };
 </script>
+
 
 <style>
 a {

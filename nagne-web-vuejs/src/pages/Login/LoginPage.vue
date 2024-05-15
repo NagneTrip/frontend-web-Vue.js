@@ -30,14 +30,15 @@
 </template>
 
 <script setup>
-import { useAuthStore } from "@/store/auth";
-import { storeToRefs } from "pinia";
 import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
-
+import { useAuthStore } from "@/store/auth";
+const store = useAuthStore();
 const router = useRouter();
-const { getToken } = useAuthStore();
-const { isAuthenticated, userEmail, password } = storeToRefs(useAuthStore());
+
+const userEmail = ref('');
+const password = ref('');
+
 
 const getLoginHandler = async () => {
   if (userEmail.value === "" || password.value === "") {
@@ -46,16 +47,20 @@ const getLoginHandler = async () => {
     password.value = "";
     return;
   } else {
-    await getToken(); //store에 로그인 요청
+    store.userEmail = userEmail.value;
+    store.password = password.value
+    await store.getToken(); //store에 로그인 요청
   }
 }
 
-watch(isAuthenticated, () => {
-  if (isAuthenticated) {
+watch(()=>store.isAuthenticated, () => {
+  if (store.isAuthenticated) {
     alert('로그인 성공');
     router.push({ name: 'main' }); // 성공 시 홈 페이지로 리다이렉트
   } else {
     alert('로그인 실패! 입력 정보를 다시 확인하세요!');
+    userEmail.value = '';
+    password.value = '';
   }
 })
 </script>

@@ -1,3 +1,4 @@
+// src/store/auth.js
 import { defineStore } from "pinia";
 import { login } from "@/auth/login.js";
 import { ref } from "vue";
@@ -9,27 +10,22 @@ export const useAuthStore = defineStore("auth", () => {
   const password = ref("");
 
   const getToken = async () => {
-    const result = await login(userEmail, password);
-    if (result != "") {
-      //로그인 성공시
-      token.value = result;
+    token.value = await login(userEmail.value, password.value);
+    if (token.value !== "") {
+      // 로그인 성공시
       isAuthenticated.value = true;
     } else {
-      //로그인 실패
+      // 로그인 실패
       token.value = "";
       isAuthenticated.value = false;
     }
   };
 
   const getLogout = () => {
-    console.log("실행됨");
     token.value = "";
     isAuthenticated.value = false;
     userEmail.value = "";
-    password.value = "";
-
-    console.log("token값 : " + token.value + " " + isAuthenticated.value);
-    return;
+    password.value = ""; 
   };
 
   return { getLogout, getToken, isAuthenticated, token, userEmail, password };
