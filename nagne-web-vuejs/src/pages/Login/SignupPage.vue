@@ -4,36 +4,43 @@
       <p>회원가입을 위해</p>
       <p>정보를 입력해주세요.</p>
     </div>
-
     <form action="">
-      <label for="">E-mail</label>
-      <input type="text">
-      <label for="">Password</label>
-      <input type="password">
-      <label for="">PW Confirm</label>
-      <input type="password">
-      <label for="">Name</label>
-      <input type="text">
-      <label for="">Phone</label>
-      <div class="input-phone">
-        <select name="" id="">
-          <option value="010">010</option>
-          <option value="02">02</option>
-          <option value="062">062</option>
-        </select>
-        <p>-</p>
+      <div class="input-box">
+        <div class="label-wrapper"><label for="">E-mail</label></div>
         <input type="text">
-        <p>-</p>
-        <input type="text">
+      </div>
+      <div class="input-box">
+        <div class="label-wrapper"><label for="">Password</label></div>
+        <input type="password">
+      </div>
+      <div class="input-box">
+        <div class="label-wrapper"><label for="">PW Confirm</label></div><input type="password">
+      </div>
+      <div class="input-box">
+        <div class="label-wrapper"><label for="">Name</label></div><input type="text">
+      </div>
+      <div class="input-box">
+        <div class="label-wrapper"><label for="">Phone</label></div>
+        <div class="input-phone">
+          <select name="" id="">
+            <option value="010">010</option>
+            <option value="02">02</option>
+            <option value="062">062</option>
+          </select>
+          <p>-</p>
+          <input type="text">
+          <p>-</p>
+          <input type="text">
+        </div>
       </div>
       <button class="login-button">회원가입</button>
     </form>
     <div class="social-icons">
       <p>소셜아이디로 가입하기</p>
       <div class="social-icons-img">
-      <img src="@/assets/social/web_neutral_sq_na.svg" alt="">
-      <img src="@/assets/social/480px-KakaoTalk_logo.svg.png" alt="">
-    </div>
+        <img src="@/assets/social/web_neutral_sq_na.svg" alt="">
+        <img src="@/assets/social/480px-KakaoTalk_logo.svg.png" alt="">
+      </div>
     </div>
     <div class="link-container">
       <div>
@@ -53,12 +60,12 @@
   margin: 50px auto 50px auto;
   border-radius: 20px;
   width: 480px;
-  height: 900px;
+  height: 760px;
   border: 3px solid rgb(118, 189, 255);
   box-shadow: 7px 7px 39px 0px #AACDFF;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  gap: 35px;
   align-items: center;
 }
 
@@ -113,7 +120,19 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
+  gap: 27px;
+}
+
+.input-box {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.label-wrapper {
+  display: flex;
+  width: 50%;
+  justify-content: flex-start;
 }
 
 .login-page label {
@@ -121,11 +140,11 @@
   font-weight: 600;
   font-size: 18px;
   justify-content: flex-start;
-  color:rgb(118, 189, 255);
+  color: rgb(118, 189, 255);
 }
 
 .login-page input {
-  width: 100%;
+  width: 50%;
   height: 24px;
   margin: 5px;
   border: none;
@@ -185,7 +204,7 @@
   font-family: Noto Sans CJK KR;
 }
 
-.link-container div{
+.link-container div {
   display: flex;
   gap: 15px;
   color: #686868
@@ -205,11 +224,12 @@
 }
 
 .input-phone select {
-  width: 80px;
+  width: 60px;
   height: 30px;
   margin-right: 5px;
   border: rgb(118, 189, 255) 1px solid;
-  border-radius: 5px
+  border-radius: 5px;
+  text-align: center;
 }
 
 .input-phone select:focus {
@@ -217,7 +237,8 @@
 }
 
 .input-phone input {
-  width: 80px;
+  width: 60px;
+  text-align: center;
 }
 
 .social-icons {
@@ -227,7 +248,8 @@
   flex-direction: column;
   align-items: center;
 }
-.social-icons img{
+
+.social-icons img {
   width: 40px;
   height: 40px;
   margin: 0 10px 0 10px;
