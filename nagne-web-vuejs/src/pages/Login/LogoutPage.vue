@@ -1,8 +1,9 @@
 <template>
-  <div>
-    로그아웃 페이지
-    <p>3초 뒤 메인 페이지로 이동합니다.</p>
-    <p>{{ timerCount }}</p>
+  <div class="container">
+    <p class="header jua-regular-large">로그아웃이 완료되었습니다.</p>
+    <img src="@/assets/logo/logo_img.png" :width="200" :height="180" alt="">
+    <p class="jua-regular-large count-notice">3초 뒤 메인 페이지로 이동합니다.</p>
+    <p class="jua-regular-large timerCount">{{ timerCount }}</p>
   </div>
 </template>
 
@@ -28,7 +29,50 @@ onMounted(() => {
 
 </script>
 
-<style scoped></style>
+<style scoped>
+.container {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  margin: 180px auto 0 auto;
+  justify-content: center;
+  align-items: center;
+  gap: 50px;
+}
 
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+    scale: 1.0;
+  }
 
-<style lang="scss" scoped></style>
+  50% {
+    transform: rotate(5deg);
+    scale: 1.2;
+  }
+
+  100% {
+    transform: rotate(-5deg);
+    scale: 1.1;
+  }
+}
+
+img {
+  animation: rotate 1s infinite alternate ease-in-out;
+}
+
+.header {
+  color: rgb(118, 189, 255);
+  font-size: 40px;
+}
+
+.count-notice {
+  color: grey;
+  font-size: 28px;
+}
+
+.timerCount {
+  color: rgb(65, 139, 244);
+  font-size: 50px;
+}
+</style>
