@@ -16,7 +16,6 @@ const router = useRouter();
 const timerCount = ref(3);
 
 onMounted(() => {
-  console.log("토큰이랑 인증정보 : ", store.token, store.isAuthenticated)
 
   const countdown = setInterval(() => {
     timerCount.value--;

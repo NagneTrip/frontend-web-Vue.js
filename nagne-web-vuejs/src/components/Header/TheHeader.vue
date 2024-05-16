@@ -74,15 +74,6 @@ import { useAuthStore } from "@/store/auth";
 const store = useAuthStore();
 const router = useRouter();
 
-// 상태 변경을 추적하기 위해 watch 추가
-watch(() => store.isAuthenticated, (newVal) => {
-  console.log('isAuthenticated 변경됨: ', newVal);
-});
-
-watch(() => store.token, (newVal) => {
-  console.log('token 변경됨: ', newVal);
-});
-
 const move = (path) => {
   let moveTo = { name: path };
   switch (path) {
