@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import MainPage from "@/pages/MainPage.vue";
 import LoginPage from "@/pages/Login/LoginPage.vue";
-import SignupPage from "@/pages/SignupPage.vue";
+import SignupPage from "@/pages/Login/SignupPage.vue";
 import LogoutPage from "@/pages/Login/LogoutPage.vue";
 import WritePage from "@/pages/write/WritePage.vue";
 import PlanWritePage from "@/pages/write/PlanWrite/PlanWritePage.vue";
@@ -37,7 +37,7 @@ const router = createRouter({
     {
       path: "/articles/write",
       name: "articleWrite",
-      component: ArticleWritePage
+      component: ArticleWritePage,
     },
     {
       path: "/plans/write",
