@@ -85,11 +85,11 @@
     <div class="social-icons">
       <p>소셜아이디로 가입하기</p>
       <div class="social-icons-img">
-        <img src="@/assets/social/web_neutral_sq_na.svg" alt="">
-        <img src="@/assets/social/480px-KakaoTalk_logo.svg.png" alt="">
+        <img src="@/assets/social/web_neutral_sq_na.svg" @click="() => getSocialLogin('google')" alt="">
+        <img src="@/assets/social/480px-KakaoTalk_logo.svg.png" @click="() => getSocialLogin('kakao')" alt="">
       </div>
     </div>
-    <div class="link-container">
+    <div class=" link-container">
       <div>
         <p>이미 회원이신가요?</p>
         <RouterLink :to="{ name: 'login' }">로그인하기</RouterLink>
@@ -97,12 +97,26 @@
       <RouterLink :to="{ name: 'main' }">고객센터</RouterLink>
     </div>
   </div>
+  <div>
+    <a v-if="user1 == null || user1.email == null" @click="kakaoLogin()">
+      <img
+        src="//k.kakaocdn.net/14/dn/btqCn0WEmI3/nijroPfbpCa4at5EIsjyf0/o.jpg"
+        width="222"
+      />
+    </a>
+    <div v-else>
+      <p>nickname: {{ user1.name }}</p>
+      <p>email: {{ user1.email }}</p>
+      <button type="button" @click="kakaoLogout">카카오 로그아웃</button>
+    </div>
+  </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { signup } from "@/auth/signup";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
+import axios from "axios";
 const router = useRouter();
 
 const email = ref("");
@@ -157,6 +171,134 @@ const validateInfo = () => {
   signup(user);
   router.push({ name: 'main' });
 };
+
+const googleLoginUrl = ref('http://localhost:8080/oauth2/authorization/google');
+const kakaoLoginUrl = ref('http://localhost:8080/oauth2/authorization/kakao');
+const showModal = ref(false);
+const loginUrl = ref('');
+
+const getSocialLogin = (platform) => {
+  let url;
+  switch (platform) {
+    case 'google':
+      url = googleLoginUrl.value;
+      break;
+    case 'kakao':
+      url = kakaoLoginUrl.value;
+      break;
+  }
+  openModal(url);
+}
+
+const openModal = (url) => {
+  loginUrl.value = url;
+  showModal.value = true;
+};
+const closeModal = () => {
+  showModal.value = false;
+  loginUrl.value = '';
+};
+
+
+
+//
+const user1 = ref(null);
+const route = useRoute();
+
+const kakaoLogin = () => {
+  window.Kakao.Auth.authorize({
+    redirectUri: "http://localhost:8080/login",
+  });
+};
+const getKakaoToken = async (code) => {
+  try {
+    const data = {
+      grant_type: "authorization_code",
+      client_id: import.meta.env.VITE_KAKAO_JS_API_KEY, //JS키
+      redirect_uri: "http://localhost:8080/login",
+      code: code,
+    };
+
+    const queryString = Object.keys(data)
+      .map((k) => encodeURIComponent(k) + "=" + encodeURIComponent(data[k]))
+      .join("&");
+
+    const result = await axios.post(
+      "https://kauth.kakao.com/oauth/token",
+      queryString,
+      {
+        headers: {
+          "Content-type": "application/x-www-form-urlencoded;charset=utf-8",
+        },
+      }
+    );
+    console.log(result);
+    return result;
+  } catch (e) {
+    console.log(e);
+    return e;
+  }
+};
+
+const getKakaoUserInfo = async () => {
+  let data = "";
+  await window.Kakao.API.request({
+    url: "/v2/user/me",
+  })
+    .then(function (response) {
+      console.log(response);
+      data = response;
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  console.log("카카오 계정 정보", data);
+  return data;
+};
+
+const setKakaoToken = async (code) => {
+  const { data } = await getKakaoToken(code);
+  if (data.error) {
+    console.log(data.error);
+    return;
+  }
+  console.log(data);
+  window.Kakao.Auth.setAccessToken(data.access_token);
+  await setUserInfo();
+  router.push({ path: "/signup" });
+};
+
+const setUserInfo = async () => {
+  const res = await getKakaoUserInfo();
+  const userInfo = {
+    name: res.kakao_account.profile.nickname,
+    email: res.kakao_account.email,
+  };
+  console.log(userInfo);
+  user1.value = userInfo;
+};
+
+const kakaoLogout = () => {
+  user1.value = {};
+  window.Kakao.Auth.logout()
+    .then(function (response) {
+      console.log(window.Kakao.Auth.getAccessToken()); // null
+      console.log(response);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+};
+
+onMounted(() => {
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.has("code")) {
+    const code = urlParams.get("code");
+    console.log("code: ", code);
+    setKakaoToken(code);
+  }
+});
+
 </script>
 
 <style scoped>
@@ -395,6 +537,23 @@ const validateInfo = () => {
 
 .selected {
   color: red;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal iframe {
+  width: 80%;
+  height: 80%;
 }
 
 @media screen and (max-width: 480px) {
