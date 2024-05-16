@@ -1,12 +1,13 @@
 import axios from "axios";
 
-const login = async (username, password) => {
+const login = async (username, password, check) => {
   return await axios
     .post("http://localhost:8080/api/users/login", {
       username: username,
       password: password,
     })
     .then(({ data }) => {
+      //로그인 성공
       const token = data.response.token;
       const userId = data.response.userInfo.id;
       return { token, userId };

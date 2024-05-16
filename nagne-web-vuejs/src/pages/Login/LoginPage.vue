@@ -6,9 +6,17 @@
     </div>
 
     <form action="" @submit.prevent="() => getLoginHandler()">
-      <label for="">E-mail</label>
+      <div class="label-box">
+        <label for="">E-mail</label>
+      </div>
       <input type="text" v-model="userEmail">
-      <label for="">Password</label>
+      <div class="remember-box">
+        <label for="remember_email" style="font-size: 12px;">E-mail 기억하기</label>
+        <input type="checkbox" id="remember_email" v-model="remeberEmail">
+      </div>
+      <div class="label-box">
+        <label for="">Password</label>
+      </div>
       <input type="password" v-model="password">
       <button class="login-button">LOGIN</button>
       <RouterLink :to="{ name: '' }">비밀번호 찾기</RouterLink>
@@ -30,7 +38,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/store/auth";
 const store = useAuthStore();
@@ -38,6 +46,7 @@ const router = useRouter();
 
 const userEmail = ref('');
 const password = ref('');
+const remeberEmail = ref(false);
 
 
 const getLoginHandler = async () => {
@@ -47,16 +56,20 @@ const getLoginHandler = async () => {
     password.value = "";
     return;
   } else {
+    if (remeberEmail.value) {
+      setCookie("userEmail", userEmail.value, 7); // 7일 동안 쿠키 유지
+    } else {
+      setCookie("userEmail", "", -1); // 쿠키 삭제
+    }
     store.userEmail = userEmail.value;
-    store.password = password.value
-    await store.getToken(); //store에 로그인 요청
+    store.password = password.value;
+    await store.getToken(); // store에 로그인 요청
   }
 }
 
 watch(() => store.isAuthenticated, () => {
   if (store.isAuthenticated) {
     alert('로그인 성공');
-    console.log(store.loginUserId)
     router.go(-1); // 성공 시 홈 페이지로 리다이렉트
   } else {
     alert('로그인 실패! 입력 정보를 다시 확인하세요!');
@@ -64,6 +77,39 @@ watch(() => store.isAuthenticated, () => {
     password.value = '';
   }
 })
+
+onMounted(() => {
+  const savedEmail = getCookie("userEmail");
+  if (savedEmail) {
+    userEmail.value = savedEmail;
+    remeberEmail.value = true;
+  }
+})
+
+// 쿠키 설정
+function setCookie(name, value, days) {
+  const d = new Date();
+  d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
+  const expires = "expires=" + d.toUTCString();
+  document.cookie = name + "=" + value + ";" + expires + ";path=/";
+}
+
+// 쿠키 로드
+function getCookie(name) {
+  const cname = name + "=";
+  const decodedCookie = decodeURIComponent(document.cookie);
+  const ca = decodedCookie.split(';');
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) === ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(cname) === 0) {
+      return c.substring(cname.length, c.length);
+    }
+  }
+  return "";
+}
 </script>
 
 
@@ -207,6 +253,29 @@ watch(() => store.isAuthenticated, () => {
 
 .link-container a:hover {
   color: #0068FF
+}
+
+.label-box {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+
+input[type="checkbox"] {
+  width: 15px;
+  margin: 0;
+}
+
+.remember-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+}
+
+.remember-box label {
+  color: #3384fd;
+  font-size: 10px
 }
 
 @media screen and (max-width: 480px) {

@@ -84,10 +84,7 @@ const move = (path) => {
       }
       break;
     case 'logout': // 로그아웃. 토큰과 인증 정보를 초기화
-      console.log('로그아웃 클릭됨');
       store.getLogout(); // 액션 호출
-      console.log('isAuthenticated 상태: ', store.isAuthenticated.value);
-      console.log('token 상태: ', store.token.value);
       moveTo = { name: 'logout' }
       break;
   }
