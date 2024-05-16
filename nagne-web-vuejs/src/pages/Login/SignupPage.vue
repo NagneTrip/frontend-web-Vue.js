@@ -4,7 +4,7 @@
       <p>회원가입을 위해</p>
       <p>정보를 입력해주세요.</p>
     </div>
-    <form action="">
+    <div class="info-form">
       <div class="input-box">
         <div class="label-wrapper">
           <label for="email">E-mail</label>
@@ -80,8 +80,8 @@
           <input type="radio" id="female" name="gender" v-model="gender" value="female">
         </div>
       </div>
-      <button class="login-button">회원가입</button>
-    </form>
+      <button class="login-button" @click="validateInfo">회원가입</button>
+    </div>
     <div class="social-icons">
       <p>소셜아이디로 가입하기</p>
       <div class="social-icons-img">
@@ -101,6 +101,9 @@
 
 <script setup>
 import { ref } from "vue";
+import { signup } from "@/auth/signup";
+import { useRouter } from "vue-router";
+const router = useRouter();
 
 const email = ref("");
 const password = ref("");
@@ -112,7 +115,48 @@ const phone2 = ref("");
 const phone3 = ref("");
 const gender = ref("");
 
+const validateEmail = (email) => {
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return re.test(email);
+};
+const validatePassword = (password) => {
+  return password.length >= 8;
+};
 
+const validateInfo = () => {
+  const isEmailValid = validateEmail(email.value);
+  const isPasswordValid = validatePassword(password.value);
+  const isPasswordMatch = password.value === passwordConfirm.value;
+  const isGenderSelected = gender.value !== "";
+
+  if (!isEmailValid) {
+    alert("이메일 형식이 올바르지 않습니다.");
+    return;
+  }
+  if (!isPasswordValid) {
+    alert("비밀번호는 8자리 이상이어야 합니다.");
+    return;
+  }
+  if (!isPasswordMatch) {
+    alert("비밀번호가 일치하지 않습니다.");
+    return;
+  }
+  if (!isGenderSelected) {
+    alert("성별을 선택해주세요.");
+    return;
+  }
+
+  const user = {
+    username: email.value,
+    password: password.value,
+    nickname: nickname.value,
+    phone: phone1.value + phone2.value + phone3.value + '',
+    birth: birth.value,
+    gender: (gender.value = 'male' ? 'MAN' : 'WOMAN'),
+  }
+  signup(user);
+  router.push({ name: 'main' });
+};
 </script>
 
 <style scoped>
@@ -174,7 +218,7 @@ const gender = ref("");
   transition: all 0.1s;
 }
 
-.login-page form {
+.info-form {
   width: 80%;
   max-width: 320px;
   display: flex;
