@@ -92,8 +92,10 @@
     </div>
   </div>
   <ul v-show="isDotMenuOpen" class="user-menu list-group" :style="dotMenuStyle">
-    <li class="list-group-item">로그인</li>
-    <li class="list-group-item">A second item</li>
+    <li v-if="store.loginUserId" class="list-group-item">수정하기</li>
+    <li v-if="store.loginUserId" class="list-group-item">삭제하기</li>
+    <li v-if="!store.loginUserId" class="list-group-item">신고하기</li>
+    <li class="list-group-item">공유하기</li>
   </ul>
 </template>
 
@@ -108,20 +110,20 @@ const article = ref({});
 
 onMounted(async () => {
   if (store.isAuthenticated) { //이미 로그인 되어 있으면 토큰 갱신
-  //   await store.getToken();
-  // }
+    //   await store.getToken();
+    // }
 
-  axios.get(`http://localhost:8080/api/articles/${props.articleId}`, {
-    headers: {
-      Authorization: `Bearer ${store.token}`,
-    },
-  })
-    .then(({ data }) => {
-      article.value = data.response.articleInfo;
-      isLiked.value = article.value.isLiked; // 데이터 로딩 후 isLiked 업데이트
-      isBookmarked.value = article.value.isBookmarked; // 데이터 로딩 후 isBookmarked 업데이트
+    axios.get(`http://localhost:8080/api/articles/${props.articleId}`, {
+      headers: {
+        Authorization: `Bearer ${store.token}`,
+      },
     })
-    .catch()
+      .then(({ data }) => {
+        article.value = data.response.articleInfo;
+        isLiked.value = article.value.isLiked; // 데이터 로딩 후 isLiked 업데이트
+        isBookmarked.value = article.value.isBookmarked; // 데이터 로딩 후 isBookmarked 업데이트
+      })
+      .catch()
   }
 })
 
