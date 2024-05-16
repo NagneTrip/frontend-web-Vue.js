@@ -14,3 +14,4 @@ const pinia = createPinia();
 library.add(fas);
 
 createApp(App).use(pinia).use(router).component("font-awesome-icon", FontAwesomeIcon).mount("#app");
+window.Kakao.init(import.meta.env.VITE_KAKAO_JS_API_KEY);
