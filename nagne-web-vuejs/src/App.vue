@@ -1,16 +1,17 @@
 <template>
   <div class="app">
-    <Header />
+    <TheHeader />
     <router-view></router-view>
   </div>
   
 </template>
 
 <script setup>
-import Header from "./components/Header/Header.vue"
+import TheHeader from "./components/Header/TheHeader.vue"
 </script>
 
 <style scoped>
+
 @font-face {
   font-family: "BMJUA";
   src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/BMJUA.woff") format("woff");
@@ -28,4 +29,10 @@ import Header from "./components/Header/Header.vue"
   font-style: normal;
   font-size: large;
 }
+
+.app {
+  width : 100%;
+  height : 100%;
+}
+
 </style>

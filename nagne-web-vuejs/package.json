@@ -15,12 +15,15 @@
     "@fortawesome/free-solid-svg-icons": "^6.5.2",
     "@fortawesome/react-fontawesome": "github:fortawesome/react-fontawesome",
     "@fortawesome/vue-fontawesome": "^3.0.6",
+    "axios": "^1.6.8",
     "bootstrap": "^5.3.3",
-    "vue": "^3.4.21",
+    "pinia": "^2.1.7",
+    "swiper": "^11.1.3",
+    "vue": "^3.4.27",
     "vue-router": "^4.3.2"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.4",
-    "vite": "^5.2.0"
+    "vite": "^5.2.11"
   }
 }

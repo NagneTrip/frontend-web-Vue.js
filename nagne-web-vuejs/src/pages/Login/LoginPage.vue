@@ -5,12 +5,13 @@
       <p>정보를 입력해주세요.</p>
     </div>
 
-    <form action="">
+    <form action="" @submit.prevent="() => getLoginHandler()">
       <label for="">E-mail</label>
-      <input type="text">
+      <input type="text" v-model="userEmail">
       <label for="">Password</label>
-      <input type="password">
+      <input type="password" v-model="password">
       <button class="login-button">LOGIN</button>
+      <RouterLink :to="{ name: '' }">비밀번호 찾기</RouterLink>
     </form>
     <div class="notice-social">
       <p>또는</p>
@@ -20,16 +21,50 @@
       <img src="@/assets/social/web_neutral_sq_na.svg" alt="">
       <img src='@/assets/social/480px-KakaoTalk_logo.svg.png' alt="">
     </div>
-    
+
     <div class="link-container">
-      <RouterLink :to="{name : 'signup'}">회원가입</RouterLink>
-      <RouterLink :to="{name : 'main'}">고객센터</RouterLink>
+      <RouterLink :to="{ name: 'signup' }">회원가입</RouterLink>
+      <RouterLink :to="{ name: 'main' }">고객센터</RouterLink>
     </div>
   </div>
 </template>
 
 <script setup>
+import { ref, watch } from "vue";
+import { useRouter } from "vue-router";
+import { useAuthStore } from "@/store/auth";
+const store = useAuthStore();
+const router = useRouter();
+
+const userEmail = ref('');
+const password = ref('');
+
+
+const getLoginHandler = async () => {
+  if (userEmail.value === "" || password.value === "") {
+    alert("입력하신 정보를 다시 확인하세요.");
+    userEmail.value = "";
+    password.value = "";
+    return;
+  } else {
+    store.userEmail = userEmail.value;
+    store.password = password.value
+    await store.getToken(); //store에 로그인 요청
+  }
+}
+
+watch(()=>store.isAuthenticated, () => {
+  if (store.isAuthenticated) {
+    alert('로그인 성공');
+    router.go(-1); // 성공 시 홈 페이지로 리다이렉트
+  } else {
+    alert('로그인 실패! 입력 정보를 다시 확인하세요!');
+    userEmail.value = '';
+    password.value = '';
+  }
+})
 </script>
+
 
 <style scoped>
 .login-page {
@@ -104,7 +139,7 @@
   font-weight: 600;
   font-size: 18px;
   justify-content: flex-start;
-  color:rgb(118, 189, 255);
+  color: rgb(118, 189, 255);
 }
 
 .login-page input {
@@ -143,15 +178,17 @@
   font-size: 20px;
 }
 
-.img-group{
+.img-group {
   display: flex;
   gap: 12px;
 }
+
 .img-group img {
   cursor: pointer;
   width: 40px;
   height: 40px;
 }
+
 .img-group img:hover {
   scale: 1.02;
   transition: all 0.1s;
@@ -163,9 +200,10 @@
   margin-bottom: 20px;
   font-size: 14px;
   font-weight: 600;
-  
+
   font-family: Noto Sans CJK KR;
 }
+
 .link-container a:hover {
   color: #0068FF
 }

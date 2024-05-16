@@ -11,6 +11,8 @@ node_modules
 dist
 dist-ssr
 *.local
+.env
+.env.VITE_WEATHER_API_KEY
 
 # Editor directories and files
 .vscode/*
