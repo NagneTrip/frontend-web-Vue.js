@@ -24,24 +24,63 @@ import { useRouter } from "vue-router";
 import { useWriteStore } from "@/store/write";
 import { storeToRefs } from 'pinia'
 import { useAuthStore } from "@/store/auth";
+import axios from "axios";
 const authStore = useAuthStore();
 const writeStore = useWriteStore();
 const { selectedImg, tempUrl } = storeToRefs(writeStore);
 
 const content = ref("");
-
-const move = (path) => {
+const router = useRouter();
+const move = async (path) => {
   switch (path) {
+    case 'main':
+      router.push({ name: 'main' })
+      break;
     case 'back':
-    writeStore.step--;
+      writeStore.step--;
       break;
     case 'next':
-      console.log(writeStore.selectedImg[0])
-      //api 추가
-
+      // 데이터 검증
+      if (!content.value) {
+        alert('내용을 입력하세요.');
+        return;
+      }
+      if (selectedImg.value.length === 0) {
+        alert('이미지를 선택하세요.');
+        return;
+      }
+      // api 추가
+      console.log(selectedImg.value[0])
+      await uploadFile();
       break;
   }
 };
+
+const uploadFile = async () => {
+  // FormData 객체 생성
+  const formData = new FormData();
+  formData.append('encrypt', "multipart/form-data");
+  // FormData에 여러 파일 추가
+  for (let i = 0; i < selectedImg.value.length; i++) {
+    formData.append('images', selectedImg.value[i]);
+  }
+
+
+  const json = JSON.stringify({ content: content.value });
+  const blob = new Blob([json], { type: "application/json" });
+  // FormData에 다른 데이터 추가
+  formData.append('request', blob);
+
+
+  await axios.post('http://localhost:8080/api/articles', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      Authorization: `Bearer ${authStore.token}`,
+    },
+  }).then(({ data }) => { alert("게시글이 등록되었습니다!") }).catch();
+
+  move('main')
+}
 </script>
 
 <style scoped>
