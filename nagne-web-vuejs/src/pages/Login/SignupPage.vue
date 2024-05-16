@@ -6,31 +6,78 @@
     </div>
     <form action="">
       <div class="input-box">
-        <div class="label-wrapper"><label for="">E-mail</label></div>
-        <input type="text">
+        <div class="label-wrapper">
+          <label for="email">E-mail</label>
+        </div>
+        <input type="text" id="email" v-model="email" required>
       </div>
       <div class="input-box">
-        <div class="label-wrapper"><label for="">Password</label></div>
-        <input type="password">
+        <div class="label-wrapper">
+          <label for="password">Password</label>
+        </div>
+        <input type="password" id="password" v-model="password" required>
       </div>
       <div class="input-box">
-        <div class="label-wrapper"><label for="">PW Confirm</label></div><input type="password">
+        <div class="label-wrapper">
+          <label for="passwordConfirm">PW Confirm</label>
+        </div>
+        <input type="password" id="passwordConfirm" v-model="passwordConfirm" required>
       </div>
       <div class="input-box">
-        <div class="label-wrapper"><label for="">Name</label></div><input type="text">
+        <div class="label-wrapper">
+          <label for="nickname">NickName</label>
+        </div>
+        <input type="text" id="nickname" v-model="nickname" required>
       </div>
       <div class="input-box">
-        <div class="label-wrapper"><label for="">Phone</label></div>
+        <div class="label-wrapper">
+          <label for="birth">Birth</label>
+        </div>
+        <input type="date" id="birth" v-model="birth" required>
+      </div>
+      <div class="input-box">
+        <div class="label-wrapper">
+          <label for="phone">Phone</label>
+        </div>
         <div class="input-phone">
-          <select name="" id="">
-            <option value="010">010</option>
+          <select name="phone1" v-model="phone1" required>
+            <option value="010" selected>010</option>
+            <option value="011">011</option>
             <option value="02">02</option>
+            <option value="031">031</option>
+            <option value="032">032</option>
+            <option value="033">033</option>
+            <option value="041">041</option>
+            <option value="042">042</option>
+            <option value="043">043</option>
+            <option value="044">044</option>
+            <option value="051">051</option>
+            <option value="052">052</option>
+            <option value="053">053</option>
+            <option value="054">054</option>
+            <option value="055">055</option>
+            <option value="061">061</option>
             <option value="062">062</option>
+            <option value="063">063</option>
+            <option value="064">064</option>
           </select>
           <p>-</p>
-          <input type="text">
+          <input type="text" v-model="phone2" required>
           <p>-</p>
-          <input type="text">
+          <input type="text" v-model="phone3" required>
+        </div>
+      </div>
+      <div id="gender-box" class="input-box">
+        <div class="label-wrapper">
+          <label>Gender</label>
+        </div>
+        <div class="radio-wrapper">
+          <label :class="{ selected: gender === 'male' }" for="male">Male</label>
+          <input type="radio" id="male" name="gender" v-model="gender" value="male">
+        </div>
+        <div class="radio-wrapper">
+          <label :class="{ selected: gender === 'female' }" for="female">Female</label>
+          <input type="radio" id="female" name="gender" v-model="gender" value="female">
         </div>
       </div>
       <button class="login-button">회원가입</button>
@@ -53,14 +100,27 @@
 </template>
 
 <script setup>
+import { ref } from "vue";
+
+const email = ref("");
+const password = ref("");
+const passwordConfirm = ref("");
+const nickname = ref("");
+const birth = ref("");
+const phone1 = ref("010");
+const phone2 = ref("");
+const phone3 = ref("");
+const gender = ref("");
+
+
 </script>
 
 <style scoped>
 .login-page {
-  margin: 50px auto 50px auto;
+  margin: 50px auto;
   border-radius: 20px;
   width: 480px;
-  height: 760px;
+  height: 880px;
   border: 3px solid rgb(118, 189, 255);
   box-shadow: 7px 7px 39px 0px #AACDFF;
   display: flex;
@@ -78,7 +138,7 @@
   line-height: 47.36px;
   text-align: left;
   margin-top: 20px;
-  cursor: default
+  cursor: default;
 }
 
 .login-top p {
@@ -161,6 +221,11 @@
   transition: all 0.05s;
 }
 
+.wrong-info {
+  outline: none;
+  border-bottom: 3px solid red;
+}
+
 .notice-social {
   display: flex;
   flex-direction: column;
@@ -169,7 +234,7 @@
 }
 
 .notice-social p {
-  margin: 0px
+  margin: 0px;
 }
 
 .notice-social h4 {
@@ -200,23 +265,22 @@
   margin-bottom: 20px;
   font-size: 14px;
   font-weight: 600;
-
   font-family: Noto Sans CJK KR;
 }
 
 .link-container div {
   display: flex;
   gap: 15px;
-  color: #686868
+  color: #686868;
 }
 
 .link-container a {
   color: #000000;
-  text-align: center
+  text-align: center;
 }
 
 .link-container a:hover {
-  color: #0068FF
+  color: #0068FF;
 }
 
 .input-phone {
@@ -254,6 +318,39 @@
   height: 40px;
   margin: 0 10px 0 10px;
   cursor: pointer;
+}
+
+#gender-box {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.radio-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  padding-top: 7px;
+}
+
+.radio-wrapper {
+  width: 100px;
+}
+
+.radio-wrapper label {
+  font-size: 12px;
+  margin: 0;
+}
+
+.radio-wrapper input {
+  width: 17px;
+  height: 17px;
+  margin: 0;
+}
+
+.selected {
+  color: red;
 }
 
 @media screen and (max-width: 480px) {
