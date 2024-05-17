@@ -45,8 +45,13 @@ const router = createRouter({
         },
         {
           path: "modify",
-          name: "articleModify",
-          component: ArticleModifyPage,
+          children: [
+            {
+              path: ":id",
+              name: "articleModify",
+              component: ArticleModifyPage,
+            },
+          ],
         },
       ],
     },
