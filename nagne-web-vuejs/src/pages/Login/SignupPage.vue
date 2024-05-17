@@ -9,19 +9,24 @@
         <div class="label-wrapper">
           <label for="email">E-mail</label>
         </div>
-        <input type="text" id="email" v-model="email" required>
+        <input type="text" v-if="!socialEmail" id="email" v-model="email" required>
+        <input type="text" v-else id="email" v-model="socialEmail" required disabled>
       </div>
       <div class="input-box">
         <div class="label-wrapper">
           <label for="password">Password</label>
         </div>
-        <input type="password" id="password" v-model="password" required>
+        <input v-if="!socialEmail" type="password" id="password" v-model="password" required>
+        <input v-else type="password" id="password" v-model="password" required :disabled="socialEmail"
+          placeholder="소셜 로그인입니다.">
       </div>
       <div class="input-box">
         <div class="label-wrapper">
           <label for="passwordConfirm">PW Confirm</label>
         </div>
-        <input type="password" id="passwordConfirm" v-model="passwordConfirm" required>
+        <input type="password" v-if="!socialEmail" id="passwordConfirm" v-model="passwordConfirm" required>
+        <input type="password" v-else id="passwordConfirm" v-model="passwordConfirm" required :disabled="socialEmail"
+          placeholder="소셜 로그인입니다.">
       </div>
       <div class="input-box">
         <div class="label-wrapper">
@@ -104,7 +109,10 @@ import { onMounted, ref, watch } from "vue";
 import { signup } from "@/auth/signup";
 import { useRouter, useRoute } from "vue-router";
 import axios from "axios";
+import { useAuthStore } from "@/store/auth";
+const authStore = useAuthStore();
 const router = useRouter();
+const route = useRoute();
 
 const email = ref("");
 const password = ref("");
@@ -116,16 +124,26 @@ const phone2 = ref("");
 const phone3 = ref("");
 const gender = ref("");
 
-const validateEmail = (email) => {
-  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return re.test(email);
+const validateEmail = (email, socialEmail) => {
+  let email_regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/i;
+  if (socialEmail) {
+    email = socialEmail;
+  }
+  if (!email_regex.test(email)) {
+    return false;
+  } else {
+    return true;
+  }
 };
 const validatePassword = (password) => {
+  if (socialEmail) {
+    return true;
+  }
   return password.length >= 8;
 };
 
 const validateInfo = () => {
-  const isEmailValid = validateEmail(email.value);
+  const isEmailValid = validateEmail(email.value, socialEmail.value);
   const isPasswordValid = validatePassword(password.value);
   const isPasswordMatch = password.value === passwordConfirm.value;
   const isGenderSelected = gender.value !== "";
@@ -138,7 +156,7 @@ const validateInfo = () => {
     alert("비밀번호는 8자리 이상이어야 합니다.");
     return;
   }
-  if (!isPasswordMatch) {
+  if (!socialEmail && !isPasswordMatch) {
     alert("비밀번호가 일치하지 않습니다.");
     return;
   }
@@ -148,8 +166,8 @@ const validateInfo = () => {
   }
 
   const user = {
-    username: email.value,
-    password: password.value,
+    username: (socialEmail.value ? socialEmail.value : email.value),
+    password: (socialEmail.value ? "" : password.value),
     nickname: nickname.value,
     phone: phone1.value + phone2.value + phone3.value + '',
     birth: birth.value,
@@ -174,19 +192,33 @@ const getSocialLogin = (platform) => {
       url = kakaoLoginUrl.value;
       break;
   }
-  openModal(url);
+  window.location.href = url;
 }
 
-const openModal = (url) => {
-  loginUrl.value = url;
-  showModal.value = true;
-};
-const closeModal = () => {
-  showModal.value = false;
-  loginUrl.value = '';
-};
+const socialEmail = ref("");
+const socialNeedToJoin = ref(false);
+const socialToken = ref('');
 
+onMounted(() => {
+  let nowUrl = window.location.search;
+  let urlParams = new URLSearchParams(nowUrl);
+  socialEmail.value = urlParams.get('username');
+  socialNeedToJoin.value = urlParams.get('needToJoin');
+  console.log()
+  if (socialNeedToJoin.value === 'false') { //신규 회원이 아니면
 
+    const { token, userInfo } = JSON.parse(urlParams.get('data'))
+    socialToken.value = token;
+    authStore.token = token;
+    authStore.isAuthenticated = true;
+    authStore.loginUserId = userInfo.id;
+    authStore.userEmail = userInfo.username;
+    router.push({ name: 'main' })
+    return
+  }
+  //가입 필요
+
+})
 
 
 
@@ -406,8 +438,8 @@ const closeModal = () => {
 }
 
 .info-form {
-  width: 80%;
-  max-width: 320px;
+  width: 100%;
+  max-width: 420px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -435,7 +467,7 @@ const closeModal = () => {
 }
 
 .login-page input {
-  width: 50%;
+  width: 70%;
   height: 24px;
   margin: 5px;
   border: none;
@@ -516,6 +548,7 @@ const closeModal = () => {
 
 .input-phone {
   display: flex;
+  width: 60%;
 }
 
 .input-phone select {
