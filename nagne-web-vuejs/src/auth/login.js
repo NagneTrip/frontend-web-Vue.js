@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const login = async (username, password, check) => {
+const login = async (username, password) => {
   return await axios
     .post("http://localhost:8080/api/users/login", {
       username: username,
