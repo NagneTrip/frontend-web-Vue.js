@@ -8,11 +8,11 @@
             </div>
             <div class="write" @click="() => movePage('articleWrite')">
                 <font-awesome-icon :icon="faComments" class="add-img-icon" />
-                <p class="jua-regular">피드 추가</p>
+                <p class="jua-regular">피드 추가하기</p>
             </div>
             <div class="write" @click="() => movePage('planWrite')">
                 <font-awesome-icon :icon="faEarthAsia" class="add-img-icon" />
-                <p class="jua-regular">여행 계획</p>
+                <p class="jua-regular">계획 공유하기</p>
             </div>
         </div>
     </div>
