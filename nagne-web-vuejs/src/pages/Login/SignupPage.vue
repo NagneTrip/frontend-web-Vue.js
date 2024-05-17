@@ -97,23 +97,10 @@
       <RouterLink :to="{ name: 'main' }">고객센터</RouterLink>
     </div>
   </div>
-  <div>
-    <a v-if="user1 == null || user1.email == null" @click="kakaoLogin()">
-      <img
-        src="//k.kakaocdn.net/14/dn/btqCn0WEmI3/nijroPfbpCa4at5EIsjyf0/o.jpg"
-        width="222"
-      />
-    </a>
-    <div v-else>
-      <p>nickname: {{ user1.name }}</p>
-      <p>email: {{ user1.email }}</p>
-      <button type="button" @click="kakaoLogout">카카오 로그아웃</button>
-    </div>
-  </div>
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { signup } from "@/auth/signup";
 import { useRouter, useRoute } from "vue-router";
 import axios from "axios";
@@ -201,103 +188,161 @@ const closeModal = () => {
 
 
 
+
+
+// onMounted(async () => {
+//   try {
+//     const response = await axios.get('http://localhost:8080/oauth2/authorization/kakao');
+//     data.value = response.data;
+//   } catch (err) {
+//     error.value = 'Failed to load data.';
+//   } finally {
+//     loading.value = false;
+//   }
+// });
+
+// const kakaoLogin = () => {
+//   click.value = true;
+
+// window.location.href = `http://localhost:8080/oauth2/authorization/kakao`;
+// window.open('http://localhost:8080/oauth2/authorization/kakao', 'Popup Window', 'width = 650, height = 450');
+// axios.get('http://localhost:8080/oauth2/authorization/kakao')
+//   .then((data) => {
+//     window.location.href(data)
+//   })
+//   .catch()
+// }
+
+// watch(click, () => {
+//   link.value = 'http://localhost:8080/oauth2/authorization/kakao'
+// })
+
+// onMounted(() => {
+//   const urlParams = new URLSearchParams(window.location.search);
+//   if (urlParams.has("code")) {
+//     const code = urlParams.get("code");
+//     console.log("code: ", code);
+//     setKakaoToken(code);
+//   }
+// });
+
+// const setKakaoToken = async (code) => {
+//   const data = {
+//     grant_type: "authorization_code",
+//     client_id: import.meta.env.VITE_KAKAO_JS_API_KEY, //JS키
+//     redirect_uri: "http://localhost:5173/login",
+//     code: code,
+//   };
+//   const queryString = Object.keys(data)
+//     .map((k) => encodeURIComponent(k) + "=" + encodeURIComponent(data[k]))
+//     .join("&");
+//   axios.post(`https://kauth.kakao.com/oauth/token`, queryString, {
+//     headers: {
+//       "Content-type": "application/x-www-form-urlencoded;charset=utf-8",
+//     }
+//   },)
+//     .then(data => console.log(data))
+// };
+
+
 //
-const user1 = ref(null);
-const route = useRoute();
+// const user1 = ref(null);
+// const route = useRoute();
 
-const kakaoLogin = () => {
-  window.Kakao.Auth.authorize({
-    redirectUri: "http://localhost:8080/login",
-  });
-};
-const getKakaoToken = async (code) => {
-  try {
-    const data = {
-      grant_type: "authorization_code",
-      client_id: import.meta.env.VITE_KAKAO_JS_API_KEY, //JS키
-      redirect_uri: "http://localhost:8080/login",
-      code: code,
-    };
+// const kakaoLogin = () => {
+//   window.Kakao.Auth.authorize({
+//     redirectUri: "http://localhost:8080/login/oauth2/code/kakao",
+//   });
+// };
 
-    const queryString = Object.keys(data)
-      .map((k) => encodeURIComponent(k) + "=" + encodeURIComponent(data[k]))
-      .join("&");
+// const getKakaoToken = async (code) => {
+//   try {
+//     const data = {
+//       grant_type: "authorization_code",
+//       client_id: import.meta.env.VITE_KAKAO_JS_API_KEY, //JS키
+//       redirect_uri: "http://localhost:8080/login/oauth2/code/kakao",
+//       code: code,
+//     };
 
-    const result = await axios.post(
-      "https://kauth.kakao.com/oauth/token",
-      queryString,
-      {
-        headers: {
-          "Content-type": "application/x-www-form-urlencoded;charset=utf-8",
-        },
-      }
-    );
-    console.log(result);
-    return result;
-  } catch (e) {
-    console.log(e);
-    return e;
-  }
-};
+// const queryString = Object.keys(data)
+//   .map((k) => encodeURIComponent(k) + "=" + encodeURIComponent(data[k]))
+//   .join("&");
 
-const getKakaoUserInfo = async () => {
-  let data = "";
-  await window.Kakao.API.request({
-    url: "/v2/user/me",
-  })
-    .then(function (response) {
-      console.log(response);
-      data = response;
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
-  console.log("카카오 계정 정보", data);
-  return data;
-};
+//     const result = await axios.post(
+//       "https://kauth.kakao.com/oauth/token",
+//       queryString,
+//       {
+// headers: {
+//   "Content-type": "application/x-www-form-urlencoded;charset=utf-8",
+// },
+//       }
+//     );
+//     console.log(result);
+//     return result;
+//   } catch (e) {
+//     console.log(e);
+//     return e;
+//   }
+// };
 
-const setKakaoToken = async (code) => {
-  const { data } = await getKakaoToken(code);
-  if (data.error) {
-    console.log(data.error);
-    return;
-  }
-  console.log(data);
-  window.Kakao.Auth.setAccessToken(data.access_token);
-  await setUserInfo();
-  router.push({ path: "/signup" });
-};
+// const getKakaoUserInfo = async () => {
+//   let data = "";
+//   await window.Kakao.API.request({
+//     url: "/v2/user/me",
+//   })
+//     .then(function (response) {
+//       console.log(response);
+//       data = response;
+//     })
+//     .catch(function (error) {
+//       console.log(error);
+//     });
+//   console.log("카카오 계정 정보", data);
+//   return data;
+// };
 
-const setUserInfo = async () => {
-  const res = await getKakaoUserInfo();
-  const userInfo = {
-    name: res.kakao_account.profile.nickname,
-    email: res.kakao_account.email,
-  };
-  console.log(userInfo);
-  user1.value = userInfo;
-};
+// const setKakaoToken = async (code) => {
+//   const { data } = await getKakaoToken(code);
+//   if (data.error) {
+//     console.log(data.error);
+//     return;
+//   }
+//   console.log(data);
+//   window.Kakao.Auth.setAccessToken(data.access_token);
+//   await setUserInfo();
+//   router.push({ path: "/signup" });
+// };
 
-const kakaoLogout = () => {
-  user1.value = {};
-  window.Kakao.Auth.logout()
-    .then(function (response) {
-      console.log(window.Kakao.Auth.getAccessToken()); // null
-      console.log(response);
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
-};
+// const setUserInfo = async () => {
+//   const res = await getKakaoUserInfo();
+//   const userInfo = {
+//     name: res.kakao_account.profile.nickname,
+//     email: res.kakao_account.email,
+//   };
+//   console.log(userInfo);
+//   user1.value = userInfo;
+// };
 
-onMounted(() => {
-  const urlParams = new URLSearchParams(window.location.search);
-  if (urlParams.has("code")) {
-    const code = urlParams.get("code");
-    console.log("code: ", code);
-    setKakaoToken(code);
-  }
-});
+// const kakaoLogout = () => {
+//   user1.value = {};
+//   window.Kakao.Auth.logout()
+//     .then(function (response) {
+//       console.log(window.Kakao.Auth.getAccessToken()); // null
+//       console.log(response);
+//     })
+//     .catch(function (error) {
+//       console.log(error);
+//     });
+// };
+
+// onMounted(() => {
+//   const urlParams = new URLSearchParams(window.location.search);
+//   if (urlParams.has("code")) {
+//     const code = urlParams.get("code");
+//     console.log("code: ", code);
+//     setKakaoToken(code);
+//   }
+// });
 
 </script>
 

@@ -10,8 +10,8 @@ export const useAuthStore = defineStore("auth", () => {
   const userEmail = ref("");
   const password = ref("");
 
-  const getToken = async (check) => {
-    const result = await login(userEmail.value, password.value, check);
+  const getToken = async () => {
+    const result = await login(userEmail.value, password.value);
     if (result.token !== "") {
       // 로그인 성공시
       token.value = result.token;
