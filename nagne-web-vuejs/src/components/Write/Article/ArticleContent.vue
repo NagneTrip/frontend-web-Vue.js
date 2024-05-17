@@ -50,7 +50,6 @@ const move = async (path) => {
         return;
       }
       // api 추가
-      console.log(selectedImg.value[0])
       await uploadFile();
       break;
   }
@@ -65,12 +64,10 @@ const uploadFile = async () => {
     formData.append('images', selectedImg.value[i]);
   }
 
-
   const json = JSON.stringify({ content: content.value });
   const blob = new Blob([json], { type: "application/json" });
   // FormData에 다른 데이터 추가
   formData.append('request', blob);
-
 
   await axios.post('http://localhost:8080/api/articles', formData, {
     headers: {
