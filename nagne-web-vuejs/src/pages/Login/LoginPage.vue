@@ -26,8 +26,8 @@
       <h4>소셜로그인</h4>
     </div>
     <div class="img-group">
-      <img src="@/assets/social/web_neutral_sq_na.svg" alt="">
-      <img src='@/assets/social/480px-KakaoTalk_logo.svg.png' alt="">
+      <img src="@/assets/social/web_neutral_sq_na.svg" alt="" @click="getSocialLogin('google')">
+      <img src='@/assets/social/480px-KakaoTalk_logo.svg.png' alt="" @click="getSocialLogin('kakao')">
     </div>
 
     <div class="link-container">
@@ -39,15 +39,35 @@
 
 <script setup>
 import { ref, watch, onMounted } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { useAuthStore } from "@/store/auth";
 const store = useAuthStore();
+const route = useRoute();
 const router = useRouter();
 
 const userEmail = ref('');
 const password = ref('');
 const remeberEmail = ref(false);
 
+const sosicalEmail = ref("");
+const socialNeedToJoin = ref(false);
+const sosicialToken = ref('');
+
+
+const googleLoginUrl = ref('http://localhost:8080/oauth2/authorization/google');
+const kakaoLoginUrl = ref('http://localhost:8080/oauth2/authorization/kakao');
+const getSocialLogin = (platform) => {
+  let url;
+  switch (platform) {
+    case 'google':
+      url = googleLoginUrl.value;
+      break;
+    case 'kakao':
+      url = kakaoLoginUrl.value;
+      break;
+  }
+  window.location.href = url;
+}
 
 const getLoginHandler = async () => {
   if (userEmail.value === "" || password.value === "") {
@@ -56,13 +76,14 @@ const getLoginHandler = async () => {
     password.value = "";
     return;
   } else {
-    if (remeberEmail.value) {
+    if (remeberEmail.value) {//이메일 기억하기 체크
       setCookie("userEmail", userEmail.value, 7); // 7일 동안 쿠키 유지
     } else {
       setCookie("userEmail", "", -1); // 쿠키 삭제
     }
     store.userEmail = userEmail.value;
     store.password = password.value;
+    userEmail.value = '';
     await store.getToken(); // store에 로그인 요청
   }
 }
@@ -79,6 +100,16 @@ watch(() => store.isAuthenticated, () => {
 })
 
 onMounted(() => {
+  let nowUrl = window.location.search;
+  const urlParams = new URLSearchParams(nowUrl);
+  sosicalEmail.value = urlParams.get('username');
+  socialNeedToJoin.value = urlParams.get('needToJoin');
+  if (!socialNeedToJoin.value) {
+    sosicialToken.value = urlParams.get('token');
+  }
+
+
+
   const savedEmail = getCookie("userEmail");
   if (savedEmail) {
     userEmail.value = savedEmail;
