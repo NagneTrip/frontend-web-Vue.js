@@ -15,7 +15,8 @@
       </div>
       <div class="img-container">
         <img class="main-img" :src="'./src/assets/logo/logo.png'" />
-        <div class="image-overlay"></div>
+        <div class=" image-overlay">
+        </div>
         <p class="noto-sans-kr-regular img-container-text">{{ article.content }}</p>
         <div class=" article-bottom">
           <div class="social-box">
@@ -87,6 +88,7 @@ const article = ref({});
 const comments = ref({});
 const isLiked = ref(false);
 const isBookmarked = ref(false);
+const noImage = ref(true);
 
 
 onMounted(async () => {
@@ -95,7 +97,7 @@ onMounted(async () => {
 
     //로그인 된 상태 -> 모든 정보 API
     //게시물 정보 받아오기
-    axios.get(`http://localhost:8080/api/articles/${props.article.id}`, {
+    await axios.get(`http://localhost:8080/api/articles/${props.article.id}`, {
       headers: {
         Authorization: `Bearer ${store.token}`,
       },
@@ -108,7 +110,7 @@ onMounted(async () => {
       .catch()
 
     //댓글 정보 받아오기
-    axios.get(`http://localhost:8080/api/comments?articleId=${props.article.id}`,
+    await axios.get(`http://localhost:8080/api/comments?articleId=${props.article.id}`,
       {
         headers: {
           Authorization: `Bearer ${store.token}`,
