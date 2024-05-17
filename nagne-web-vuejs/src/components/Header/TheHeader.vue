@@ -19,7 +19,7 @@
         <div class="navbar-icons-wrapper" @click="toggleUserMenu">
           <font-awesome-icon class="icon" :icon="faUser" id="navbar-user" />
         </div>
-        <div class="navbar-icons-wrapper" id="navbar-write-icon-wrapper">
+        <div class="navbar-icons-wrapper" id="navbar-write-icon-wrapper" @click="() => move('write')">
           <font-awesome-icon :icon="faPen" class="icon" id="navbar-write-icon" />
         </div>
         <div class="navbar-icons-wrapper navbar-write-button-wrapper" @click="() => move('write')">
