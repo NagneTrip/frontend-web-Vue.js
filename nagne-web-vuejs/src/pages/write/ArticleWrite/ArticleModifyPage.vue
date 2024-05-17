@@ -19,19 +19,26 @@
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
+import axios from 'axios';
+import { ref, watch, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import ArticleImgSelect from "@/components/Write/Article/ArticleImgSelect.vue"
 import ArticleContent from "@/components/Write/Article/ArticleContent.vue"
 import ArticleWriteSwiper from "@/components/Write/Article/ArticleWriteSwiper.vue"
 import { useWriteStore } from "@/store/write";
+import { useAuthStore } from "@/store/auth";
 import { storeToRefs } from 'pinia'
-const store = useWriteStore();
+const writeStore = useWriteStore();
+const authStore = useAuthStore();
 
 const route = useRoute();
 const router = useRouter();
 
+const renderBaseImg = ref(true);
+//S3 업로드 전까진 기본 이미지 사용.
+
 const idByParams = route.params.id;
+
 onMounted(() => {
   getArticleToModify();
 })
@@ -39,10 +46,10 @@ onMounted(() => {
 const getArticleToModify = () => {
   axios.get(`http://localhost:8080/api/articles/${idByParams}`, {
     headers: {
-      Authorization: `Bearer ${store.token}`,
+      Authorization: `Bearer ${authStore.token}`,
     }
   }).then(({ data }) => {
-    console.log(data)
+    console.log(data) //이거 지우고 article 객체 선언 후 게시글 객체 불러오기
   })
 }
 
@@ -50,22 +57,12 @@ const baseImg = ref("/src/assets/logo/logo.png");
 const move = (path) => {
   switch (path) {
     case 'back':
-      tempUrl.value = ref([]);
-      selectedImg.value = ref([]);
-      renderBaseImg.value = true;
-      router.go(-1);
+      if (window.confirm("작성중인 내역이 있습니다. 작성을 취소하시겠습니까?")) {
+        router.push({ name: 'main' });
+      }
       break;
   }
 };
-
-// watch를 사용하여 store.selectedImg의 변화를 감시합니다.
-watch((selectedImg, tempUrl), () => {
-  if (tempUrl.value.length >= 1) {
-    renderBaseImg.value = false;
-  } else {
-    renderBaseImg.value = true;
-  }
-}, { deep: true });
 
 
 </script>
