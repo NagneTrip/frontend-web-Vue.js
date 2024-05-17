@@ -7,6 +7,7 @@ import WritePage from "@/pages/write/WritePage.vue";
 import PlanWritePage from "@/pages/write/PlanWrite/PlanWritePage.vue";
 import ArticleWritePage from "@/pages/write/ArticleWrite/ArticleWritePage.vue";
 import ArticleModifyPage from "@/pages/write/ArticleWrite/ArticleModifyPage.vue";
+import MapMainPage from "@/pages/map/MapMainPage.vue";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -54,6 +55,11 @@ const router = createRouter({
           ],
         },
       ],
+    },
+    {
+      path : "/map",
+      name : 'mapMain',
+      component: MapMainPage
     },
     {
       path: "/plans/write",
