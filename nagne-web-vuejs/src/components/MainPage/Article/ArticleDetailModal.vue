@@ -148,7 +148,7 @@ const commentInput = ref(null);
 const moveTo = (action) => {
   switch (action) {
     case 'modify':
-      router.push({ path: 'modify', params: { id: article.id } });
+      router.push({ name: 'articleModify', params: { 'id': props.articleId } });
       break;
 
     case 'delete':
