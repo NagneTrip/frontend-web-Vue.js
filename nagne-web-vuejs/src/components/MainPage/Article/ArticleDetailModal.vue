@@ -92,9 +92,9 @@
     </div>
   </div>
   <ul v-show="isDotMenuOpen" class="user-menu list-group" :style="dotMenuStyle">
-    <li v-if="store.loginUserId" class="list-group-item">수정하기</li>
-    <li v-if="store.loginUserId" class="list-group-item">삭제하기</li>
-    <li v-if="!store.loginUserId" class="list-group-item">신고하기</li>
+    <li v-if="store.loginUserId === article.userId" class="list-group-item" @click="moveTo('modify')">수정하기</li>
+    <li v-if="store.loginUserId === article.userId" class="list-group-item" @click="moveTo('delete')">삭제하기</li>
+    <li v-if="store.loginUserId !== article.userId" class="list-group-item" @click="moveTo('declare')">신고하기</li>
     <li class="list-group-item">공유하기</li>
   </ul>
 </template>
@@ -105,6 +105,8 @@ import axios from "axios";
 import { onMounted, ref, watch } from "vue";
 import CommentList from "./CommentList.vue";
 import { useAuthStore } from "@/store/auth";
+import { useRouter } from "vue-router"
+const router = useRouter();
 const store = useAuthStore();
 const article = ref({});
 
@@ -130,6 +132,7 @@ onMounted(async () => {
 const props = defineProps({
   articleId: Number,
 });
+
 const emit = defineEmits(["closeModal", "changed"]);
 const closeModal = () => {
   emit("closeModal");
@@ -138,10 +141,47 @@ const closeModal = () => {
 const isLiked = ref(false);
 const isBookmarked = ref(false);
 const isDotMenuOpen = ref(false);
+
 const dotMenuStyle = ref({});
 const commentInput = ref(null);
 
-//좋아요, 북마크 클릭시 갯수 렌더링을 위한 비동기
+const moveTo = (action) => {
+  switch (action) {
+    case 'modify':
+      router.push({ path: 'modify', params: { id: article.id } });
+      break;
+
+    case 'delete':
+      if (window.confirm("게시글을 삭제하시겠습니까?")) {
+        deleteArticle();
+        emit("closeModal");
+      }
+      break;
+
+    case 'declare':
+      //신고하기
+      break;
+  }
+}
+
+const deleteArticle = async () => {
+  //게시글 삭제
+  if (article.value.userId !== store.loginUserId) {
+    alert("게시글 삭제에 실패했습니다.");
+    return;
+  }
+
+  await axios.delete(`http://localhost:8080/api/articles/${props.articleId}`, {
+    headers: {
+      Authorization: `Bearer ${store.token}`,
+    }
+  }).then(({ data }) => {
+    alert("게시글이 삭제되었습니다.");
+    router.push({ name: 'main' });
+  }).catch();
+}
+
+//좋아요, 북마크 클릭시 갯수 렌더링 또는 게시글 삭제 후 로드를 위한 비동기
 watch([isLiked, isBookmarked], async () => {
   if (store.isAuthenticated) { //이미 로그인 되어 있으면 토큰 갱신
     await store.getToken();

@@ -115,6 +115,7 @@ const router = useRouter();
 const closeModal = () => {
   isOpenModal.value = false;
   modalArticle.value = {};
+  stateChanged();
 }
 //좋아요, 북마크 클릭시 갯수 렌더링을 위한 비동기
 const stateChanged = async () => {
