@@ -64,6 +64,9 @@ const router = createRouter({
       path : "/map",
       name : 'mapMain',
       component: MapMainPage,
+    },
+    {
+      path : "/map",
       children : [
         {
           path : "find",
