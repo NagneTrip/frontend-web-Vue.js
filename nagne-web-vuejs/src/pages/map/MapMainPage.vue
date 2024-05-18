@@ -2,21 +2,21 @@
     <div class="write-page">
         <div class="write-menu">
             <div class="row-container">
-                <div class="write" id="gps-icon">
+                <div class="write" id="gps-icon" @click="move('find')">
                     <font-awesome-icon :icon="faLocationDot" class="add-img-icon" />
                     <p class="jua-regular">지도로 찾기</p>
                 </div>
-                <div class="write" id="hashtag-icon">
+                <div class="write" id="hashtag-icon" @click="move('tag')">
                     <font-awesome-icon :icon="faHashtag" class="add-img-icon " />
                     <p class="jua-regular">키워드로 찾기</p>
                 </div>
             </div>
             <div class="row-container">
-                <div class="write" id="pin-icon">
+                <div class="write" id="pin-icon" @click="move('save')">
                     <font-awesome-icon :icon="faThumbtack" class="add-img-icon" />
                     <p class="jua-regular">저장한 장소</p>
                 </div>
-                <div class="write" id="carrier-icon">
+                <div class="write" id="carrier-icon" @click="move('plan')">
                     <font-awesome-icon :icon="faSuitcaseRolling" class="add-img-icon" />
                     <p class="jua-regular">내 여행 계획</p>
                 </div>
@@ -29,6 +29,13 @@
 
 <script setup>
 import { faLocationDot, faHashtag, faSuitcaseRolling, faThumbtack } from "@fortawesome/free-solid-svg-icons";
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+
+const move = (path) => {
+  router.push(`/map/${path}`);
+}
 </script>
 
 <style scoped>
