@@ -8,6 +8,10 @@ import PlanWritePage from "@/pages/write/PlanWrite/PlanWritePage.vue";
 import ArticleWritePage from "@/pages/write/ArticleWrite/ArticleWritePage.vue";
 import ArticleModifyPage from "@/pages/write/ArticleWrite/ArticleModifyPage.vue";
 import MapMainPage from "@/pages/map/MapMainPage.vue";
+import FindByMapPage from "@/pages/map/FindByMapPage.vue"; 
+import FindByTagPage from "@/pages/map/FindByTagPage.vue"; 
+import MapSavedPage from "@/pages/map/MapSavedPage.vue"; 
+import MyTripPlanPage from "@/pages/map/MyTripPlanPage.vue"; 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -59,7 +63,29 @@ const router = createRouter({
     {
       path : "/map",
       name : 'mapMain',
-      component: MapMainPage
+      component: MapMainPage,
+      children : [
+        {
+          path : "find",
+          name: 'mapFind',
+          component: FindByMapPage
+        },
+        {
+          path : 'tag',
+          name: 'mapTag',
+          component: FindByTagPage
+        },
+        {
+          path : 'save',
+          name: 'mapSave',
+          component: MapSavedPage
+        },
+        {
+          path : 'plan',
+          name: 'mapPlan',
+          component: MyTripPlanPage
+        },
+      ]
     },
     {
       path: "/plans/write",
