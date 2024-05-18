@@ -1,20 +1,25 @@
 <template>
     <div class="write-page">
+        <button class="address-btn jua-regular" @click="clickBtn">
+            <font-awesome-icon :icon="faLocationCrosshairs" class="gps-btn" />
+            <p>현 위치로 주소 설정하기</p>
+        </button>
+        <p class="write-top jua-regular">나그네와 함께 [] 를 둘러봐요.</p>
         <div class="write-menu">
             <div class="row-container">
                 <div class="write" id="gps-icon" @click="move('find')">
                     <font-awesome-icon :icon="faLocationDot" class="add-img-icon" />
-                    <p class="jua-regular">지도로 찾기</p>
+                    <p class="jua-regular">주변 둘러보기</p>
                 </div>
                 <div class="write" id="hashtag-icon" @click="move('tag')">
-                    <font-awesome-icon :icon="faHashtag" class="add-img-icon " />
-                    <p class="jua-regular">키워드로 찾기</p>
+                    <font-awesome-icon :icon="faEarthAsia" class="add-img-icon " />
+                    <p class="jua-regular">지역 선택 하기</p>
                 </div>
             </div>
             <div class="row-container">
                 <div class="write" id="pin-icon" @click="move('save')">
-                    <font-awesome-icon :icon="faThumbtack" class="add-img-icon" />
-                    <p class="jua-regular">저장한 장소</p>
+                    <font-awesome-icon :icon="faHashtag" class="add-img-icon" />
+                    <p class="jua-regular">키워드로 찾기</p>
                 </div>
                 <div class="write" id="carrier-icon" @click="move('plan')">
                     <font-awesome-icon :icon="faSuitcaseRolling" class="add-img-icon" />
@@ -22,19 +27,49 @@
                 </div>
             </div>
         </div>
-        <p class="write-top jua-regular">나그네와 함께 추억을 공유하세요!</p>
-
     </div>
 </template>
 
 <script setup>
-import { faLocationDot, faHashtag, faSuitcaseRolling, faThumbtack } from "@fortawesome/free-solid-svg-icons";
+import axios from 'axios';
+import { faLocationDot, faEarthAsia, faSuitcaseRolling, faHashtag, faLocationCrosshairs } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from 'vue-router';
-
+import { ref, onMounted, watch } from 'vue';
+import { useMapStore } from '@/store/map';
+const mapStore = useMapStore();
 const router = useRouter();
-
 const move = (path) => {
-  router.push(`/map/${path}`);
+    router.push(`/map/${path}`);
+}
+
+const gpsLocation = ref({});
+
+const clickBtn = ()=> {
+    console.log('눌림')
+    getLoaction();
+    locaToAddress();
+}
+
+const getLoaction = async()=> {
+    await navigator.geolocation.getCurrentPosition((position) => {
+    let lat = position.coords.latitude;
+    let lng = position.coords.longitude;
+    mapStore.userLocation = { lat, lng };
+    gpsLocation.value = mapStore.userLocation;
+  }, (error) => {
+    console.error("Geolocation error:", error);
+  });
+}
+
+const locaToAddress = async ()=>{
+    await axios.get(`https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?coords=${gpsLocation.lat},${gpsLocation.lng}&output=json`, {
+        headers : {
+            'X-NCP-APIGW-API-KEY-ID' : import.meta.env.VITE_GC_ID,
+            'X-NCP-APIGW-API-KEY' : import.meta.env.VITE_GC_SECRET
+        }
+    })
+    .then(({data})=>console.log(data))
+    .catch()
 }
 </script>
 
@@ -44,10 +79,10 @@ const move = (path) => {
     height: 900px;
     display: flex;
     justify-content: space-between;
-    ;
     align-items: center;
     flex-direction: column;
-    gap: 50px;
+    justify-content: flex-start;
+    gap: 20px;
     background-image: url('@/assets/page/map_main.jpg');
     background-repeat: no-repeat;
     background-size: cover;
@@ -55,17 +90,52 @@ const move = (path) => {
     transition: all 0.2s;
 }
 
+.address-btn {
+    width: 240px;
+    height: 60px;
+    border-radius: 35px;
+    background-color: rgb(134, 184, 255);
+    font-size: 20px;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin : 30px 0 10px 0;
+    border: none;
+    box-shadow: 0px 2px 3px 2px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s;
+}
+
+.address-btn:hover {
+    background-color: white;
+    color: rgb(134, 184, 255);
+    scale: 1.05;
+    transition: all 0.2s;
+    .gps-btn {
+        color: rgb(134, 184, 255);
+    }
+}
+
+.address-btn p {
+    margin:0;
+}
+
+.gps-btn {
+    color: white;
+    width: 30px;
+    height: 30px;
+}
+
 .write-top {
-    visibility: hidden;
-    margin: 0 0 90px 0;
-    font-size: 60px;
+    margin: 0 0 20px 0;
+    font-size: 30px;
     letter-spacing: 1.5px;
-    color: rgb(214, 214, 214);
+    color: rgb(255, 255, 255);
     font-weight: 500;
 }
 
 .write-menu {
-    margin-top: 80px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -118,15 +188,20 @@ const move = (path) => {
     }
 }
 
+
+
 #gps-icon:hover {
     background-color: rgb(65, 139, 244);
 }
+
 #hashtag-icon:hover {
     background-color: rgb(248, 75, 119);
 }
+
 #pin-icon:hover {
     background-color: gold;
 }
+
 #carrier-icon:hover {
     background-color: rgb(22, 248, 173);
 }
