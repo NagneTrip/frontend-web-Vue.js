@@ -147,9 +147,14 @@ import { faLocationDot, faHashtag, faSuitcaseRolling, faThumbtack } from "@forta
     }
 }
 
-@media screen and (max-width: 850px) {
+@media screen and (max-width: 950px) {
     .write-menu {
         flex-direction: column;
+        gap: 50px;
+    }
+
+    .row-container {
+        gap: 50px;
     }
 
     .write-top {
@@ -157,14 +162,20 @@ import { faLocationDot, faHashtag, faSuitcaseRolling, faThumbtack } from "@forta
     }
 }
 
-@media screen and (max-width : 380px) {
+@media screen and (max-width : 450px) {
 
     .write-top {
         display: none;
     }
 
+    .row-container {
+        gap: 20px;
+        flex-direction: column;
+    }
+
     .write-menu {
-        margin-top: 100px;
+        gap: 20px;
+        margin-top: 30px;
     }
 }
 </style>
