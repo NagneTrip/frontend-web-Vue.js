@@ -47,7 +47,7 @@ const move = (path) => {
 };
 
 // watch를 사용하여 store.selectedImg의 변화를 감시합니다.
-watch((selectedImg, tempUrl), () => {
+watch([selectedImg, tempUrl], () => {
   if (tempUrl.value.length >= 1) {
     renderBaseImg.value = false;
   } else {
