@@ -13,16 +13,16 @@
         <div class="navbar-icons-wrapper" id="bell-wrapper">
           <font-awesome-icon class="icon" :icon="faBell" id="navbar-bell" />
         </div>
-        <div class="navbar-icons-wrapper">
+        <div class="navbar-icons-wrapper" @click="move('mapMain')">
           <font-awesome-icon class="icon" :icon="faMap" id="navbar-map" />
         </div>
         <div class="navbar-icons-wrapper" @click="toggleUserMenu">
           <font-awesome-icon class="icon" :icon="faUser" id="navbar-user" />
         </div>
-        <div class="navbar-icons-wrapper" id="navbar-write-icon-wrapper">
+        <div class="navbar-icons-wrapper" id="navbar-write-icon-wrapper" @click="move('write')">
           <font-awesome-icon :icon="faPen" class="icon" id="navbar-write-icon" />
         </div>
-        <div class="navbar-icons-wrapper navbar-write-button-wrapper" @click="() => move('write')">
+        <div class="navbar-icons-wrapper navbar-write-button-wrapper" @click="move('write')">
           <div class="navbar-write-button jua-regular-large">작성하기</div>
         </div>
       </div>
@@ -74,15 +74,6 @@ import { useAuthStore } from "@/store/auth";
 const store = useAuthStore();
 const router = useRouter();
 
-// 상태 변경을 추적하기 위해 watch 추가
-watch(() => store.isAuthenticated, (newVal) => {
-  console.log('isAuthenticated 변경됨: ', newVal);
-});
-
-watch(() => store.token, (newVal) => {
-  console.log('token 변경됨: ', newVal);
-});
-
 const move = (path) => {
   let moveTo = { name: path };
   switch (path) {
@@ -93,11 +84,10 @@ const move = (path) => {
       }
       break;
     case 'logout': // 로그아웃. 토큰과 인증 정보를 초기화
-      console.log('로그아웃 클릭됨');
       store.getLogout(); // 액션 호출
-      console.log('isAuthenticated 상태: ', store.isAuthenticated.value);
-      console.log('token 상태: ', store.token.value);
       moveTo = { name: 'logout' }
+      break;
+    case 'mapMain':
       break;
   }
   // 페이지 이동 시 열려있는 메뉴 전부 닫기

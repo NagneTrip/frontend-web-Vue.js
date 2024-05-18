@@ -6,14 +6,17 @@ import { ref } from "vue";
 export const useAuthStore = defineStore("auth", () => {
   const isAuthenticated = ref(false);
   const token = ref("");
+  const loginUserId = ref(null);
   const userEmail = ref("");
   const password = ref("");
 
   const getToken = async () => {
-    token.value = await login(userEmail.value, password.value);
-    if (token.value !== "") {
+    const result = await login(userEmail.value, password.value);
+    if (result.token !== "") {
       // 로그인 성공시
+      token.value = result.token;
       isAuthenticated.value = true;
+      loginUserId.value = result.userId;
     } else {
       // 로그인 실패
       token.value = "";
@@ -25,8 +28,9 @@ export const useAuthStore = defineStore("auth", () => {
     token.value = "";
     isAuthenticated.value = false;
     userEmail.value = "";
-    password.value = ""; 
+    password.value = "";
+    loginUserId.value = null;
   };
 
-  return { getLogout, getToken, isAuthenticated, token, userEmail, password };
+  return { getLogout, getToken, isAuthenticated, token, userEmail, password, loginUserId };
 });

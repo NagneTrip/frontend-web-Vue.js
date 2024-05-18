@@ -6,9 +6,17 @@
     </div>
 
     <form action="" @submit.prevent="() => getLoginHandler()">
-      <label for="">E-mail</label>
+      <div class="label-box">
+        <label for="">E-mail</label>
+      </div>
       <input type="text" v-model="userEmail">
-      <label for="">Password</label>
+      <div class="remember-box">
+        <label for="remember_email" style="font-size: 12px;">E-mail 기억하기</label>
+        <input type="checkbox" id="remember_email" v-model="remeberEmail">
+      </div>
+      <div class="label-box">
+        <label for="">Password</label>
+      </div>
       <input type="password" v-model="password">
       <button class="login-button">LOGIN</button>
       <RouterLink :to="{ name: '' }">비밀번호 찾기</RouterLink>
@@ -18,8 +26,8 @@
       <h4>소셜로그인</h4>
     </div>
     <div class="img-group">
-      <img src="@/assets/social/web_neutral_sq_na.svg" alt="">
-      <img src='@/assets/social/480px-KakaoTalk_logo.svg.png' alt="">
+      <img src="@/assets/social/web_neutral_sq_na.svg" alt="" @click="getSocialLogin('google')">
+      <img src='@/assets/social/480px-KakaoTalk_logo.svg.png' alt="" @click="getSocialLogin('kakao')">
     </div>
 
     <div class="link-container">
@@ -30,15 +38,36 @@
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
-import { useRouter } from "vue-router";
+import { ref, watch, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import { useAuthStore } from "@/store/auth";
 const store = useAuthStore();
+const route = useRoute();
 const router = useRouter();
 
 const userEmail = ref('');
 const password = ref('');
+const remeberEmail = ref(false);
 
+const sosicalEmail = ref("");
+const socialNeedToJoin = ref(false);
+const sosicialToken = ref('');
+
+
+const googleLoginUrl = ref('http://localhost:8080/oauth2/authorization/google');
+const kakaoLoginUrl = ref('http://localhost:8080/oauth2/authorization/kakao');
+const getSocialLogin = (platform) => {
+  let url;
+  switch (platform) {
+    case 'google':
+      url = googleLoginUrl.value;
+      break;
+    case 'kakao':
+      url = kakaoLoginUrl.value;
+      break;
+  }
+  window.location.href = url;
+}
 
 const getLoginHandler = async () => {
   if (userEmail.value === "" || password.value === "") {
@@ -47,13 +76,19 @@ const getLoginHandler = async () => {
     password.value = "";
     return;
   } else {
+    if (remeberEmail.value) {//이메일 기억하기 체크
+      setCookie("userEmail", userEmail.value, 7); // 7일 동안 쿠키 유지
+    } else {
+      setCookie("userEmail", "", -1); // 쿠키 삭제
+    }
     store.userEmail = userEmail.value;
-    store.password = password.value
-    await store.getToken(); //store에 로그인 요청
+    store.password = password.value;
+    userEmail.value = '';
+    await store.getToken(); // store에 로그인 요청
   }
 }
 
-watch(()=>store.isAuthenticated, () => {
+watch(() => store.isAuthenticated, () => {
   if (store.isAuthenticated) {
     alert('로그인 성공');
     router.go(-1); // 성공 시 홈 페이지로 리다이렉트
@@ -63,6 +98,49 @@ watch(()=>store.isAuthenticated, () => {
     password.value = '';
   }
 })
+
+onMounted(() => {
+  let nowUrl = window.location.search;
+  const urlParams = new URLSearchParams(nowUrl);
+  sosicalEmail.value = urlParams.get('username');
+  socialNeedToJoin.value = urlParams.get('needToJoin');
+  if (!socialNeedToJoin.value) {
+    sosicialToken.value = urlParams.get('token');
+  }
+
+
+
+  const savedEmail = getCookie("userEmail");
+  if (savedEmail) {
+    userEmail.value = savedEmail;
+    remeberEmail.value = true;
+  }
+})
+
+// 쿠키 설정
+function setCookie(name, value, days) {
+  const d = new Date();
+  d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
+  const expires = "expires=" + d.toUTCString();
+  document.cookie = name + "=" + value + ";" + expires + ";path=/";
+}
+
+// 쿠키 로드
+function getCookie(name) {
+  const cname = name + "=";
+  const decodedCookie = decodeURIComponent(document.cookie);
+  const ca = decodedCookie.split(';');
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) === ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(cname) === 0) {
+      return c.substring(cname.length, c.length);
+    }
+  }
+  return "";
+}
 </script>
 
 
@@ -206,6 +284,29 @@ watch(()=>store.isAuthenticated, () => {
 
 .link-container a:hover {
   color: #0068FF
+}
+
+.label-box {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+
+input[type="checkbox"] {
+  width: 15px;
+  margin: 0;
+}
+
+.remember-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+}
+
+.remember-box label {
+  color: #3384fd;
+  font-size: 10px
 }
 
 @media screen and (max-width: 480px) {

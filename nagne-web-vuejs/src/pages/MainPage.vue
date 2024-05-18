@@ -5,8 +5,8 @@
       <TheSwipper />
       <div class="wrapper">
         <div class="content">
-          <div class="write-article-box">
-            <div class="write-article-left-box" @click="moveWrite">
+          <div class="write-article-box" @click="moveWrite">
+            <div class="write-article-left-box">
               <div class="write-article-icon-box">
                 <font-awesome-icon :icon="faUser" class="write-article-icon" />
               </div>
@@ -19,11 +19,6 @@
           <div class="article-container">
             <TheArticle v-for="(article, index) in articles" :article="article" :key="article.id"
               @open-article-modal="openModal" />
-            <!-- <Article />
-        <Article />
-        <RecomendFriends />
-        <Article />
-        <Advertisement /> -->
           </div>
         </div>
         <div class="vertical-line"></div>
@@ -39,8 +34,8 @@
       </div>
     </div>
   </div>
-  <ArticleDetailModal v-if="isOpenModal && store.isAuthenticated" :key="modalArticle[0].id" :articleId="modalArticle[0].id"
-    @close-modal="closeModal" @changed="stateChanged" />
+  <ArticleDetailModal v-if="isOpenModal && store.isAuthenticated" :key="modalArticle[0].id"
+    :articleId="modalArticle[0].id" @close-modal="closeModal" @changed="stateChanged" />
 </template>
 
 <script setup>
@@ -120,6 +115,7 @@ const router = useRouter();
 const closeModal = () => {
   isOpenModal.value = false;
   modalArticle.value = {};
+  stateChanged();
 }
 //좋아요, 북마크 클릭시 갯수 렌더링을 위한 비동기
 const stateChanged = async () => {
@@ -127,7 +123,7 @@ const stateChanged = async () => {
     alert("로그인 후 이용하세요!");
     return;
   }
-    await useAuthStore().getToken();
+  await useAuthStore().getToken();
 
   await axios.get("http://localhost:8080/api/articles?size=7", {
     //토큰 넣어서게시글 받아오기
@@ -143,8 +139,8 @@ const stateChanged = async () => {
     });
 }
 
-const moveWrite = ()=> {
-  router.push({name : 'write'});
+const moveWrite = () => {
+  router.push({ name: 'write' });
 }
 </script>
 
