@@ -51,9 +51,7 @@
     </ul>
   </div>
 
-  <div class="navbar-icons-wrapper" id="faArrowUp-button" @click="scrollToTop">
-    <font-awesome-icon :icon="faArrowUp" class="icon" id="faArrowUp" />
-  </div>
+  
   <div class="horizon-border"></div>
 </template>
 
@@ -115,12 +113,7 @@ function toggleUserMenu(event) {
   }
 }
 
-const scrollToTop = () => {
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth",
-  });
-};
+
 </script>
 
 

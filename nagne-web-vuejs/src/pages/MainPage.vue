@@ -36,10 +36,13 @@
   </div>
   <ArticleDetailModal v-if="isOpenModal && store.isAuthenticated" :key="modalArticle[0].id"
     :articleId="modalArticle[0].id" @close-modal="closeModal" @changed="stateChanged" />
+  <div class="navbar-icons-wrapper" id="faArrowUp-button" @click="scrollToTop">
+    <font-awesome-icon :icon="faArrowUp" class="icon" id="faArrowUp" />
+  </div>
 </template>
 
 <script setup>
-import { faUser, faPen } from "@fortawesome/free-solid-svg-icons";
+import { faUser, faPen, faArrowUp } from "@fortawesome/free-solid-svg-icons";
 import TheArticle from "@/components/MainPage/Article/TheArticle.vue";
 import { onMounted, ref, onUnmounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -142,6 +145,13 @@ const stateChanged = async () => {
 const moveWrite = () => {
   router.push({ name: 'write' });
 }
+
+const scrollToTop = () => {
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
+};
 </script>
 
 <style scoped>
@@ -324,5 +334,53 @@ const moveWrite = () => {
   .article-container {
     margin-top: 20px;
   }
+}
+
+.navbar-icons-wrapper {
+  background-color: white;
+  border-radius: 50px;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 200ms;
+  position: relative;
+}
+
+.navbar-icons-wrapper:hover {
+  scale: 1.1;
+  transition: all 100ms;
+  cursor: pointer;
+  background-color: rgb(118, 189, 255);
+
+  .icon {
+    color: white;
+    scale: 1.1;
+    transition: all 200ms;
+  }
+}
+
+#faArrowUp-button {
+  background-color: rgb(118, 189, 255);
+  color: white;
+  position: fixed;
+  bottom: 20px;
+  right: 30px;
+  z-index: 99;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 50px;
+}
+
+#faArrowUp-button:active {
+  background-color: #2a79ff;
+}
+
+#faArrowUp {
+  width: 30px;
+  height: 30px;
 }
 </style>
