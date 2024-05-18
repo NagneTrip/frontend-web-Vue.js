@@ -269,7 +269,7 @@ const scrollToTop = () => {
 
 .side-content {
   width: 340px;
-  height: 1500px;
+  height: 1800px;
   margin-left: 40px;
 
   gap: 20px;
