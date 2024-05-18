@@ -90,6 +90,13 @@ const isLiked = ref(false);
 const isBookmarked = ref(false);
 const noImage = ref(true);
 
+const props = defineProps({
+  article: Object,
+});
+const emit = defineEmits([
+  "openArticleModal",
+])
+
 
 onMounted(async () => {
   if (store.isAuthenticated) { //이미 로그인 되어 있으면 토큰 갱신
@@ -172,13 +179,6 @@ watch(article, async () => {
     isBookmarked.value = false;
   }
 })
-
-const props = defineProps({
-  article: Object,
-});
-const emit = defineEmits([
-  "openArticleModal",
-])
 
 const openArticleModal = () => {
   if (!store.isAuthenticated) {
