@@ -1,6 +1,6 @@
 # Nagne Trip
 
-## Stack : Vue3.js, Pinia
+## Stack : Vue3.js, Pinia, Vanilla CSS
 
 - Git Convention
     
@@ -52,6 +52,21 @@
 1. 토큰 무한 갱신으로 인한 로그아웃 불가
 [https://groovy-balaur-25d.notion.site/e106186a1b1b46529de92fb28ea99e3f?pvs=4](https://www.notion.so/e106186a1b1b46529de92fb28ea99e3f?pvs=21)
 
+### 20204.05.18 - monam2
+
+1. 지도 메인 페이지
+    1. [지도로 보기], [키워드로 보기], [저장한 장소], [내 여행 계획] 버튼 추가
+    2. index.js 라우터 추가
+
+### 2024.05.17 - monam2
+
+1. 로그인 페이지 / 회원가입 페이지
+    1. 소셜 로그인 기능 구현(임시, 로그인/가입 페이지에서 파라미터로 받기)
+    2. 이후 REST API 방식으로 보완 예정
+2. 게시물 수정 페이지
+    1. 수정할 게시물(작성자가 클릭한 게시물) API로 불러오기 - 수정 후 PATCH 구현 필요
+    2. index.js 라우터 추가
+
 ### 2024.05.16 - monam2
 
 1. **게시물 작성 페이지**
@@ -60,6 +75,14 @@
         1. input[type=file] 로 받아온 이미지 객체 저장
         2. 이미지를 임시 URL(URL.createObjectURL())을 생성하는 업로드 이미지 미리보기 기능 추가
         3. 게시물 작성 API 연동 → *request : { … } 를 Json이 아닌 Blob으로*
+2. **로그인 페이지**
+    1. 로그인 시 Email 기억하기 체크박스 추가 - 쿠키에 저장
+    2. 로그인 시 user Id를 pinia auth Store에 저장
+3. **게시물 상세 페이지(모달)**
+    1. 내가 작성한 게시물 삭제 기능 추가
+    2. 내 게시물 수정 기능 추가했으나 문제 발생
+4. **회원가입 페이지**
+    1. 회원가입 API 추가 및 기능 구현 완료
 
 ### 2024.05.15 - monam2
 
