@@ -39,6 +39,11 @@ import { useMapStore } from '@/store/map';
 const mapStore = useMapStore();
 const router = useRouter();
 const move = (path) => {
+    if (!sessionStorage.getItem('token')) {
+        alert('로그인 후 이용하세요!')
+        router.push({name : 'login'});
+    }
+
     router.push(`/map/${path}`);
 }
 

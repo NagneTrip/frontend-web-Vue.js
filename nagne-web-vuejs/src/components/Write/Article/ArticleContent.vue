@@ -73,13 +73,13 @@ const uploadFile = async () => {
     await axios.post('http://localhost:8080/api/articles', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
-        Authorization: `Bearer ${authStore.token}`,
+        Authorization: `Bearer ${sessionStorage.getItem('token')}`,
       },
     });
     alert("게시글이 등록되었습니다!");
     move('main');
   } catch (error) {
-    console.error(error);
+    alert('게시글 작성 실패!')
   }
 };
 </script>

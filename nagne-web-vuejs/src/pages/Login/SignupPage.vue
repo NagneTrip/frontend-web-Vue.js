@@ -210,6 +210,8 @@ onMounted(() => {
     const { token, userInfo } = JSON.parse(urlParams.get('data'))
     socialToken.value = token;
     authStore.token = token;
+    sessionStorage.setItem('token', token);
+    sessionStorage.setItem('loginUserId', userInfo.id);
     authStore.isAuthenticated = true;
     authStore.loginUserId = userInfo.id;
     authStore.userEmail = userInfo.username;

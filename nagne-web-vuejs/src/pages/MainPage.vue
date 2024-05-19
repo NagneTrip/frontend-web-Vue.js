@@ -1,6 +1,5 @@
 <template>
   <div class="main">
-    <!--  메인 영역 -->
     <div class="main-container">
       <TheSwipper />
       <div class="wrapper">
@@ -17,12 +16,10 @@
             </div>
           </div>
           <div class="article-container">
-            <TheArticle v-for="(article, index) in articles" :article="article" :key="article.id"
-              @open-article-modal="openModal" />
+            <TheArticle v-for="(article, index) in articles" :article="article" :key="article.id" @open-article-modal="openModal" />
           </div>
         </div>
         <div class="vertical-line"></div>
-        <!-- 사이드바 -->
         <div class="side" ref="sideSection">
           <div class="side-content">
             <TheWeather />
@@ -33,19 +30,18 @@
         </div>
       </div>
     </div>
-  </div>
-  <ArticleDetailModal v-if="isOpenModal && store.isAuthenticated" :key="modalArticle[0].id"
-    :articleId="modalArticle[0].id" @close-modal="closeModal" @changed="stateChanged" />
-  <div class="navbar-icons-wrapper" id="faArrowUp-button" @click="scrollToTop">
-    <font-awesome-icon :icon="faArrowUp" class="icon" id="faArrowUp" />
+    <ArticleDetailModal v-if="isOpenModal && store.isAuthenticated" :articleId="modalArticleId" @close-modal="closeModal" @changed="fetchArticles" />
+    <div class="navbar-icons-wrapper" id="faArrowUp-button" @click="scrollToTop">
+      <font-awesome-icon :icon="faArrowUp" class="icon" id="faArrowUp" />
+    </div>
   </div>
 </template>
 
 <script setup>
 import { faUser, faPen, faArrowUp } from "@fortawesome/free-solid-svg-icons";
 import TheArticle from "@/components/MainPage/Article/TheArticle.vue";
-import { onMounted, ref, onUnmounted, watch } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { onMounted, ref, onUnmounted } from "vue";
+import { useRouter } from "vue-router";
 import axios from "axios";
 import TheWeather from "@/components/MainPage/SideBar/TheWeather.vue";
 import TheNotice from "@/components/MainPage/SideBar/TheNotice.vue";
@@ -57,33 +53,45 @@ import { useAuthStore } from "@/store/auth";
 const store = useAuthStore();
 
 const articles = ref([]);
-onMounted(() => {
-  if (store.isAuthenticated) { //로그인 o
-    axios
-      .get("http://localhost:8080/api/articles?size=7", {
-        //토큰 넣어서게시글 받아오기
-        headers: {
-          Authorization: `Bearer ${store.token}`,
-        },
-      })
-      .then(({ data }) => {
-        articles.value = data.response.articles;
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  } else { //로그인 x
-    axios
-      .get("http://localhost:8080/api/articles?size=7", {
-      })
-      .then(({ data }) => {
-        articles.value = data.response.articles;
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+const router = useRouter();
+const isOpenModal = ref(false);
+const modalArticleId = ref(null);
+
+const fetchArticles = async () => {
+  try {
+    const response = await axios.get("http://localhost:8080/api/articles?size=7", {
+      headers: sessionStorage.getItem('token') ? { Authorization: `Bearer ${sessionStorage.getItem('token')}` } : {},
+    });
+    articles.value = response.data.response.articles;
+  } catch (error) {
+    console.error(error);
   }
-});
+};
+
+onMounted(fetchArticles);
+
+const openModal = (id) => {
+  if (store.isAuthenticated) {
+    isOpenModal.value = true;
+    modalArticleId.value = id;
+  }
+};
+
+const closeModal = () => {
+  isOpenModal.value = false;
+  modalArticleId.value = null;
+};
+
+const moveWrite = () => {
+  router.push({ name: 'write' });
+};
+
+const scrollToTop = () => {
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
+};
 
 const sideSection = ref(null);
 
@@ -92,67 +100,19 @@ onMounted(() => {
     if (sideSection.value) {
       sideSection.value.scrollTo({
         top: window.scrollY,
-        behavior: "smooth", // 부드러운 스크롤
+        behavior: "smooth",
       });
     }
   };
 
   window.addEventListener("scroll", handleScroll);
 
-  // 컴포넌트가 언마운트될 때 이벤트 리스너 제거
   onUnmounted(() => {
     window.removeEventListener("scroll", handleScroll);
   });
 });
-
-const isOpenModal = ref(false);
-const modalArticle = ref({});
-const openModal = (id) => {
-  if (store.isAuthenticated) {
-    //로그인 상태이면 게시글 로드
-    isOpenModal.value = true;
-    modalArticle.value = articles.value.filter(a => a.id === id);
-  }
-};
-const router = useRouter();
-const closeModal = () => {
-  isOpenModal.value = false;
-  modalArticle.value = {};
-  stateChanged();
-}
-//좋아요, 북마크 클릭시 갯수 렌더링을 위한 비동기
-const stateChanged = async () => {
-  if (!store.isAuthenticated) { //이미 로그인 되어 있으면 토큰 갱신
-    alert("로그인 후 이용하세요!");
-    return;
-  }
-  await useAuthStore().getToken();
-
-  await axios.get("http://localhost:8080/api/articles?size=7", {
-    //토큰 넣어서게시글 받아오기
-    headers: {
-      Authorization: `Bearer ${store.token}`,
-    },
-  })
-    .then(({ data }) => {
-      articles.value = data.response.articles;
-    })
-    .catch((error) => {
-      console.error(error);
-    });
-}
-
-const moveWrite = () => {
-  router.push({ name: 'write' });
-}
-
-const scrollToTop = () => {
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth",
-  });
-};
 </script>
+
 
 <style scoped>
 .main {

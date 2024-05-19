@@ -56,7 +56,7 @@ onMounted(async () => {
   //게시글 객체 속 유저id로 유저 정보 받아오기
   axios.get(`http://localhost:8080/api/users/${props.comment.userId}`, {
     headers: {
-      Authorization: `Bearer ${store.token}`,
+      Authorization: `Bearer ${sessionStorage.getItem('token')}`,
     },
   }).then(({ data }) => userInfo.value = data.response.userInfo).catch()
 })

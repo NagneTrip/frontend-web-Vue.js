@@ -15,8 +15,7 @@
                 <div class="user-info-text">
                   <div class="user-info-main">
                     <p class="noto-sans-kr-bold">{{ article?.userNickname }}</p>
-                    <img :src="`src/assets/tier/${article.userTier}.svg`" alt="" class="tier-img" :width="17"
-                      :height="17" />
+                    <img :src="`src/assets/tier/${article.userTier}.svg`" alt="" class="tier-img" :width="17" :height="17" />
                   </div>
                   <p class="user-info-date noto-sans-kr-regular">{{ article?.createdDate?.split('T')[0] }}</p>
                 </div>
@@ -34,52 +33,39 @@
               <span class="content-main noto-sans-kr-bold">
                 {{ article.content }}
               </span>
-              <!-- 댓글 컴포넌트 -for -->
               <CommentList :articleId="articleId" />
             </div>
             <div class="right-footer">
               <div class="social-box">
                 <div class="social-left-box">
                   <div class="social-like">
-                    <svg v-show="!isLiked" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="social-btn"
-                      @click="() => clickSocialBtn('like')">
-                      <path
-                        d="M225.8 468.2l-2.5-2.3L48.1 303.2C17.4 274.7 0 234.7 0 192.8v-3.3c0-70.4 50-130.8 119.2-144C158.6 37.9 198.9 47 231 69.6c9 6.4 17.4 13.8 25 22.3c4.2-4.8 8.7-9.2 13.5-13.3c3.7-3.2 7.5-6.2 11.5-9c0 0 0 0 0 0C313.1 47 353.4 37.9 392.8 45.4C462 58.6 512 119.1 512 189.5v3.3c0 41.9-17.4 81.9-48.1 110.4L288.7 465.9l-2.5 2.3c-8.2 7.6-19 11.9-30.2 11.9s-22-4.2-30.2-11.9zM239.1 145c-.4-.3-.7-.7-1-1.1l-17.8-20c0 0-.1-.1-.1-.1c0 0 0 0 0 0c-23.1-25.9-58-37.7-92-31.2C81.6 101.5 48 142.1 48 189.5v3.3c0 28.5 11.9 55.8 32.8 75.2L256 430.7 431.2 268c20.9-19.4 32.8-46.7 32.8-75.2v-3.3c0-47.3-33.6-88-80.1-96.9c-34-6.5-69 5.4-92 31.2c0 0 0 0-.1 .1s0 0-.1 .1l-17.8 20c-.3 .4-.7 .7-1 1.1c-4.5 4.5-10.6 7-16.9 7s-12.4-2.5-16.9-7z" />
+                    <svg v-show="!isLiked" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="social-btn" @click="() => clickSocialBtn('like')">
+                      <path d="M225.8 468.2l-2.5-2.3L48.1 303.2C17.4 274.7 0 234.7 0 192.8v-3.3c0-70.4 50-130.8 119.2-144C158.6 37.9 198.9 47 231 69.6c9 6.4 17.4 13.8 25 22.3c4.2-4.8 8.7-9.2 13.5-13.3c3.7-3.2 7.5-6.2 11.5-9c0 0 0 0 0 0C313.1 47 353.4 37.9 392.8 45.4C462 58.6 512 119.1 512 189.5v3.3c0 41.9-17.4 81.9-48.1 110.4L288.7 465.9l-2.5 2.3c-8.2 7.6-19 11.9-30.2 11.9s-22-4.2-30.2-11.9zM239.1 145c-.4-.3-.7-.7-1-1.1l-17.8-20c0 0-.1-.1-.1-.1c0 0 0 0 0 0c-23.1-25.9-58-37.7-92-31.2C81.6 101.5 48 142.1 48 189.5v3.3c0 28.5 11.9 55.8 32.8 75.2L256 430.7 431.2 268c20.9-19.4 32.8-46.7 32.8-75.2v-3.3c0-47.3-33.6-88-80.1-96.9c-34-6.5-69 5.4-92 31.2c0 0 0 0-.1 .1s0 0-.1 .1l-17.8 20c-.3 .4-.7 .7-1 1.1c-4.5 4.5-10.6 7-16.9 7s-12.4-2.5-16.9-7z"/>
                     </svg>
-                    <svg v-show="isLiked" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="social-btn"
-                      @click="() => clickSocialBtn('like')">
-                      <path fill="#ff0000"
-                        d="M47.6 300.4L228.3 469.1c7.5 7 17.4 10.9 27.7 10.9s20.2-3.9 27.7-10.9L464.4 300.4c30.4-28.3 47.6-68 47.6-109.5v-5.8c0-69.9-50.5-129.5-119.4-141C347 36.5 300.6 51.4 268 84L256 96 244 84c-32.6-32.6-79-47.5-124.6-39.9C50.5 55.6 0 115.2 0 185.1v5.8c0 41.5 17.2 81.2 47.6 109.5z" />
+                    <svg v-show="isLiked" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="social-btn" @click="() => clickSocialBtn('like')">
+                      <path fill="#ff0000" d="M47.6 300.4L228.3 469.1c7.5 7 17.4 10.9 27.7 10.9s20.2-3.9 27.7-10.9L464.4 300.4c30.4-28.3 47.6-68 47.6-109.5v-5.8c0-69.9-50.5-129.5-119.4-141C347 36.5 300.6 51.4 268 84L256 96 244 84c-32.6-32.6-79-47.5-124.6-39.9C50.5 55.6 0 115.2 0 185.1v5.8c0 41.5 17.2 81.2 47.6 109.5z"/>
                     </svg>
                     <p class="jua-regular">{{ article?.likeCount }}</p>
                   </div>
                   <div class="social-comment">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="social-btn"
-                      @click="() => clickSocialBtn('comment')">
-                      <path
-                        d="M123.6 391.3c12.9-9.4 29.6-11.8 44.6-6.4c26.5 9.6 56.2 15.1 87.8 15.1c124.7 0 208-80.5 208-160s-83.3-160-208-160S48 160.5 48 240c0 32 12.4 62.8 35.7 89.2c8.6 9.7 12.8 22.5 11.8 35.5c-1.4 18.1-5.7 34.7-11.3 49.4c17-7.9 31.1-16.7 39.4-22.7zM21.2 431.9c1.8-2.7 3.5-5.4 5.1-8.1c10-16.6 19.5-38.4 21.4-62.9C17.7 326.8 0 285.1 0 240C0 125.1 114.6 32 256 32s256 93.1 256 208s-114.6 208-256 208c-37.1 0-72.3-6.4-104.1-17.9c-11.9 8.7-31.3 20.6-54.3 30.6c-15.1 6.6-32.3 12.6-50.1 16.1c-.8 .2-1.6 .3-2.4 .5c-4.4 .8-8.7 1.5-13.2 1.9c-.2 0-.5 .1-.7 .1c-5.1 .5-10.2 .8-15.3 .8c-6.5 0-12.3-3.9-14.8-9.9c-2.5-6-1.1-12.8 3.4-17.4c4.1-4.2 7.8-8.7 11.3-13.5c1.7-2.3 3.3-4.6 4.8-6.9c.1-.2 .2-.3 .3-.5z" />
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="social-btn" @click="() => clickSocialBtn('comment')">
+                      <path d="M123.6 391.3c12.9-9.4 29.6-11.8 44.6-6.4c26.5 9.6 56.2 15.1 87.8 15.1c124.7 0 208-80.5 208-160s-83.3-160-208-160S48 160.5 48 240c0 32 12.4 62.8 35.7 89.2c8.6 9.7 12.8 22.5 11.8 35.5c-1.4 18.1-5.7 34.7-11.3 49.4c17-7.9 31.1-16.7 39.4-22.7zM21.2 431.9c1.8-2.7 3.5-5.4 5.1-8.1c10-16.6 19.5-38.4 21.4-62.9C17.7 326.8 0 285.1 0 240C0 125.1 114.6 32 256 32s256 93.1 256 208s-114.6 208-256 208c-37.1 0-72.3-6.4-104.1-17.9c-11.9 8.7-31.3 20.6-54.3 30.6c-15.1 6.6-32.3 12.6-50.1 16.1c-.8 .2-1.6 .3-2.4 .5c-4.4 .8-8.7 1.5-13.2 1.9c-.2 0-.5 .1-.7 .1c-5.1 .5-10.2 .8-15.3 .8c-6.5 0-12.3-3.9-14.8-9.9c-2.5-6-1.1-12.8 3.4-17.4c4.1-4.2 7.8-8.7 11.3-13.5c1.7-2.3 3.3-4.6 4.8-6.9c.1-.2 .2-.3 .3-.5z"/>
                     </svg>
                     <p class="jua-regular">{{ article.commentCount }}</p>
                   </div>
-                  <!-- 좋아요, 댓글, 공유, ... 북마크(저장) 버튼 -->
                 </div>
                 <div class="social-right-box">
                   <div class="social-bookmark">
-                    <svg v-show="isBookmarked" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"
-                      class="social-btn" @click="() => clickSocialBtn('bookMark')">
-                      <path
-                        d="M0 48V487.7C0 501.1 10.9 512 24.3 512c5 0 9.9-1.5 14-4.4L192 400 345.7 507.6c4.1 2.9 9 4.4 14 4.4c13.4 0 24.3-10.9 24.3-24.3V48c0-26.5-21.5-48-48-48H48C21.5 0 0 21.5 0 48z" />
+                    <svg v-show="isBookmarked" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" class="social-btn" @click="() => clickSocialBtn('bookMark')">
+                      <path d="M0 48V487.7C0 501.1 10.9 512 24.3 512c5 0 9.9-1.5 14-4.4L192 400 345.7 507.6c4.1 2.9 9 4.4 14 4.4c13.4 0 24.3-10.9 24.3-24.3V48c0-26.5-21.5-48-48-48H48C21.5 0 0 21.5 0 48z"/>
                     </svg>
-                    <svg v-show="!isBookmarked" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"
-                      class="social-btn" @click="() => clickSocialBtn('bookMark')">
-                      <path
-                        d="M0 48C0 21.5 21.5 0 48 0l0 48V441.4l130.1-92.9c8.3-6 19.6-6 27.9 0L336 441.4V48H48V0H336c26.5 0 48 21.5 48 48V488c0 9-5 17.2-13 21.3s-17.6 3.4-24.9-1.8L192 397.5 37.9 507.5c-7.3 5.2-16.9 5.9-24.9 1.8S0 497 0 488V48z" />
+                    <svg v-show="!isBookmarked" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" class="social-btn" @click="() => clickSocialBtn('bookMark')">
+                      <path d="M0 48C0 21.5 21.5 0 48 0l0 48V441.4l130.1-92.9c8.3-6 19.6-6 27.9 0L336 441.4V48H48V0H336c26.5 0 48 21.5 48 48V488c0 9-5 17.2-13 21.3s-17.6 3.4-24.9-1.8L192 397.5 37.9 507.5c-7.3 5.2-16.9 5.9-24.9 1.8S0 497 0 488V48z"/>
                     </svg>
                   </div>
                 </div>
               </div>
               <div class="write-comment-box">
-                <!-- 댓글 아이콘 -->
                 <div class="comment-input">
                   <input type="text" class="noto-sans-kr-bold" ref="commentInput" />
                 </div>
@@ -102,32 +88,13 @@
 <script setup>
 import { faXmark, faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref } from "vue";
 import CommentList from "./CommentList.vue";
 import { useAuthStore } from "@/store/auth";
-import { useRouter } from "vue-router"
+import { useRouter } from "vue-router";
 const router = useRouter();
 const store = useAuthStore();
 const article = ref({});
-
-onMounted(async () => {
-  if (store.isAuthenticated) { //이미 로그인 되어 있으면 토큰 갱신
-    //   await store.getToken();
-    // }
-
-    axios.get(`http://localhost:8080/api/articles/${props.articleId}`, {
-      headers: {
-        Authorization: `Bearer ${store.token}`,
-      },
-    })
-      .then(({ data }) => {
-        article.value = data.response.articleInfo;
-        isLiked.value = article.value.isLiked; // 데이터 로딩 후 isLiked 업데이트
-        isBookmarked.value = article.value.isBookmarked; // 데이터 로딩 후 isBookmarked 업데이트
-      })
-      .catch()
-  }
-})
 
 const props = defineProps({
   articleId: Number,
@@ -145,111 +112,105 @@ const isDotMenuOpen = ref(false);
 const dotMenuStyle = ref({});
 const commentInput = ref(null);
 
+onMounted(async () => {
+  await fetchArticleData();
+});
+
+const fetchArticleData = async () => {
+  if (sessionStorage.getItem('token') !== '') {
+    try {
+      const { data } = await axios.get(`http://localhost:8080/api/articles/${props.articleId}`, {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+        },
+      });
+      article.value = data.response.articleInfo;
+      isLiked.value = article.value.isLiked;
+      isBookmarked.value = article.value.isBookmarked;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+};
+
 const moveTo = (action) => {
   switch (action) {
     case 'modify':
-      router.push({ name: 'articleModify', params: { 'id': props.articleId } });
+      router.push({ name: 'articleModify', params: { id: props.articleId } });
       break;
 
     case 'delete':
       if (window.confirm("게시글을 삭제하시겠습니까?")) {
         deleteArticle();
-        emit("closeModal");
       }
       break;
 
     case 'declare':
-      //신고하기
+      // 신고하기
       break;
   }
 }
 
 const deleteArticle = async () => {
-  //게시글 삭제
-  if (article.value.userId !== store.loginUserId) {
+  if (article.value.userId !== sessionStorage.getItem('loginUserId')) {
     alert("게시글 삭제에 실패했습니다.");
     return;
   }
 
-  await axios.delete(`http://localhost:8080/api/articles/${props.articleId}`, {
-    headers: {
-      Authorization: `Bearer ${store.token}`,
-    }
-  }).then(({ data }) => {
+  try {
+    await axios.delete(`http://localhost:8080/api/articles/${props.articleId}`, {
+      headers: {
+        Authorization: `Bearer ${store.token}`,
+      }
+    });
     alert("게시글이 삭제되었습니다.");
-    router.push({ name: 'main' });
-  }).catch();
+    emit("closeModal");
+    emit("changed");
+  } catch (error) {
+    console.error(error);
+  }
 }
 
-//좋아요, 북마크 클릭시 갯수 렌더링 또는 게시글 삭제 후 로드를 위한 비동기
-watch([isLiked, isBookmarked], async () => {
-  if (store.isAuthenticated) { //이미 로그인 되어 있으면 토큰 갱신
-    await store.getToken();
-  }
-  await axios.get(`http://localhost:8080/api/articles/${props.articleId}`, {
-    headers: {
-      Authorization: `Bearer ${store.token}`,
-    },
-  })
-    .then(({ data }) => {
-      article.value = data.response.articleInfo;
-      isLiked.value = article.value.isLiked; // 데이터 로딩 후 isLiked 업데이트
-      isBookmarked.value = article.value.isBookmarked; // 데이터 로딩 후 isBookmarked 업데이트
-    })
-    .catch()
-  emit('changed');
-})
-
-const clickSocialBtn = (btnName) => {
-  if (!store.isAuthenticated || store.token === '') {
+const clickSocialBtn = async (btnName) => {
+  if (!store.isAuthenticated || !sessionStorage.getItem('token')) {
     alert('로그인 후 진행하세요!')
-    return
+    return;
   }
-  switch (btnName) {
-    case 'like':
-      if (!isLiked.value) { //좋아요 누르기
-        isLiked.value = true;
-        axios.post(`http://localhost:8080/api/articles/like`,
-          { articleId: props.articleId },
-          { headers: { Authorization: `Bearer ${store.token}` } }
-        ).then()
-          .catch(({ error }) => alert('이미 좋아요 한 게시글입니다.'))
-      } else { //좋아요 취소하기
-        isLiked.value = false;
-        axios.delete(`http://localhost:8080/api/articles/like/${props.articleId}`,
-          { headers: { Authorization: `Bearer ${store.token}` } }).then()
-          .catch(({ error }) => console.log('이미 좋아요 취소한 게시글입니다.'))
-      }
 
-      emit('changed');
-      break;
-    case 'bookMark':
-      if (!isBookmarked.value) { //좋아요 누르기
-        isBookmarked.value = true;
-        axios.post(`http://localhost:8080/api/bookmark`,
-          { articleId: props.articleId },
-          { headers: { Authorization: `Bearer ${store.token}` } }
-        ).then()
-          .catch(({ error }) => alert('이미 저장한 게시글입니다.'))
-      } else { //좋아요 취소하기
-        isBookmarked.value = false;
-        axios.delete(`http://localhost:8080/api/bookmark/${props.articleId}`,
-          { headers: { Authorization: `Bearer ${store.token}` } }).then()
-          .catch(({ error }) => console.log('이미 좋아요 취소한 게시글입니다.'))
-      }
-
-      emit('changed');
-      break;
-    case 'comment':
-      if (commentInput.value) {
-        commentInput.value.focus(); // commentInput 요소에 포커스 설정
-      }
-      break;
+  try {
+    switch (btnName) {
+      case 'like':
+        if (!isLiked.value) {
+          isLiked.value = true;
+          await axios.post(`http://localhost:8080/api/articles/like`, { articleId: props.articleId }, { headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` } });
+        } else {
+          isLiked.value = false;
+          await axios.delete(`http://localhost:8080/api/articles/like/${props.articleId}`, { headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` } });
+        }
+        break;
+      case 'bookMark':
+        if (!isBookmarked.value) {
+          isBookmarked.value = true;
+          await axios.post(`http://localhost:8080/api/bookmark`, { articleId: props.articleId }, { headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` } });
+        } else {
+          isBookmarked.value = false;
+          await axios.delete(`http://localhost:8080/api/bookmark/${props.articleId}`, { headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` } });
+        }
+        break;
+      case 'comment':
+        if (commentInput.value) {
+          commentInput.value.focus();
+        }
+        break;
+    }
+    await fetchArticleData(); // Update the article data after any social button click
+    emit('changed'); // Emit the event to notify the parent component of the change
+  } catch (error) {
+    console.error(error);
   }
 };
 
 const closeDotMenu = (event) => {
-  // 메뉴 버튼 클릭인지 확인
   if (!event.target.closest('.right-button')) {
     isDotMenuOpen.value = false;
   }
@@ -267,6 +228,8 @@ const toggleDotMenu = (event) => {
   }
 };
 </script>
+
+
 
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400&display=swap");

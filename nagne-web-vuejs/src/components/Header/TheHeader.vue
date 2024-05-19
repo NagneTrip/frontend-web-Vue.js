@@ -65,18 +65,34 @@ import {
   faBars,
   faArrowUp,
 } from "@fortawesome/free-solid-svg-icons";
-import { ref, watch } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/store/auth";
+const authStore = useAuthStore();
+import { storeToRefs } from 'pinia';
+const { isAuthenticated } = storeToRefs(authStore);
 
 const store = useAuthStore();
 const router = useRouter();
+const isLogin = ref(false);
+
+onMounted(() => {
+  store.loadAuthState();
+})
+
+watch(isAuthenticated, ()=>{
+  if (!sessionStorage.getItem('token')) {
+    isLogin.value = false;
+  } else {
+    isLogin.value = true;
+  }
+})
 
 const move = (path) => {
   let moveTo = { name: path };
   switch (path) {
     case 'login': // 로그인
-      if (store.isAuthenticated) {
+      if (sessionStorage.getItem('token')) {
         alert('이미 로그인 중입니다!');
         return;
       }

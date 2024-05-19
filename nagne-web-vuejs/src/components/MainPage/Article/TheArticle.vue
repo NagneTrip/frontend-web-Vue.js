@@ -99,14 +99,14 @@ const emit = defineEmits([
 
 
 onMounted(async () => {
-  if (store.isAuthenticated) { //이미 로그인 되어 있으면 토큰 갱신
+  if (sessionStorage.getItem('token')) { //이미 로그인 되어 있으면 토큰 갱신
     // await store.getToken();
 
     //로그인 된 상태 -> 모든 정보 API
     //게시물 정보 받아오기
     await axios.get(`http://localhost:8080/api/articles/${props.article.id}`, {
       headers: {
-        Authorization: `Bearer ${store.token}`,
+        Authorization: `Bearer ${sessionStorage.getItem('token')}`,
       },
     })
       .then(({ data }) => {
@@ -120,7 +120,7 @@ onMounted(async () => {
     await axios.get(`http://localhost:8080/api/comments?articleId=${props.article.id}`,
       {
         headers: {
-          Authorization: `Bearer ${store.token}`,
+          Authorization: `Bearer ${sessionStorage.getItem('token')}`,
         },
       }
     )
@@ -147,7 +147,7 @@ watch(article, async () => {
     //게시물 정보 받아오기
     axios.get(`http://localhost:8080/api/articles/${props.article.id}`, {
       headers: {
-        Authorization: `Bearer ${store.token}`,
+        Authorization: `Bearer ${sessionStorage.getItem('token')}`,
       },
     })
       .then(({ data }) => {
@@ -161,7 +161,7 @@ watch(article, async () => {
     axios.get(`http://localhost:8080/api/comments?articleId=${props.article.id}`,
       {
         headers: {
-          Authorization: `Bearer ${store.token}`,
+          Authorization: `Bearer ${sessionStorage.getItem('token')}`,
         },
       }
     )
