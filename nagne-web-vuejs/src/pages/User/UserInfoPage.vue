@@ -51,7 +51,7 @@ import UserPlan from '@/components/User/UserPlan.vue';
 import UserFollowing from '@/components/User/UserFollowing.vue';
 import UserFollowers from '@/components/User/UserFollowers.vue';
 import axios from 'axios';
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from "@/store/auth";
 const authStore = useAuthStore();
@@ -103,6 +103,22 @@ onMounted(async () => {
     }
 
     // 유저 정보 로드
+    await fetchUserInfo();
+
+    // 유저가 작성한 게시물 로드
+    await axios.get(`http://localhost:8080/api/articles/by?userId=${userIdByParams}`, {
+        headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}`, }
+    }).then(({ data }) => {
+        userArticles.value = data.response.articles;
+    })
+})
+
+watch(isFollow, async ()=>{
+    await fetchUserInfo();
+})
+
+// 유저 정보 로드
+const fetchUserInfo = async ()=> {
     await axios.get(`http://localhost:8080/api/users/${userIdByParams}`, {
         headers: {
             Authorization: `Bearer ${sessionStorage.getItem('token')}`,
@@ -113,14 +129,7 @@ onMounted(async () => {
         alert('유저 정보 로드 실패! 메인으로 돌아갑니다.');
         router.push({ name: 'main' });
     })
-
-    // 유저가 작성한 게시물 로드
-    await axios.get(`http://localhost:8080/api/articles/by?userId=${userIdByParams}`, {
-        headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}`, }
-    }).then(({ data }) => {
-        userArticles.value = data.response.articles;
-    })
-})
+}
 
 const userArticlesLen = computed(() => {
     return userArticles.value.length;
