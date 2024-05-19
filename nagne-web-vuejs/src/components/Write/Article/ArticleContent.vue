@@ -70,7 +70,6 @@ const uploadFile = async () => {
   try {
     await axios.post('http://localhost:8080/api/articles', formData, {
       headers: {
-        'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${sessionStorage.getItem('token')}`,
       },
     });
@@ -81,6 +80,7 @@ const uploadFile = async () => {
   }
 };
 </script>
+
 
 
 
