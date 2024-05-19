@@ -1,6 +1,6 @@
 <template>
     <div class="list">
-        <div class="list-left">
+        <div class="list-left" @click="moveToUser">
             <div class="img-section">
                 <img src="@/assets/logo/logo_img.png" alt="" :width="60" :height="60">
             </div>
@@ -20,9 +20,12 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import axios from "axios";
 import { useAuthStore } from "@/store/auth";
 const authStore = useAuthStore();
+const router = useRouter();
+
 const isNowLoginUser = ref(false);
 
 const props = defineProps({
@@ -33,6 +36,10 @@ const emit = defineEmits([
 ])
 
 const isFollow = ref(false);
+
+const moveToUser = ()=> {
+    router.push({name : 'user', params : {'id' : props.followItem.id}})
+}
 
 onMounted(async () => {
     if (!sessionStorage.getItem('token') || !authStore.isAuthenticated) {
@@ -97,6 +104,7 @@ p {
     align-items: center;
     justify-content: flex-start;
     gap: 20px;
+    cursor: pointer;
 }
 
 .user-nickname {
