@@ -11,7 +11,6 @@
                         <img :src="`/src/assets/tier/${userInfo.tier}.svg`" :width="25" :height="25" alt=""
                             class="tier-img" />
                     </div>
-
                     <button class="edit-profile-btn jua-regular">프로필 편집</button>
                     <template>
                         <button class="edit-profile-btn jua-regular">팔로우</button>
@@ -54,6 +53,8 @@ import UserFollowers from '@/components/User/UserFollowers.vue';
 import axios from 'axios';
 import { ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { useAuthStore } from "@/store/auth";
+const authStore = useAuthStore();
 
 const route = useRoute();
 const router = useRouter();
@@ -87,7 +88,7 @@ const closeFollowModal = () => {
 }
 
 onMounted(async () => {
-    if (!sessionStorage.getItem('token')) {
+    if (!sessionStorage.getItem('token') || !authStore.isAuthenticated) {
         alert('유저 정보는 로그인 후 확인할 수 있습니다.');
         router.push({ name: 'login' });
         return;
