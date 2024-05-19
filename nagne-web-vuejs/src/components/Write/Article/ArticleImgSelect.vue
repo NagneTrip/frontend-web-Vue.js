@@ -34,6 +34,7 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useWriteStore } from "@/store/write";
 import { storeToRefs } from 'pinia';
+import imageCompression from "browser-image-compression";
 
 const store = useWriteStore();
 const { selectedImg, tempUrl } = storeToRefs(store);
@@ -58,13 +59,28 @@ onMounted(() => {
   tempUrl.value = [];
 });
 
-const fileChangeHandler = (event) => {
+const fileChangeHandler = async (event) => {
   if (event.target.files && event.target.files.length > 0) {
-    Array.from(event.target.files).forEach(file => {
-      selectedImg.value.push(file);
-      let url = URL.createObjectURL(file);
+    for (let file of event.target.files) {
+      const compressedFile = await compressImage(file);
+      selectedImg.value.push(compressedFile);
+      const url = URL.createObjectURL(compressedFile);
       tempUrl.value.push(url);
-    });
+    }
+  }
+};
+
+const compressImage = async (file) => {
+  const options = {
+    maxSizeMB: 1,
+    maxWidthOrHeight: 1920,
+    useWebWorker: true
+  };
+  try {
+    return await imageCompression(file, options);
+  } catch (error) {
+    console.error(error);
+    return file;
   }
 };
 
@@ -84,6 +100,7 @@ const truncatedName = (img) => {
   return '';
 };
 </script>
+
 
 
 
