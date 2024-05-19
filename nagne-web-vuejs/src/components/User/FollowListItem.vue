@@ -2,27 +2,31 @@
     <div class="list">
         <div class="list-left">
             <div class="img-section">
-            <img src="@/assets/logo/logo_img.png" alt="" :width="60" :height="60">
+                <img src="@/assets/logo/logo_img.png" alt="" :width="60" :height="60">
+            </div>
+            <div class="user-nickname">
+                <p class="jua-regular nickname">{{ followItem.nickname }}</p>
+                <img :src="`/src/assets/tier/${followItem.tier}.svg`" :width="18" :height="18" alt=""
+                    class="tier-img" />
+            </div>
         </div>
-        <div class="user-nickname">
-            <p class="jua-regular nickname">{{ followItem.nickname }}</p>
-            <img :src="`/src/assets/tier/${followItem.tier}.svg`" :width="18" :height="18" alt="" class="tier-img" />
-        </div>
-        
-        </div>
-        <button v-if="!isFollow" class="follow-btn jua-regular" @click="follow">팔로우</button>
-        <button v-if="isFollow" class="unfollow jua-regular" @click="unfollow">팔로잉</button>
+        <template v-if="!isNowLoginUser">
+            <button v-if="!isFollow" class="follow-btn jua-regular" @click="follow">팔로우</button>
+            <button v-if="isFollow" class="unfollow jua-regular" @click="unfollow">팔로잉</button>
+        </template>
+
     </div>
 </template>
 
 <script setup>
-import {ref, onMounted} from 'vue';
+import { ref, onMounted } from 'vue';
 import axios from "axios";
 import { useAuthStore } from "@/store/auth";
 const authStore = useAuthStore();
+const isNowLoginUser = ref(false);
 
 const props = defineProps({
-    followItem : Object,
+    followItem: Object,
 })
 const emit = defineEmits([
     'followChanged'
@@ -30,40 +34,45 @@ const emit = defineEmits([
 
 const isFollow = ref(false);
 
-onMounted(async ()=> {
+onMounted(async () => {
     if (!sessionStorage.getItem('token') || !authStore.isAuthenticated) {
         return;
     }
 
+    // 로그인한 유저와 목록의 유저가 동일한지 확인
+    if (Number(props.followItem.id)===Number(sessionStorage.getItem('loginUserId'))) {
+        isNowLoginUser.value = true;
+    }
+
     await axios.get(`http://localhost:8080/api/follow/${props.followItem.id}`, {
-        headers : {Authorization: `Bearer ${sessionStorage.getItem('token')}`, }
-    }).then(({data})=>{
+        headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}`, }
+    }).then(({ data }) => {
         isFollow.value = data.response.checkFollow;
     })
 })
 
-const follow = ()=> {
+const follow = () => {
     if (!sessionStorage.getItem('token') || !authStore.isAuthenticated) {
         alert('에러 발생! 로그인을 다시 진행하세요!')
         return;
     }
 
-    axios.post(`http://localhost:8080/api/follow`, {'followId':props.followItem.id},{
-        headers : {Authorization: `Bearer ${sessionStorage.getItem('token')}`, }
-    }).then(({data})=>{
+    axios.post(`http://localhost:8080/api/follow`, { 'followId': props.followItem.id }, {
+        headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}`, }
+    }).then(({ data }) => {
         isFollow.value = true;
     })
     emit('followChanged'); // 팔로우 변경 내역 보내기
 }
-const unfollow = async ()=> {
+const unfollow = async () => {
     if (!sessionStorage.getItem('token') || !authStore.isAuthenticated) {
         alert('에러 발생! 로그인을 다시 진행하세요!')
         return;
     }
 
     axios.delete(`http://localhost:8080/api/follow/${props.followItem.id}`, {
-        headers : {Authorization: `Bearer ${sessionStorage.getItem('token')}`, }
-    }).then(()=>{
+        headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}`, }
+    }).then(() => {
         isFollow.value = false;
     })
     emit('followChanged');  // 팔로우 변경 내역 보내기
@@ -74,12 +83,14 @@ const unfollow = async ()=> {
 p {
     margin: 0;
 }
+
 .list {
     display: flex;
     width: 100%;
     align-items: center;
     justify-content: space-between;
 }
+
 .list-left {
     width: 100%;
     display: flex;
