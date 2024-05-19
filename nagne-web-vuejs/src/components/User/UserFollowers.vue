@@ -91,7 +91,7 @@ li {
     transition: 0.2s all;
   }
 
-ul {
+  ul {
     display: flex;
     height: 100%;
     flex-direction: column;
@@ -99,5 +99,10 @@ ul {
     justify-content: flex-start;
     align-items: center;
     padding: 20px;
+    overflow-Y: scroll;
+    overflow-y: auto;
+  overscroll-behavior-y: contain;
+  scrollbar-width: none;
+    gap: 10px;
 }
 </style>

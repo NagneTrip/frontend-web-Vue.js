@@ -100,6 +100,11 @@ const followChanged = ()=>{
     justify-content: flex-start;
     align-items: center;
     padding: 20px;
+    overflow-Y: scroll;
+    overflow-y: auto;
+  overscroll-behavior-y: contain;
+  scrollbar-width: none;
+    gap: 10px;
 }
   </style>
   

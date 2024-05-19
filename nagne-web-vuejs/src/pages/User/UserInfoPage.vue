@@ -133,7 +133,6 @@ const fetchUserInfo = async () => {
         }
     }).then(({ data }) => {
         userInfo.value = data.response.userInfo;
-        console.log(userInfo.value)
     }).catch(() => {
         alert('유저 정보 로드 실패! 메인으로 돌아갑니다.');
         router.push({ name: 'main' });
@@ -143,7 +142,7 @@ const fetchUserInfo = async () => {
 // 유저가 작성한 게시물 로드
 const fetchUserArticles = async () => {
     await axios.get(`http://localhost:8080/api/articles/by?userId=${userIdByParams.value}`, {
-        headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}`, }
+        headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}`}
     }).then(({ data }) => {
         userArticles.value = data.response.articles;
     })
@@ -159,7 +158,7 @@ const follow = async () => {
         return;
     }
 
-    await axios.post(`http://localhost:8080/api/follow`, {'followId': userIdByParams.value}, {
+    await axios.post(`http://localhost:8080/api/follow`, {"followId": Number(userIdByParams.value)}, {
         headers: {
             Authorization: `Bearer ${sessionStorage.getItem('token')}`,
         }
@@ -167,7 +166,7 @@ const follow = async () => {
         isFollow.value = true;
     })
 }
-
+console.log(userIdByParams.value)
 const unfollow = async () => {
     if (!sessionStorage.getItem('token') || !authStore.isAuthenticated) {
         alert('에러 발생! 로그인을 다시 진행하세요!')
@@ -175,7 +174,9 @@ const unfollow = async () => {
     }
 
     await axios.delete(`http://localhost:8080/api/follow/${userIdByParams.value}`, {
-        headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}`, }
+        headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+        }
     }).then(() => {
         isFollow.value = false;
     })
