@@ -10,6 +10,10 @@ export const useAuthStore = defineStore("auth", () => {
   const userEmail = ref("");
   const password = ref("");
 
+  const loadAuthState = () => {
+    isAuthenticated.value = !!sessionStorage.getItem('token');
+  };
+
   const getToken = async () => {
     const result = await login(userEmail.value, password.value);
     if (result.token !== "") {
@@ -17,6 +21,8 @@ export const useAuthStore = defineStore("auth", () => {
       token.value = result.token;
       isAuthenticated.value = true;
       loginUserId.value = result.userId;
+      sessionStorage.setItem('token', token.value);
+      sessionStorage.setItem('loginUserId', loginUserId.value);
     } else {
       // 로그인 실패
       token.value = "";
@@ -30,7 +36,8 @@ export const useAuthStore = defineStore("auth", () => {
     userEmail.value = "";
     password.value = "";
     loginUserId.value = null;
+    sessionStorage.clear();
   };
 
-  return { getLogout, getToken, isAuthenticated, token, userEmail, password, loginUserId };
+  return { loadAuthState, getLogout, getToken, isAuthenticated, token, userEmail, password, loginUserId };
 });
