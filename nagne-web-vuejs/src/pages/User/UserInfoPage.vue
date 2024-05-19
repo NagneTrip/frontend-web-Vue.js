@@ -29,8 +29,7 @@
             <button class="tab jua-regular" :class="{ 'tab-selected': tabState === 'article' }"
                 @click="changeTab('article')">게시물</button>
             <button class="tab jua-regular" :class="{ 'tab-selected': tabState === 'plan' }"
-                @click="changeTab('plan')">여행
-                계획</button>
+                @click="changeTab('plan')">여행 계획</button>
         </div>
         <div class="article-section">
             <template v-if="tabState === 'article'">
@@ -40,8 +39,8 @@
                 <UserPlan />
             </template>
         </div>
-        <UserFollowing v-if="isFollowingOpen" :userInfo="userInfo" @follow-changed="'followChanged'" @close-follow-modal="closeFollowModal" />
-        <UserFollowers v-if="isFollowersOpen" :userInfo="userInfo" @follow-changed="'followChanged'" @close-follow-modal="closeFollowModal" />
+        <UserFollowing v-if="isFollowingOpen" :userInfo="userInfo" @follow-changed="followChanged" @close-follow-modal="closeFollowModal" />
+        <UserFollowers v-if="isFollowersOpen" :userInfo="userInfo" @follow-changed="followChanged" @close-follow-modal="closeFollowModal" />
     </div>
 </template>
 
@@ -54,14 +53,15 @@ import axios from 'axios';
 import { ref, onMounted, computed, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from "@/store/auth";
-const authStore = useAuthStore();
 
+const authStore = useAuthStore();
 const route = useRoute();
 const router = useRouter();
 
 const userInfo = ref({});
 const userArticles = ref([]);
-const userIdByParams = route.params.id;
+const userIdByParams = ref(route.params.id);
+
 const tabState = ref('article');
 const isFollowingOpen = ref(false);
 const isFollowersOpen = ref(false);
@@ -77,7 +77,6 @@ const openFollowModal = (type) => {
         case 'followers':
             isFollowersOpen.value = true;
             break;
-
         case 'following':
             isFollowingOpen.value = true;
             break;
@@ -102,36 +101,51 @@ onMounted(async () => {
     }
 
     // 로그인한 유저와 info의 유저가 동일한지 확인
-    if (Number(userIdByParams)===Number(sessionStorage.getItem('loginUserId'))) {
+    if (Number(userIdByParams.value) === Number(sessionStorage.getItem('loginUserId'))) {
         isNowLoginUser.value = true;
     }
 
     // 유저 정보 로드
     await fetchUserInfo();
-
     // 유저가 작성한 게시물 로드
-    await axios.get(`http://localhost:8080/api/articles/by?userId=${userIdByParams}`, {
-        headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}`, }
-    }).then(({ data }) => {
-        userArticles.value = data.response.articles;
-    })
+    await fetchUserArticles();
+    
 })
 
-watch(isFollow, async ()=>{
+watch(() => route.params.id, async (newId) => {
+    userIdByParams.value = newId;
+    isFollowingOpen.value = false;
+    isFollowersOpen.value = false;
+    isNowLoginUser.value = (Number(newId) === Number(sessionStorage.getItem('loginUserId')));
+    await fetchUserInfo();
+    await fetchUserArticles();
+})
+
+watch(isFollow, async () => {
     await fetchUserInfo();
 })
 
 // 유저 정보 로드
-const fetchUserInfo = async ()=> {
-    await axios.get(`http://localhost:8080/api/users/${userIdByParams}`, {
+const fetchUserInfo = async () => {
+    await axios.get(`http://localhost:8080/api/users/${userIdByParams.value}`, {
         headers: {
             Authorization: `Bearer ${sessionStorage.getItem('token')}`,
         }
     }).then(({ data }) => {
         userInfo.value = data.response.userInfo;
+        console.log(userInfo.value)
     }).catch(() => {
         alert('유저 정보 로드 실패! 메인으로 돌아갑니다.');
         router.push({ name: 'main' });
+    })
+}
+
+// 유저가 작성한 게시물 로드
+const fetchUserArticles = async () => {
+    await axios.get(`http://localhost:8080/api/articles/by?userId=${userIdByParams.value}`, {
+        headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}`, }
+    }).then(({ data }) => {
+        userArticles.value = data.response.articles;
     })
 }
 
@@ -139,27 +153,30 @@ const userArticlesLen = computed(() => {
     return userArticles.value.length;
 })
 
-const follow = ()=> {
+const follow = async () => {
     if (!sessionStorage.getItem('token') || !authStore.isAuthenticated) {
         alert('에러 발생! 로그인을 다시 진행하세요!')
         return;
     }
 
-    axios.post(`http://localhost:8080/api/follow`, {'followId':userIdByParams},{
-        headers : {Authorization: `Bearer ${sessionStorage.getItem('token')}`, }
-    }).then(({data})=>{
+    await axios.post(`http://localhost:8080/api/follow`, {'followId': userIdByParams.value}, {
+        headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+        }
+    }).then(({data}) => {
         isFollow.value = true;
     })
 }
-const unfollow = async ()=> {
+
+const unfollow = async () => {
     if (!sessionStorage.getItem('token') || !authStore.isAuthenticated) {
         alert('에러 발생! 로그인을 다시 진행하세요!')
         return;
     }
 
-    axios.delete(`http://localhost:8080/api/follow/${userIdByParams}`, {
-        headers : {Authorization: `Bearer ${sessionStorage.getItem('token')}`, }
-    }).then(()=>{
+    await axios.delete(`http://localhost:8080/api/follow/${userIdByParams.value}`, {
+        headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}`, }
+    }).then(() => {
         isFollow.value = false;
     })
 }
