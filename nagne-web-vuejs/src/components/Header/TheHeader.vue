@@ -43,7 +43,7 @@
     <!-- UserMenu -->
     <ul v-show="showUserMenu" class="user-menu list-group" :style="userMenuStyle">
       <li v-show="!store.isAuthenticated" class="list-group-item" @click="() => move('login')">로그인</li>
-      <li v-show="store.isAuthenticated" class="list-group-item">내 프로필</li>
+      <li v-show="store.isAuthenticated" class="list-group-item" @click="() => move('user')">내 프로필</li>
       <li v-show="store.isAuthenticated" class="list-group-item">저장한 게시물</li>
       <li v-show="store.isAuthenticated" class="list-group-item">내정보 수정</li>
       <li v-show="store.isAuthenticated" class="list-group-item" style="border-top: 1px solid black;">고객센터</li>
@@ -102,6 +102,9 @@ const move = (path) => {
       moveTo = { name: 'logout' }
       break;
     case 'mapMain':
+      break;
+    case 'user':
+      moveTo = {name: path, params : {'id' : Number(sessionStorage.getItem('loginUserId'))}}
       break;
   }
   // 페이지 이동 시 열려있는 메뉴 전부 닫기
