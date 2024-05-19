@@ -24,6 +24,9 @@ const authStore = useAuthStore();
 const props = defineProps({
     followItem : Object,
 })
+const emit = defineEmits([
+    'followChanged'
+])
 
 const isFollow = ref(false);
 
@@ -50,6 +53,7 @@ const follow = ()=> {
     }).then(({data})=>{
         isFollow.value = true;
     })
+    emit('followChanged'); // 팔로우 변경 내역 보내기
 }
 const unfollow = async ()=> {
     if (!sessionStorage.getItem('token') || !authStore.isAuthenticated) {
@@ -62,6 +66,7 @@ const unfollow = async ()=> {
     }).then(()=>{
         isFollow.value = false;
     })
+    emit('followChanged');  // 팔로우 변경 내역 보내기
 }
 </script>
 

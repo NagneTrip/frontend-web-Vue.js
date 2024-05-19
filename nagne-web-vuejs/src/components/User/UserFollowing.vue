@@ -3,7 +3,7 @@
       <div class="modal-content">
         <h1 class="jua-regular">{{userInfo.nickname}} 님의 팔로우</h1>
         <ul>
-          <FollowListItem v-for="following in followings" :followItem="following" :key="following.id">{{ following.nickname }}</FollowListItem>
+          <FollowListItem v-for="following in followings" :followItem="following" :follow-changed="followChanged" :key="following.id">{{ following.nickname }}</FollowListItem>
         </ul>
         <button class="close-btn jua-regular" @click="closeFollowModal">Close</button>
       </div>
@@ -24,8 +24,12 @@ const authStore = useAuthStore()
   })
   
   const emit = defineEmits([
-    'closeFollowModal'
-  ])
+    'closeFollowModal', 'followChanged'
+])
+
+const followChanged = ()=>{
+    emit('followChanged');
+}
   const closeFollowModal = () => {
     emit('closeFollowModal');
   };

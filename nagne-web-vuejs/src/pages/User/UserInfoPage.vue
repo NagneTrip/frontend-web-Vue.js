@@ -40,8 +40,8 @@
                 <UserPlan />
             </template>
         </div>
-        <UserFollowing v-if="isFollowingOpen" :userInfo="userInfo" @close-follow-modal="closeFollowModal" />
-        <UserFollowers v-if="isFollowersOpen" :userInfo="userInfo" @close-follow-modal="closeFollowModal" />
+        <UserFollowing v-if="isFollowingOpen" :userInfo="userInfo" @follow-changed="'followChanged'" @close-follow-modal="closeFollowModal" />
+        <UserFollowers v-if="isFollowersOpen" :userInfo="userInfo" @follow-changed="'followChanged'" @close-follow-modal="closeFollowModal" />
     </div>
 </template>
 
@@ -87,6 +87,10 @@ const openFollowModal = (type) => {
 const closeFollowModal = () => {
     isFollowersOpen.value = false;
     isFollowingOpen.value = false;
+}
+
+const followChanged = async() => {
+    await fetchUserInfo();
 }
 
 onMounted(async () => {

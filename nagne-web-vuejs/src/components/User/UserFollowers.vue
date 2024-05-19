@@ -3,7 +3,7 @@
         <div class="modal-content">
             <h1 class="jua-regular">{{ userInfo.nickname }} 님을 팔로우</h1>
             <ul>
-                <FollowListItem v-for="follower in followers" :followItem="follower" :key="follower.id">{{ follower.nickname }}</FollowListItem>
+                <FollowListItem v-for="follower in followers" :followItem="follower" @follow-changed="followChanged" :key="follower.id">{{ follower.nickname }}</FollowListItem>
             </ul>
             <button class="close-btn jua-regular" @click="closeFollowModal">Close</button>
         </div>
@@ -22,10 +22,14 @@ const followers = ref([]);
 const props = defineProps({
     userInfo: Object,
 })
-
 const emit = defineEmits([
-    'closeFollowModal'
+    'closeFollowModal', 'followChanged'
 ])
+
+const followChanged = ()=>{
+    emit('followChanged');
+}
+
 const closeFollowModal = () => {
     emit('closeFollowModal');
 };
