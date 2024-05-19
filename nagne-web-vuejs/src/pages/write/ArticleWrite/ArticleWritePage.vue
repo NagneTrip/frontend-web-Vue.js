@@ -3,16 +3,16 @@
     <div class="modal-wrapper">
       <div class="modal-box" @click.stop>
         <div class="modal-left">
-          <template v-if="renderBaseImg" >
+          <template v-if="renderBaseImg">
             <img class="modal-left-img" :src="baseImg" alt="" :width="650" :height="600">
           </template>
-          <template v-if="!renderBaseImg" >
-            <ArticleWriteSwiper class="modal-left-img" v-if="!renderBaseImg" :width="650" :height="600"/>
+          <template v-if="!renderBaseImg">
+            <ArticleWriteSwiper class="modal-left-img" :width="650" :height="600"/>
           </template>
         </div>
         <div class="modal-right">
-          <ArticleImgSelect v-if="store.step==1"/>
-          <ArticleContent v-if="store.step==2"/>
+          <ArticleImgSelect v-if="store.step == 1"/>
+          <ArticleContent v-if="store.step == 2"/>
         </div>
       </div>
     </div>
@@ -22,11 +22,12 @@
 <script setup>
 import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
-import ArticleImgSelect from "@/components/Write/Article/ArticleImgSelect.vue"
-import ArticleContent from "@/components/Write/Article/ArticleContent.vue"
-import ArticleWriteSwiper from "@/components/Write/Article/ArticleWriteSwiper.vue"
+import ArticleImgSelect from "@/components/Write/Article/ArticleImgSelect.vue";
+import ArticleContent from "@/components/Write/Article/ArticleContent.vue";
+import ArticleWriteSwiper from "@/components/Write/Article/ArticleWriteSwiper.vue";
 import { useWriteStore } from "@/store/write";
-import {storeToRefs} from 'pinia'
+import { storeToRefs } from 'pinia';
+
 const store = useWriteStore();
 const { selectedImg, tempUrl } = storeToRefs(store);
 
@@ -38,25 +39,24 @@ const move = (path) => {
   switch (path) {
     case 'back':
       store.step = 1;
-      tempUrl.value = ref([]);
-      selectedImg.value = ref([]);
+      selectedImg.value = [];
+      tempUrl.value = [];
       renderBaseImg.value = true;
       router.go(-1);
       break;
   }
 };
 
-// watch를 사용하여 store.selectedImg의 변화를 감시합니다.
-watch([selectedImg, tempUrl], () => {
-  if (tempUrl.value.length >= 1) {
+watch(tempUrl, (newTempUrl) => {
+  if (newTempUrl && newTempUrl.length >= 1) {
     renderBaseImg.value = false;
   } else {
     renderBaseImg.value = true;
   }
 }, { deep: true });
-
-
 </script>
+
+
 
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400&display=swap");
@@ -88,24 +88,15 @@ watch([selectedImg, tempUrl], () => {
 
 .article-detail-page {
   position: fixed;
-  /* 고정된 위치 */
   top: 0;
-  /* 상단에서 0px 위치 */
   left: 0;
-  /* 좌측에서 0px 위치 */
   width: 100%;
-  /* 전체 너비 */
   height: 100%;
-  /* 전체 높이 */
   background-color: rgba(0, 0, 0, 0.5);
-  /* 반투명 배경 */
   display: flex;
   justify-content: center;
-  /* 중앙 정렬 */
   align-items: center;
-  /* 중앙 정렬 */
   z-index: 1000;
-  /* 다른 요소들 위에 표시 */
 }
 
 .modal-wrapper {
@@ -124,7 +115,6 @@ watch([selectedImg, tempUrl], () => {
   background-color: #ffffff;
   border-radius: 8px 0 0 8px;
   box-shadow: 6px 0 6px 4px rgba(0, 0, 0, 0.1);
-  /* 오른쪽과 아래쪽에 그림자 */
   padding: 30px;
   display: flex;
   justify-content: center;
@@ -140,7 +130,6 @@ watch([selectedImg, tempUrl], () => {
 }
 
 .modal-right {
-  /* 기존 스타일 유지, overflow-y 스타일 제거 */
   width: 480px;
   background-color: #f7f7f7;
   border-radius: 0 8px 8px 0;
@@ -284,8 +273,6 @@ input[type="file"] {
   }
 }
 
-
-
 @media screen and (max-width: 1400px) {
   .modal-wrapper {
     height: 80%;
@@ -293,15 +280,11 @@ input[type="file"] {
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    /* 상단 정렬을 보장 */
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     background-color: #fff;
-
-    /* 배경색 설정 */
     ::-webkit-scrollbar {
       display: none;
     }
-
     scrollbar-width: none;
     border-radius: 8px 8px 8px 8px;
   }
@@ -309,10 +292,8 @@ input[type="file"] {
   .modal-box {
     min-height: 100%;
     width: 100%;
-    /* 내부 박스의 너비를 100%로 설정 */
     display: flex;
     flex-direction: column;
-    /* 콘텐츠를 수직으로 정렬 */
     justify-content: flex-start;
   }
 
@@ -344,16 +325,11 @@ input[type="file"] {
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    /* 상단 정렬을 보장 */
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    /* 모달에 그림자 효과 추가 */
     background-color: #fff;
-
-    /* 배경색 설정 */
     ::-webkit-scrollbar {
       display: none;
     }
-
     scrollbar-width: none;
     border-radius: 8px 8px 8px 8px;
   }

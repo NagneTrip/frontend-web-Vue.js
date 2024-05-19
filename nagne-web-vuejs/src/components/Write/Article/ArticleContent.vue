@@ -4,7 +4,7 @@
       <p class="header-text jua-regular">게시글 내용을 작성하세요.</p>
     </div>
     <div class="right-content">
-      <textarea type="text" class=" content-input" v-model.lazy="content"></textarea>
+      <textarea type="text" class="content-input" v-model.lazy="content"></textarea>
     </div>
     <div class="right-footer">
       <button class="right-footer-btn back-btn" @click="() => move('back')">
@@ -18,23 +18,25 @@
 </template>
 
 <script setup>
-import { faArrowLeft, faArrowRight, faImage, faXmark } from "@fortawesome/free-solid-svg-icons";
-import { ref, onMounted, watch } from "vue";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useWriteStore } from "@/store/write";
-import { storeToRefs } from 'pinia'
 import { useAuthStore } from "@/store/auth";
+import { storeToRefs } from 'pinia';
 import axios from "axios";
+
 const authStore = useAuthStore();
 const writeStore = useWriteStore();
-const { selectedImg, tempUrl } = storeToRefs(writeStore);
+const { selectedImg } = storeToRefs(writeStore);
 
 const content = ref("");
 const router = useRouter();
+
 const move = async (path) => {
   switch (path) {
     case 'main':
-      router.push({ name: 'main' })
+      router.push({ name: 'main' });
       break;
     case 'back':
       writeStore.step--;
@@ -56,29 +58,33 @@ const move = async (path) => {
 };
 
 const uploadFile = async () => {
-  // FormData 객체 생성
   const formData = new FormData();
   formData.append('encrypt', "multipart/form-data");
-  // FormData에 여러 파일 추가
+
   for (let i = 0; i < selectedImg.value.length; i++) {
     formData.append('images', selectedImg.value[i]);
   }
 
   const json = JSON.stringify({ content: content.value });
   const blob = new Blob([json], { type: "application/json" });
-  // FormData에 다른 데이터 추가
   formData.append('request', blob);
 
-  await axios.post('http://localhost:8080/api/articles', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-      Authorization: `Bearer ${authStore.token}`,
-    },
-  }).then(({ data }) => { alert("게시글이 등록되었습니다!") }).catch();
-
-  move('main')
-}
+  try {
+    await axios.post('http://localhost:8080/api/articles', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Authorization: `Bearer ${authStore.token}`,
+      },
+    });
+    alert("게시글이 등록되었습니다!");
+    move('main');
+  } catch (error) {
+    console.error(error);
+  }
+};
 </script>
+
+
 
 <style scoped>
 .write-content-page {
