@@ -11,10 +11,10 @@
                         <img :src="`/src/assets/tier/${userInfo.tier}.svg`" :width="25" :height="25" alt=""
                             class="tier-img" />
                     </div>
-                    <button class="edit-profile-btn jua-regular">프로필 편집</button>
-                    <template>
-                        <button class="edit-profile-btn jua-regular">팔로우</button>
-                        <button class="edit-profile-btn jua-regular">팔로잉</button>
+                    <button v-if="isNowLoginUser" class="edit-profile-btn jua-regular">프로필 편집</button>
+                    <template v-if="!isNowLoginUser">
+                        <button v-if="!isFollow" class="edit-profile-btn jua-regular" @click="follow">팔로우</button>
+                        <button v-if="isFollow" class="unfollow jua-regular" @click="unfollow">팔로잉</button>
                     </template>
                 </div>
                 <div class="info-box-social">
@@ -65,6 +65,8 @@ const userIdByParams = route.params.id;
 const tabState = ref('article');
 const isFollowingOpen = ref(false);
 const isFollowersOpen = ref(false);
+const isNowLoginUser = ref(false);
+const isFollow = ref(false);
 
 const changeTab = (tab) => {
     tabState.value = tab;
@@ -88,10 +90,16 @@ const closeFollowModal = () => {
 }
 
 onMounted(async () => {
+    // 로그인 여부 검증
     if (!sessionStorage.getItem('token') || !authStore.isAuthenticated) {
         alert('유저 정보는 로그인 후 확인할 수 있습니다.');
         router.push({ name: 'login' });
         return;
+    }
+
+    // 로그인한 유저와 info의 유저가 동일한지 확인
+    if (userIdByParams===Number(sessionStorage.getItem('loginUserId'))) {
+        isNowLoginUser.value = true;
     }
 
     // 유저 정보 로드
@@ -114,9 +122,35 @@ onMounted(async () => {
         userArticles.value = data.response.articles;
     })
 })
+
 const userArticlesLen = computed(() => {
     return userArticles.value.length;
 })
+
+const follow = ()=> {
+    if (!sessionStorage.getItem('token') || !authStore.isAuthenticated) {
+        alert('에러 발생! 로그인을 다시 진행하세요!')
+        return;
+    }
+
+    axios.post(`http://localhost:8080/api/follow`, {'followId':userIdByParams},{
+        headers : {Authorization: `Bearer ${sessionStorage.getItem('token')}`, }
+    }).then(({data})=>{
+        isFollow.value = true;
+    })
+}
+const unfollow = async ()=> {
+    if (!sessionStorage.getItem('token') || !authStore.isAuthenticated) {
+        alert('에러 발생! 로그인을 다시 진행하세요!')
+        return;
+    }
+
+    axios.delete(`http://localhost:8080/api/follow/${userIdByParams}`, {
+        headers : {Authorization: `Bearer ${sessionStorage.getItem('token')}`, }
+    }).then(()=>{
+        isFollow.value = false;
+    })
+}
 </script>
 
 <style scoped>
@@ -189,13 +223,29 @@ p {
     height: 35px;
     border: none;
     background-color: rgb(118, 189, 255);
-    border-radius: 15px;
+    border-radius: 12px;
     color: white;
     transition: 0.2s all;
 }
 
 .edit-profile-btn:hover {
     background-color: #0068FF;
+    scale: 1.1;
+    transition: 0.2s all;
+}
+
+.unfollow {
+    width: 85px;
+    height: 35px;
+    border: none;
+    background-color: rgb(167, 167, 167);
+    border-radius: 12px;
+    color: white;
+    transition: 0.2s all;
+}
+
+.unfollow:hover {
+    background-color: #f36f57;
     scale: 1.1;
     transition: 0.2s all;
 }
