@@ -98,7 +98,7 @@ onMounted(async () => {
     }
 
     // 로그인한 유저와 info의 유저가 동일한지 확인
-    if (userIdByParams===Number(sessionStorage.getItem('loginUserId'))) {
+    if (Number(userIdByParams)===Number(sessionStorage.getItem('loginUserId'))) {
         isNowLoginUser.value = true;
     }
 
@@ -109,7 +109,6 @@ onMounted(async () => {
         }
     }).then(({ data }) => {
         userInfo.value = data.response.userInfo;
-        console.log(userInfo.value)
     }).catch(() => {
         alert('유저 정보 로드 실패! 메인으로 돌아갑니다.');
         router.push({ name: 'main' });
