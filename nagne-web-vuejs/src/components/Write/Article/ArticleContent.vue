@@ -42,7 +42,6 @@ const move = async (path) => {
       writeStore.step--;
       break;
     case 'next':
-      // 데이터 검증
       if (!content.value) {
         alert('내용을 입력하세요.');
         return;
@@ -51,7 +50,6 @@ const move = async (path) => {
         alert('이미지를 선택하세요.');
         return;
       }
-      // api 추가
       await uploadFile();
       break;
   }
@@ -79,10 +77,11 @@ const uploadFile = async () => {
     alert("게시글이 등록되었습니다!");
     move('main');
   } catch (error) {
-    alert('게시글 작성 실패!')
+    alert('게시글 작성 실패!');
   }
 };
 </script>
+
 
 
 

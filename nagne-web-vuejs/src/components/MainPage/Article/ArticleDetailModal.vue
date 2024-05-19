@@ -78,9 +78,9 @@
     </div>
   </div>
   <ul v-show="isDotMenuOpen" class="user-menu list-group" :style="dotMenuStyle">
-    <li v-if="store.loginUserId === article.userId" class="list-group-item" @click="moveTo('modify')">수정하기</li>
-    <li v-if="store.loginUserId === article.userId" class="list-group-item" @click="moveTo('delete')">삭제하기</li>
-    <li v-if="store.loginUserId !== article.userId" class="list-group-item" @click="moveTo('declare')">신고하기</li>
+    <li v-if="isUsersArticle" class="list-group-item" @click="moveTo('modify')">수정하기</li>
+    <li v-if="isUsersArticle" class="list-group-item" @click="moveTo('delete')">삭제하기</li>
+    <li v-if="!isUsersArticle" class="list-group-item" @click="moveTo('declare')">신고하기</li>
     <li class="list-group-item">공유하기</li>
   </ul>
 </template>
@@ -105,6 +105,7 @@ const closeModal = () => {
   emit("closeModal");
 };
 
+const isUsersArticle = ref(false);
 const isLiked = ref(false);
 const isBookmarked = ref(false);
 const isDotMenuOpen = ref(false);
@@ -114,6 +115,9 @@ const commentInput = ref(null);
 
 onMounted(async () => {
   await fetchArticleData();
+  if (article.value.userId === Number(sessionStorage.getItem('loginUserId'))) {
+    isUsersArticle.value = true;
+  }
 });
 
 const fetchArticleData = async () => {
@@ -152,7 +156,7 @@ const moveTo = (action) => {
 }
 
 const deleteArticle = async () => {
-  if (article.value.userId !== sessionStorage.getItem('loginUserId')) {
+  if (article.value.userId !== Number(sessionStorage.getItem('loginUserId'))) {
     alert("게시글 삭제에 실패했습니다.");
     return;
   }
@@ -160,7 +164,7 @@ const deleteArticle = async () => {
   try {
     await axios.delete(`http://localhost:8080/api/articles/${props.articleId}`, {
       headers: {
-        Authorization: `Bearer ${store.token}`,
+        Authorization: `Bearer ${sessionStorage.getItem('token')}`,
       }
     });
     alert("게시글이 삭제되었습니다.");
