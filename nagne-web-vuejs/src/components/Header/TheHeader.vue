@@ -58,7 +58,7 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5 jua-regular-large noti-user-name" id="modalLabel" data-bs-dismiss="modal"
+          <h1 class="modal-title fs-5 jua-regular-large noti-user-name" id="modalLabel"
             @click="() => move('user')">{{
               userInfo.nickname }}</h1>
           <p v-if="isAuthenticated" class="jua-regular" data-bs-dismiss="modal"> 님을 기다리는 소식</p>
@@ -73,9 +73,7 @@
           </ul>
         </div>
         <div class="modal-footer">
-          <button type="button" class="jua-regular-large btn noti-allread">모두 확인하기</button>
-          <button type="button" class="jua-regular-large btn noti-close" data-bs-dismiss="modal"
-            @click="closeNotice">닫기</button>
+          <button type="button" class="jua-regular-large btn noti-allread" @click="readAllNotice">모두 확인하기</button>
         </div>
       </div>
     </div>
@@ -179,7 +177,7 @@ const fetchUserInfo = async () => {
 
 // 알림 전체 읽기 기능 추가 필요
 const readAllNotice = async () => {
-
+  console.log('readAllNotice')
 }
 
 const move = (path) => {

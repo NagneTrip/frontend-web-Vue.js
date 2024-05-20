@@ -1,16 +1,15 @@
 <template>
     <li class="notice-item">
         <div class="noticer-img">
-            <img :src="notice.fromUserProfileImage || '/src/assets/logo/logo_img.png'" alt="" :width="50"
-                :height="50" @click="moveTo('user')"/>
+            <img :src="notice.fromUserProfileImage || '/src/assets/logo/logo_img.png'" alt="" :width="50" :height="50"
+                @click="moveTo('user')" />
         </div>
         <div class="notice-info">
             <div class="noticer-info">
                 <div class="noticer">
                     <div class="name-tier" @click="moveTo('user')">
                         <p class="noticer-name jua-regular">{{ notice.fromUserNickname }}</p>
-                        <img :src="`/src/assets/tier/${notice.fromUserTier}.svg`" alt=""
-                            :width="14" :height="16">
+                        <img :src="`/src/assets/tier/${notice.fromUserTier}.svg`" alt="" :width="14" :height="16">
                     </div>
 
                     <p class="notice-date jua-regular">{{ notice?.createdDate.split("T")[0] }}</p>
@@ -24,7 +23,7 @@
                     댓글을 달았어요.</p>
                 <p v-if="notice.type == 'BOOKMARK'" class="notice-type jua-regular" @click="moveTo('article')">회원님의 게시글을
                     저장했어요.</p>
-                <p v-if="notice.type == 'FOLLOW'" class="notice-type jua-regular" @click="moveTo('article')">회원님을 팔로우
+                <p v-if="notice.type == 'FOLLOW'" class="notice-type jua-regular" @click="moveTo('follow')">회원님을 팔로우
                     했어요.</p>
             </div>
         </div>
@@ -57,7 +56,10 @@ const moveTo = (to) => {
             break;
 
         case 'article':
-            pathTo = { name: 'articleDetail', params: {'id': props.notice.articleId} }
+            pathTo = { name: 'articleDetail', params: { 'id': props.notice.articleId } }
+            break;
+        case 'follow':
+            pathTo = { name: 'user', params: { 'id': props.notice.fromUserId } };
             break;
     }
     router.push(pathTo)
@@ -69,7 +71,7 @@ const readNotice = () => {
         headers: {
             Authorization: `Bearer ${sessionStorage.getItem('token')}`,
         },
-    }).then(({data})=>{
+    }).then(({ data }) => {
         isReaded.value = data.success;
     })
 }
