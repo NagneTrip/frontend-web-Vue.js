@@ -55,8 +55,8 @@ const clickBtn = ()=> {
     locaToAddress();
 }
 
-const getLoaction = async()=> {
-    await navigator.geolocation.getCurrentPosition((position) => {
+const getLoaction = ()=> {
+    navigator.geolocation.getCurrentPosition((position) => {
     let lat = position.coords.latitude;
     let lng = position.coords.longitude;
     mapStore.userLocation = { lat, lng };
@@ -67,13 +67,13 @@ const getLoaction = async()=> {
 }
 
 const locaToAddress = async ()=>{
-    await axios.get(`https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?coords=${gpsLocation.lat},${gpsLocation.lng}&output=json`, {
+    await axios.get(`/map-reversegeocode/v2/gc?coords=${gpsLocation.value.lat},${gpsLocation.value.lng}&output=json`, {
         headers : {
             'X-NCP-APIGW-API-KEY-ID' : import.meta.env.VITE_GC_ID,
             'X-NCP-APIGW-API-KEY' : import.meta.env.VITE_GC_SECRET
         }
     })
-    .then(({data})=>console.log(data))
+    .then((data)=>console.log(data))
     .catch()
 }
 </script>
