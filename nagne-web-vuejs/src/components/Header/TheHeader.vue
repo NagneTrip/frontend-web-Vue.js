@@ -10,7 +10,7 @@
         <div class="navbar-icons-wrapper">
           <font-awesome-icon class="icon" id="navbar-search-btn" :icon="faMagnifyingGlass" />
         </div>
-        <div class="navbar-icons-wrapper" id="bell-wrapper">
+        <div class="navbar-icons-wrapper" id="bell-wrapper" data-bs-toggle="modal" data-bs-target="#exampleModal">
           <font-awesome-icon class="icon" :icon="faBell" id="navbar-bell" />
         </div>
         <div class="navbar-icons-wrapper" @click="move('mapMain')">
@@ -50,8 +50,28 @@
       <li v-show="store.isAuthenticated" class="list-group-item" @click="() => move('logout')">로그아웃</li>
     </ul>
   </div>
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5 jua-regular-large noti-user-name" id="modalLabel" data-bs-dismiss="modal"
+            @click="() => move('user')">{{
+              userInfo.nickname }}</h1>
+          <p class="jua-regular" data-bs-dismiss="modal"> 님을 기다리는 소식</p>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          ...
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="jua-regular-large btn noti-allread">모두 확인하기</button>
+          <button type="button" class="jua-regular-large btn noti-close" data-bs-dismiss="modal">닫기</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-  
+
   <div class="horizon-border"></div>
 </template>
 
@@ -70,17 +90,35 @@ import { useRouter } from "vue-router";
 import { useAuthStore } from "@/store/auth";
 const authStore = useAuthStore();
 import { storeToRefs } from 'pinia';
+import axios from "axios";
 const { isAuthenticated } = storeToRefs(authStore);
 
 const store = useAuthStore();
 const router = useRouter();
 const isLogin = ref(false);
+const userInfo = ref({})
 
-onMounted(() => {
+onMounted(async () => {
   store.loadAuthState();
+
+  //유저 정보 조회
+  if (!store.isAuthenticated || !sessionStorage.getItem('token')) {
+    return;
+  }
+  await fetchUserInfo();
 })
 
-watch(isAuthenticated, ()=>{
+const fetchUserInfo = async () => {
+  await axios.get(`http://localhost:8080/api/users/${sessionStorage.getItem('loginUserId')}`, {
+    headers: {
+      Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+    },
+  }).then(({ data }) => {
+    userInfo.value = data.response.userInfo;
+  })
+}
+
+watch(isAuthenticated, () => {
   if (!sessionStorage.getItem('token')) {
     isLogin.value = false;
   } else {
@@ -104,7 +142,7 @@ const move = (path) => {
     case 'mapMain':
       break;
     case 'user':
-      moveTo = {name: path, params : {'id' : Number(sessionStorage.getItem('loginUserId'))}}
+      moveTo = { name: path, params: { 'id': Number(sessionStorage.getItem('loginUserId')) } }
       break;
   }
   // 페이지 이동 시 열려있는 메뉴 전부 닫기
@@ -137,6 +175,10 @@ function toggleUserMenu(event) {
 
 
 <style>
+p {
+  margin: 0;
+}
+
 a {
   text-decoration: none;
   color: black;
@@ -400,5 +442,44 @@ a {
       display: none;
     }
   }
+}
+
+.modal-content {
+  border-radius: 15px;
+  box-shadow: 2px 3px 5px 2px rgba(0, 0, 0, 0.5);
+  border: none;
+}
+
+.modal-header {
+  gap: 10px;
+}
+
+.noti-allread {
+  background-color: rgb(118, 189, 255);
+  color: white;
+  transition: 0.2s all;
+}
+
+.noti-allread:hover {
+  background-color: #2a79ff;
+  color: white;
+  scale: 1.05;
+  transition: 0.2s all;
+}
+
+.noti-close {
+  background-color: rgb(175, 172, 172);
+  color: white;
+}
+
+.noti-user-name {
+  cursor: pointer;
+}
+
+.noti-close:hover {
+  background-color: #818181;
+  color: white;
+  scale: 1.05;
+  transition: 0.2s all;
 }
 </style>
