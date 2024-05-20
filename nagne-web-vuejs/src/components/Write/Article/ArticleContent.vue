@@ -1,16 +1,16 @@
 <template>
   <div class="write-content-page">
     <div class="right-header">
-      <p class="header-text jua-regular">게시글 내용을 작성하세요.</p>
+      <p class="header-text jua-regular">게시글 내용을 입력하세요.</p>
     </div>
     <div class="right-content">
-      <textarea type="text" class="content-input" v-model.lazy="content"></textarea>
+      <textarea type="text" class="content-input" v-model="content"></textarea>
     </div>
     <div class="right-footer">
-      <button class="right-footer-btn back-btn" @click="() => move('back')">
+      <button class="right-footer-btn back-btn" @click="move('back')">
         <font-awesome-icon :icon="faArrowLeft" :width="40" />
       </button>
-      <button class="jua-regular right-footer-btn next-btn" @click="() => move('next')">
+      <button class="jua-regular right-footer-btn next-btn" @click="move('next')">
         게시
       </button>
     </div>
@@ -19,7 +19,7 @@
 
 <script setup>
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-import { ref } from "vue";
+import { onMounted, watch, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useWriteStore } from "@/store/write";
 import { useAuthStore } from "@/store/auth";
@@ -32,6 +32,19 @@ const { selectedImg, tempUrl } = storeToRefs(writeStore);
 
 const content = ref("");
 const router = useRouter();
+
+const props = defineProps({
+  modifyArticle: Object,
+});
+
+watch(props, () => {
+  console.log(props.modifyArticle)
+  console.log(props.modifyArticle.content)
+  if (props.modifyArticle && props.modifyArticle.content) {
+    content.value = props.modifyArticle.content;
+    console.log(props.modifyArticle);
+  }
+});
 
 const move = async (path) => {
   switch (path) {
@@ -56,6 +69,7 @@ const move = async (path) => {
       break;
   }
 };
+
 
 const uploadFile = async () => {
   const formData = new FormData();
@@ -82,6 +96,7 @@ const uploadFile = async () => {
   }
 };
 </script>
+
 
 
 

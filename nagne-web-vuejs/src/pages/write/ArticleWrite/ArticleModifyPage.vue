@@ -11,7 +11,7 @@
           </template>
         </div>
         <div class="modal-right">
-          <ArticleContent />
+          <ArticleContent :modifyArticle="modifyArticle" />
         </div>
       </div>
     </div>
@@ -39,17 +39,18 @@ const renderBaseImg = ref(true);
 
 const idByParams = route.params.id;
 
-onMounted(() => {
-  getArticleToModify();
+const modifyArticle = ref({});
+onMounted(async () => {
+  await getArticleToModify();
 })
 
-const getArticleToModify = () => {
-  axios.get(`http://localhost:8080/api/articles/${idByParams}`, {
+const getArticleToModify = async () => {
+  await axios.get(`http://localhost:8080/api/articles/${idByParams}`, {
     headers: {
-      Authorization: `Bearer ${authStore.token}`,
+      Authorization: `Bearer ${sessionStorage.getItem('token')}`,
     }
   }).then(({ data }) => {
-    console.log(data) //이거 지우고 article 객체 선언 후 게시글 객체 불러오기
+    modifyArticle.value = data.response.articleInfo; //이거 지우고 article 객체 선언 후 게시글 객체 불러오기
   })
 }
 
