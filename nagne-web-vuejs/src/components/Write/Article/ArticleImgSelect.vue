@@ -10,7 +10,7 @@
     <div class="selected">
       <p class="jua-regular selected-text">Selected</p>
       <div class="selected-imgs-list">
-        <div class="selected-img" v-for="(img, index) in selectedImg" :key="index">
+        <div class="selected-img" v-for="(img, index) in store.selectedImg" :key="index">
           <p class="img-text noto-sans-kr-regular">{{ truncatedName(img) }}</p>
           <button class="delete-img jua-regular" @click="() => deleteImg(index)">삭제</button>
         </div>
@@ -37,7 +37,7 @@ import { storeToRefs } from 'pinia';
 import imageCompression from "browser-image-compression";
 
 const store = useWriteStore();
-const { selectedImg, tempUrl } = storeToRefs(store);
+// const { selectedImg, tempUrl } = storeToRefs(store);
 
 const router = useRouter();
 const inputFileRef = ref(null);
@@ -55,17 +55,17 @@ const move = (path) => {
 };
 
 onMounted(() => {
-  selectedImg.value = [];
-  tempUrl.value = [];
+  store.selectedImg = [];
+  store.tempUrl = [];
 });
 
 const fileChangeHandler = async (event) => {
   if (event.target.files && event.target.files.length > 0) {
     for (let file of event.target.files) {
       const compressedFile = await compressImage(file);
-      selectedImg.value.push(compressedFile);
+      store.selectedImg.push(compressedFile);
       const url = URL.createObjectURL(compressedFile);
-      tempUrl.value.push(url);
+      store.tempUrl.push(url);
     }
   }
 };
@@ -434,7 +434,7 @@ input[type="file"] {
       min-height: 60%;
     }
 
-    .select-section{
+    .select-section {
       flex-direction: column;
     }
   }

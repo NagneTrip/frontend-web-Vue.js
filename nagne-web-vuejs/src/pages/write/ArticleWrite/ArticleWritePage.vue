@@ -1,5 +1,5 @@
 <template>
-  <div class="article-detail-page" @click="()=>{move('back')}">
+  <div class="article-detail-page" @click="move('back')">
     <div class="modal-wrapper">
       <div class="modal-box" @click.stop>
         <div class="modal-left">
@@ -7,12 +7,12 @@
             <img class="modal-left-img" :src="baseImg" alt="" :width="650" :height="600">
           </template>
           <template v-if="!renderBaseImg">
-            <ArticleWriteSwiper class="modal-left-img" :width="650" :height="600"/>
+            <ArticleWriteSwiper class="modal-left-img" :width="650" :height="600" />
           </template>
         </div>
         <div class="modal-right">
-          <ArticleImgSelect v-if="store.step == 1"/>
-          <ArticleContent v-if="store.step == 2"/>
+          <ArticleImgSelect v-if="store.step == 1" />
+          <ArticleContent v-if="store.step == 2" />
         </div>
       </div>
     </div>
@@ -20,14 +20,13 @@
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import ArticleImgSelect from "@/components/Write/Article/ArticleImgSelect.vue";
 import ArticleContent from "@/components/Write/Article/ArticleContent.vue";
 import ArticleWriteSwiper from "@/components/Write/Article/ArticleWriteSwiper.vue";
 import { useWriteStore } from "@/store/write";
 import { storeToRefs } from 'pinia';
-
 const store = useWriteStore();
 const { selectedImg, tempUrl } = storeToRefs(store);
 
@@ -35,26 +34,30 @@ const router = useRouter();
 const renderBaseImg = ref(true);
 
 const baseImg = ref("/src/assets/logo/logo.png");
+
 const move = (path) => {
   switch (path) {
     case 'back':
       store.step = 1;
-      selectedImg.value = [];
-      tempUrl.value = [];
+      store.selectedImg = [];
+      store.tempUrl = [];
       renderBaseImg.value = true;
       router.go(-1);
       break;
   }
 };
 
-watch(tempUrl, (newTempUrl) => {
-  if (newTempUrl && newTempUrl.length >= 1) {
-    renderBaseImg.value = false;
-  } else {
-    renderBaseImg.value = true;
-  }
-}, { deep: true });
+onMounted(() => {
+  watch(store.tempUrl, (newTempUrl) => {
+    if (newTempUrl && newTempUrl.length >= 1) {
+      renderBaseImg.value = false;
+    } else {
+      renderBaseImg.value = true;
+    }
+  }, { deep: true });
+});
 </script>
+
 
 
 
@@ -252,6 +255,7 @@ input[type="file"] {
   color: white;
   transition: 0.2s all;
 }
+
 .back-btn:hover {
   background-color: red;
   transition: 0.2s all;
@@ -262,6 +266,7 @@ input[type="file"] {
   color: white;
   transition: 0.2s all;
 }
+
 .next-btn:hover {
   background-color: rgb(23, 117, 250);
   transition: 0.2s all;
@@ -282,9 +287,11 @@ input[type="file"] {
     align-items: flex-start;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     background-color: #fff;
+
     ::-webkit-scrollbar {
       display: none;
     }
+
     scrollbar-width: none;
     border-radius: 8px 8px 8px 8px;
   }
@@ -312,7 +319,7 @@ input[type="file"] {
 
   .select-section {
     flex-direction: row;
-    gap : 30px;
+    gap: 30px;
   }
 }
 
@@ -327,9 +334,11 @@ input[type="file"] {
     align-items: flex-start;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     background-color: #fff;
+
     ::-webkit-scrollbar {
       display: none;
     }
+
     scrollbar-width: none;
     border-radius: 8px 8px 8px 8px;
   }
@@ -351,7 +360,7 @@ input[type="file"] {
     display: flex;
     border-radius: 0 0 8px 8px;
     box-shadow: 0 6px 6px 4px rgba(0, 0, 0, 0.1);
-    padding : 0 0 10px 0;
+    padding: 0 0 10px 0;
   }
 }
 </style>

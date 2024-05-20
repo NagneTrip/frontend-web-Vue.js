@@ -28,7 +28,7 @@ import axios from "axios";
 
 const authStore = useAuthStore();
 const writeStore = useWriteStore();
-const { selectedImg } = storeToRefs(writeStore);
+const { selectedImg, tempUrl } = storeToRefs(writeStore);
 
 const content = ref("");
 const router = useRouter();
@@ -51,6 +51,8 @@ const move = async (path) => {
         return;
       }
       await uploadFile();
+      selectedImg.value = [];
+      tempUrl.value = [];
       break;
   }
 };
