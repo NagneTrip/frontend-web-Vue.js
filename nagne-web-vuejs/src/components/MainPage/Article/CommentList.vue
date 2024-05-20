@@ -26,7 +26,7 @@ onMounted(async () => {
   axios.get(`http://localhost:8080/api/comments?articleId=${props.articleId}`,
     {
       headers: {
-        Authorization: `Bearer ${store.token}`,
+        Authorization: `Bearer ${sessionStorage.getItem('token')}`,
       },
     }
   )

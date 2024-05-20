@@ -81,10 +81,15 @@ const getLoginHandler = async () => {
     } else {
       setCookie("userEmail", "", -1); // 쿠키 삭제
     }
+
+    //로그인 -> 피니아에 저장 -> 로컬 스토리지에 저장
     store.userEmail = userEmail.value;
     store.password = password.value;
+
     userEmail.value = '';
-    await store.getToken(); // store에 로그인 요청
+    // store에 로그인 요청(세션스토리지에 토큰, 유저 아이디)
+    // 피니아에는 유저 정보
+    await store.getToken();
   }
 }
 

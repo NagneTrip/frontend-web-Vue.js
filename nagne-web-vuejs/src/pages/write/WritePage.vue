@@ -27,7 +27,7 @@ const store = useAuthStore();
 const router = useRouter();
 const movePage = (path) => {
     //로그인 확인 해야함
-    if (!store.isAuthenticated || store.token==='') {
+    if (!store.isAuthenticated || !sessionStorage.getItem('token')) {
         if (window.confirm("로그인 후 이용하세요!")) {
             router.push({name : 'login'});
         }

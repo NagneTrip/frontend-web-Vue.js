@@ -10,7 +10,10 @@
         <div class="navbar-icons-wrapper">
           <font-awesome-icon class="icon" id="navbar-search-btn" :icon="faMagnifyingGlass" />
         </div>
-        <div class="navbar-icons-wrapper" id="bell-wrapper">
+        <div class="navbar-icons-wrapper" id="bell-wrapper" data-bs-toggle="modal" data-bs-target="#exampleModal">
+          <span :style="{display: isNewNotice ? 'block' : 'none'}" class="badge position-absolute top-2 end-40 translate-middle p-2 bg-danger border-0 rounded-circle">
+            <span class="visually-hidden">New alerts</span>
+          </span>
           <font-awesome-icon class="icon" :icon="faBell" id="navbar-bell" />
         </div>
         <div class="navbar-icons-wrapper" @click="move('mapMain')">
@@ -43,17 +46,41 @@
     <!-- UserMenu -->
     <ul v-show="showUserMenu" class="user-menu list-group" :style="userMenuStyle">
       <li v-show="!store.isAuthenticated" class="list-group-item" @click="() => move('login')">로그인</li>
-      <li v-show="store.isAuthenticated" class="list-group-item">내 프로필</li>
+      <li v-show="store.isAuthenticated" class="list-group-item" @click="() => move('user')">내 프로필</li>
       <li v-show="store.isAuthenticated" class="list-group-item">저장한 게시물</li>
       <li v-show="store.isAuthenticated" class="list-group-item">내정보 수정</li>
       <li v-show="store.isAuthenticated" class="list-group-item" style="border-top: 1px solid black;">고객센터</li>
       <li v-show="store.isAuthenticated" class="list-group-item" @click="() => move('logout')">로그아웃</li>
     </ul>
   </div>
-
-  <div class="navbar-icons-wrapper" id="faArrowUp-button" @click="scrollToTop">
-    <font-awesome-icon :icon="faArrowUp" class="icon" id="faArrowUp" />
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5 jua-regular-large noti-user-name" id="modalLabel" data-bs-dismiss="modal"
+            @click="() => move('user')">{{
+              userInfo.nickname }}</h1>
+          <p v-if="isAuthenticated" class="jua-regular" data-bs-dismiss="modal"> 님을 기다리는 소식</p>
+          <p v-if="!isAuthenticated" class="jua-regular" data-bs-dismiss="modal"> 로그인 후 확인하세요!</p>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+            @click="closeNotice"></button>
+        </div>
+        <div class="modal-body">
+          <ul class="notice-box">
+            <NoticeItem v-for="(notice, index) in userNotices" :notice="notice" @closeNotice="closeNotice"
+              :key="notice.id" />
+          </ul>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="jua-regular-large btn noti-allread">모두 확인하기</button>
+          <button type="button" class="jua-regular-large btn noti-close" data-bs-dismiss="modal"
+            @click="closeNotice">닫기</button>
+        </div>
+      </div>
+    </div>
   </div>
+
+
   <div class="horizon-border"></div>
 </template>
 
@@ -67,18 +94,98 @@ import {
   faBars,
   faArrowUp,
 } from "@fortawesome/free-solid-svg-icons";
-import { ref, watch } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/store/auth";
+const authStore = useAuthStore();
+import { storeToRefs } from 'pinia';
+import axios from "axios";
+import NoticeItem from "./NoticeItem.vue";
+const { isAuthenticated } = storeToRefs(authStore);
 
 const store = useAuthStore();
 const router = useRouter();
+const userInfo = ref({})
+const userNotices = ref([]);
+const isNewNotice = ref(false);
+
+onMounted(async () => {
+  store.loadAuthState();
+
+  // 유저 로그인 여부 검증
+  if (!store.isAuthenticated || !sessionStorage.getItem('token')) {
+    return;
+  }
+  // 유저 정보 조회
+  await fetchUserInfo();
+
+  // 새로운 알림 여부 조회
+  await fecthIsNotice();
+
+  // 유저 알림 조회
+  await fetchUserNotice();
+})
+// 로그인 정보가 변경되면, 다시 호출
+watch(isAuthenticated, async()=>{
+  if (!store.isAuthenticated || !sessionStorage.getItem('token')) {
+    return;
+  }
+
+  // 유저 정보 조회
+  await fetchUserInfo();
+
+  // 새로운 알림 여부 조회
+  await fecthIsNotice();
+
+  // 유저 알림 조회
+  await fetchUserNotice();
+})
+
+
+// 새로운 알림 여부 조회
+const fecthIsNotice = async () => {
+  await axios.get(`http://localhost:8080/api/notifications/has-new`, {
+    headers: {
+      Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+    },
+  }).then(({ data }) => {
+    isNewNotice.value = data.response;
+  })
+}
+
+
+// 유저 알림 조회
+const fetchUserNotice = async () => {
+  await axios.get(`http://localhost:8080/api/notifications`, {
+    headers: {
+      Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+    },
+  }).then(({ data }) => {
+    userNotices.value = data.response;
+  })
+}
+
+// 유저 정보 조회
+const fetchUserInfo = async () => {
+  await axios.get(`http://localhost:8080/api/users/${sessionStorage.getItem('loginUserId')}`, {
+    headers: {
+      Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+    },
+  }).then(({ data }) => {
+    userInfo.value = data.response.userInfo;
+  })
+}
+
+// 알림 전체 읽기 기능 추가 필요
+const readAllNotice = async ()=> {
+  
+}
 
 const move = (path) => {
   let moveTo = { name: path };
   switch (path) {
     case 'login': // 로그인
-      if (store.isAuthenticated) {
+      if (sessionStorage.getItem('token')) {
         alert('이미 로그인 중입니다!');
         return;
       }
@@ -88,6 +195,9 @@ const move = (path) => {
       moveTo = { name: 'logout' }
       break;
     case 'mapMain':
+      break;
+    case 'user':
+      moveTo = { name: path, params: { 'id': Number(sessionStorage.getItem('loginUserId')) } }
       break;
   }
   // 페이지 이동 시 열려있는 메뉴 전부 닫기
@@ -115,16 +225,20 @@ function toggleUserMenu(event) {
   }
 }
 
-const scrollToTop = () => {
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth",
-  });
+const closeNotice = () => {
+  const modal = new bootstrap.Modal(document.getElementById('exampleModal'));
+  modal.hide();
 };
+
+
 </script>
 
 
 <style>
+p {
+  margin: 0;
+}
+
 a {
   text-decoration: none;
   color: black;
@@ -388,5 +502,60 @@ a {
       display: none;
     }
   }
+}
+
+.modal-content {
+  border-radius: 15px;
+  box-shadow: 2px 3px 5px 2px rgba(0, 0, 0, 0.5);
+  border: none;
+}
+
+.modal-header {
+  gap: 10px;
+}
+
+.noti-allread {
+  background-color: rgb(118, 189, 255);
+  color: white;
+  transition: 0.2s all;
+}
+
+.noti-allread:hover {
+  background-color: #2a79ff;
+  color: white;
+  scale: 1.05;
+  transition: 0.2s all;
+}
+
+.noti-close {
+  background-color: rgb(175, 172, 172);
+  color: white;
+}
+
+.noti-user-name {
+  cursor: pointer;
+}
+
+.noti-close:hover {
+  background-color: #818181;
+  color: white;
+  scale: 1.05;
+  transition: 0.2s all;
+}
+
+.notice-box {
+  width: 100%;
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  justify-content: flex-start;
+  margin: 0;
+  padding: 0 20px 0 20px;
+}
+
+.badge {
+  right: 0px;
 }
 </style>

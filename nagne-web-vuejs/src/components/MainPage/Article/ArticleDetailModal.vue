@@ -1,8 +1,10 @@
 <template>
   <div class="article-detail-page" @click="closeModal">
     <div class="modal-wrapper">
+      
       <div class="modal-box" @click.stop>
-        <div class="modal-left" @click="closeDotMenu">
+        <img v-if="isLoading" src="/src/assets/blue_spinner.svg" alt="" class="modal-left" />
+        <div v-if="!isLoading" class="modal-left" @click="closeDotMenu">
           <img :src="'./src/assets/logo/logo.png'" class="modal-left-img" />
         </div>
         <div class="modal-right" @click="closeDotMenu">
@@ -34,7 +36,6 @@
               <span class="content-main noto-sans-kr-bold">
                 {{ article.content }}
               </span>
-              <!-- 댓글 컴포넌트 -for -->
               <CommentList :articleId="articleId" />
             </div>
             <div class="right-footer">
@@ -61,7 +62,6 @@
                     </svg>
                     <p class="jua-regular">{{ article.commentCount }}</p>
                   </div>
-                  <!-- 좋아요, 댓글, 공유, ... 북마크(저장) 버튼 -->
                 </div>
                 <div class="social-right-box">
                   <div class="social-bookmark">
@@ -79,7 +79,6 @@
                 </div>
               </div>
               <div class="write-comment-box">
-                <!-- 댓글 아이콘 -->
                 <div class="comment-input">
                   <input type="text" class="noto-sans-kr-bold" ref="commentInput" />
                 </div>
@@ -92,9 +91,9 @@
     </div>
   </div>
   <ul v-show="isDotMenuOpen" class="user-menu list-group" :style="dotMenuStyle">
-    <li v-if="store.loginUserId === article.userId" class="list-group-item" @click="moveTo('modify')">수정하기</li>
-    <li v-if="store.loginUserId === article.userId" class="list-group-item" @click="moveTo('delete')">삭제하기</li>
-    <li v-if="store.loginUserId !== article.userId" class="list-group-item" @click="moveTo('declare')">신고하기</li>
+    <li v-if="isUsersArticle" class="list-group-item" @click="moveTo('modify')">수정하기</li>
+    <li v-if="isUsersArticle" class="list-group-item" @click="moveTo('delete')">삭제하기</li>
+    <li v-if="!isUsersArticle" class="list-group-item" @click="moveTo('declare')">신고하기</li>
     <li class="list-group-item">공유하기</li>
   </ul>
 </template>
@@ -102,32 +101,13 @@
 <script setup>
 import { faXmark, faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref } from "vue";
 import CommentList from "./CommentList.vue";
 import { useAuthStore } from "@/store/auth";
-import { useRouter } from "vue-router"
+import { useRouter } from "vue-router";
 const router = useRouter();
 const store = useAuthStore();
 const article = ref({});
-
-onMounted(async () => {
-  if (store.isAuthenticated) { //이미 로그인 되어 있으면 토큰 갱신
-    //   await store.getToken();
-    // }
-
-    axios.get(`http://localhost:8080/api/articles/${props.articleId}`, {
-      headers: {
-        Authorization: `Bearer ${store.token}`,
-      },
-    })
-      .then(({ data }) => {
-        article.value = data.response.articleInfo;
-        isLiked.value = article.value.isLiked; // 데이터 로딩 후 isLiked 업데이트
-        isBookmarked.value = article.value.isBookmarked; // 데이터 로딩 후 isBookmarked 업데이트
-      })
-      .catch()
-  }
-})
 
 const props = defineProps({
   articleId: Number,
@@ -138,118 +118,118 @@ const closeModal = () => {
   emit("closeModal");
 };
 
+const isUsersArticle = ref(false);
 const isLiked = ref(false);
 const isBookmarked = ref(false);
 const isDotMenuOpen = ref(false);
+const isLoading = ref(false);
 
 const dotMenuStyle = ref({});
 const commentInput = ref(null);
 
+onMounted(async () => {
+  isLoading.value = true;
+  await fetchArticleData();
+  isLoading.value = false;
+  if (article.value.userId === Number(sessionStorage.getItem('loginUserId'))) {
+    isUsersArticle.value = true;
+  }
+});
+
+const fetchArticleData = async () => {
+  if (sessionStorage.getItem('token') !== '') {
+    try {
+      const { data } = await axios.get(`http://localhost:8080/api/articles/${props.articleId}`, {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+        },
+      });
+      article.value = data.response.articleInfo;
+      isLiked.value = article.value.isLiked;
+      isBookmarked.value = article.value.isBookmarked;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+};
+
 const moveTo = (action) => {
   switch (action) {
     case 'modify':
-      router.push({ name: 'articleModify', params: { 'id': props.articleId } });
+      router.push({ name: 'articleModify', params: { id: props.articleId } });
       break;
 
     case 'delete':
       if (window.confirm("게시글을 삭제하시겠습니까?")) {
         deleteArticle();
-        emit("closeModal");
       }
       break;
 
     case 'declare':
-      //신고하기
+      // 신고하기
       break;
   }
 }
 
 const deleteArticle = async () => {
-  //게시글 삭제
-  if (article.value.userId !== store.loginUserId) {
+  if (article.value.userId !== Number(sessionStorage.getItem('loginUserId'))) {
     alert("게시글 삭제에 실패했습니다.");
     return;
   }
 
-  await axios.delete(`http://localhost:8080/api/articles/${props.articleId}`, {
-    headers: {
-      Authorization: `Bearer ${store.token}`,
-    }
-  }).then(({ data }) => {
+  try {
+    await axios.delete(`http://localhost:8080/api/articles/${props.articleId}`, {
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+      }
+    });
     alert("게시글이 삭제되었습니다.");
-    router.push({ name: 'main' });
-  }).catch();
+    emit("closeModal");
+    emit("changed");
+  } catch (error) {
+  }
 }
 
-//좋아요, 북마크 클릭시 갯수 렌더링 또는 게시글 삭제 후 로드를 위한 비동기
-watch([isLiked, isBookmarked], async () => {
-  if (store.isAuthenticated) { //이미 로그인 되어 있으면 토큰 갱신
-    await store.getToken();
-  }
-  await axios.get(`http://localhost:8080/api/articles/${props.articleId}`, {
-    headers: {
-      Authorization: `Bearer ${store.token}`,
-    },
-  })
-    .then(({ data }) => {
-      article.value = data.response.articleInfo;
-      isLiked.value = article.value.isLiked; // 데이터 로딩 후 isLiked 업데이트
-      isBookmarked.value = article.value.isBookmarked; // 데이터 로딩 후 isBookmarked 업데이트
-    })
-    .catch()
-  emit('changed');
-})
-
-const clickSocialBtn = (btnName) => {
-  if (!store.isAuthenticated || store.token === '') {
+const clickSocialBtn = async (btnName) => {
+  if (!store.isAuthenticated || !sessionStorage.getItem('token')) {
     alert('로그인 후 진행하세요!')
-    return
+    return;
   }
-  switch (btnName) {
-    case 'like':
-      if (!isLiked.value) { //좋아요 누르기
-        isLiked.value = true;
-        axios.post(`http://localhost:8080/api/articles/like`,
-          { articleId: props.articleId },
-          { headers: { Authorization: `Bearer ${store.token}` } }
-        ).then()
-          .catch(({ error }) => alert('이미 좋아요 한 게시글입니다.'))
-      } else { //좋아요 취소하기
-        isLiked.value = false;
-        axios.delete(`http://localhost:8080/api/articles/like/${props.articleId}`,
-          { headers: { Authorization: `Bearer ${store.token}` } }).then()
-          .catch(({ error }) => console.log('이미 좋아요 취소한 게시글입니다.'))
-      }
 
-      emit('changed');
-      break;
-    case 'bookMark':
-      if (!isBookmarked.value) { //좋아요 누르기
-        isBookmarked.value = true;
-        axios.post(`http://localhost:8080/api/bookmark`,
-          { articleId: props.articleId },
-          { headers: { Authorization: `Bearer ${store.token}` } }
-        ).then()
-          .catch(({ error }) => alert('이미 저장한 게시글입니다.'))
-      } else { //좋아요 취소하기
-        isBookmarked.value = false;
-        axios.delete(`http://localhost:8080/api/bookmark/${props.articleId}`,
-          { headers: { Authorization: `Bearer ${store.token}` } }).then()
-          .catch(({ error }) => console.log('이미 좋아요 취소한 게시글입니다.'))
-      }
-
-      emit('changed');
-      break;
-    case 'comment':
-      if (commentInput.value) {
-        commentInput.value.focus(); // commentInput 요소에 포커스 설정
-      }
-      break;
+  try {
+    switch (btnName) {
+      case 'like':
+        if (!isLiked.value) {
+          isLiked.value = true;
+          await axios.post(`http://localhost:8080/api/articles/like`, { articleId: props.articleId }, { headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` } });
+        } else {
+          isLiked.value = false;
+          await axios.delete(`http://localhost:8080/api/articles/like/${props.articleId}`, { headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` } });
+        }
+        break;
+      case 'bookMark':
+        if (!isBookmarked.value) {
+          isBookmarked.value = true;
+          await axios.post(`http://localhost:8080/api/bookmark`, { articleId: props.articleId }, { headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` } });
+        } else {
+          isBookmarked.value = false;
+          await axios.delete(`http://localhost:8080/api/bookmark/${props.articleId}`, { headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` } });
+        }
+        break;
+      case 'comment':
+        if (commentInput.value) {
+          commentInput.value.focus();
+        }
+        break;
+    }
+    await fetchArticleData(); // Update the article data after any social button click
+    emit('changed'); // Emit the event to notify the parent component of the change
+  } catch (error) {
+    console.error(error);
   }
 };
 
 const closeDotMenu = (event) => {
-  // 메뉴 버튼 클릭인지 확인
   if (!event.target.closest('.right-button')) {
     isDotMenuOpen.value = false;
   }
@@ -267,6 +247,8 @@ const toggleDotMenu = (event) => {
   }
 };
 </script>
+
+
 
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400&display=swap");

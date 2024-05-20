@@ -68,9 +68,6 @@
         </div>
       </div>
     </div>
-    <template v-if="comments[0]">
-      <CommentListItem class="comment" :comment="comments[0]" />
-    </template>
 
   </div>
 
@@ -90,16 +87,23 @@ const isLiked = ref(false);
 const isBookmarked = ref(false);
 const noImage = ref(true);
 
+const props = defineProps({
+  article: Object,
+});
+const emit = defineEmits([
+  "openArticleModal",
+])
+
 
 onMounted(async () => {
-  if (store.isAuthenticated) { //이미 로그인 되어 있으면 토큰 갱신
+  if (sessionStorage.getItem('token') && props.article) { //이미 로그인 되어 있으면 토큰 갱신
     // await store.getToken();
 
     //로그인 된 상태 -> 모든 정보 API
     //게시물 정보 받아오기
     await axios.get(`http://localhost:8080/api/articles/${props.article.id}`, {
       headers: {
-        Authorization: `Bearer ${store.token}`,
+        Authorization: `Bearer ${sessionStorage.getItem('token')}`,
       },
     })
       .then(({ data }) => {
@@ -113,7 +117,7 @@ onMounted(async () => {
     await axios.get(`http://localhost:8080/api/comments?articleId=${props.article.id}`,
       {
         headers: {
-          Authorization: `Bearer ${store.token}`,
+          Authorization: `Bearer ${sessionStorage.getItem('token')}`,
         },
       }
     )
@@ -131,54 +135,6 @@ onMounted(async () => {
     isBookmarked.value = false;
   }
 })
-
-watch(article, async () => {
-  if (store.isAuthenticated) { //이미 로그인 되어 있으면 토큰 갱신
-    // await store.getToken();
-
-    //로그인 된 상태 -> 모든 정보 API
-    //게시물 정보 받아오기
-    axios.get(`http://localhost:8080/api/articles/${props.article.id}`, {
-      headers: {
-        Authorization: `Bearer ${store.token}`,
-      },
-    })
-      .then(({ data }) => {
-        article.value = data.response.articleInfo;
-        isLiked.value = data.response.articleInfo.isLiked;
-        isBookmarked.value = data.response.articleInfo.isBookmarked;
-      })
-      .catch()
-
-    //댓글 정보 받아오기
-    axios.get(`http://localhost:8080/api/comments?articleId=${props.article.id}`,
-      {
-        headers: {
-          Authorization: `Bearer ${store.token}`,
-        },
-      }
-    )
-      .then(({ data }) => {
-        comments.value = data.response.comments
-      })
-      .catch
-    return;
-  }
-
-  else { // 로그인 안된 상태 -> 제한된 정보 API
-    //게시물 정보 받아오기
-    article.value = props.article;
-    isLiked.value = false;
-    isBookmarked.value = false;
-  }
-})
-
-const props = defineProps({
-  article: Object,
-});
-const emit = defineEmits([
-  "openArticleModal",
-])
 
 const openArticleModal = () => {
   if (!store.isAuthenticated) {
@@ -196,14 +152,13 @@ const openArticleModal = () => {
   flex-direction: column;
   align-items: center;
   margin: 20px 0 20px 0;
+  padding: 0 0px 40px 0px;
 }
 
 .article {
   width: 100%;
   display: flex;
   flex-direction: column;
-  padding-bottom: 15px;
-
 }
 
 .user-info {

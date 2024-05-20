@@ -1,16 +1,16 @@
 <template>
   <div class="write-content-page">
     <div class="right-header">
-      <p class="header-text jua-regular">게시글 내용을 작성하세요.</p>
+      <p class="header-text jua-regular">게시글 내용을 입력하세요.</p>
     </div>
     <div class="right-content">
-      <textarea type="text" class=" content-input" v-model.lazy="content"></textarea>
+      <textarea type="text" class="content-input" v-model="content"></textarea>
     </div>
     <div class="right-footer">
-      <button class="right-footer-btn back-btn" @click="() => move('back')">
+      <button class="right-footer-btn back-btn" @click="move('back')">
         <font-awesome-icon :icon="faArrowLeft" :width="40" />
       </button>
-      <button class="jua-regular right-footer-btn next-btn" @click="() => move('next')">
+      <button class="jua-regular right-footer-btn next-btn" @click="move('next')">
         게시
       </button>
     </div>
@@ -18,29 +18,43 @@
 </template>
 
 <script setup>
-import { faArrowLeft, faArrowRight, faImage, faXmark } from "@fortawesome/free-solid-svg-icons";
-import { ref, onMounted, watch } from "vue";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { onMounted, watch, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useWriteStore } from "@/store/write";
-import { storeToRefs } from 'pinia'
 import { useAuthStore } from "@/store/auth";
+import { storeToRefs } from 'pinia';
 import axios from "axios";
+
 const authStore = useAuthStore();
 const writeStore = useWriteStore();
 const { selectedImg, tempUrl } = storeToRefs(writeStore);
 
 const content = ref("");
 const router = useRouter();
+
+const props = defineProps({
+  modifyArticle: Object,
+});
+
+watch(props, () => {
+  console.log(props.modifyArticle)
+  console.log(props.modifyArticle.content)
+  if (props.modifyArticle && props.modifyArticle.content) {
+    content.value = props.modifyArticle.content;
+    console.log(props.modifyArticle);
+  }
+});
+
 const move = async (path) => {
   switch (path) {
     case 'main':
-      router.push({ name: 'main' })
+      router.push({ name: 'main' });
       break;
     case 'back':
       writeStore.step--;
       break;
     case 'next':
-      // 데이터 검증
       if (!content.value) {
         alert('내용을 입력하세요.');
         return;
@@ -49,36 +63,44 @@ const move = async (path) => {
         alert('이미지를 선택하세요.');
         return;
       }
-      // api 추가
       await uploadFile();
+      selectedImg.value = [];
+      tempUrl.value = [];
       break;
   }
 };
 
+
 const uploadFile = async () => {
-  // FormData 객체 생성
   const formData = new FormData();
   formData.append('encrypt', "multipart/form-data");
-  // FormData에 여러 파일 추가
+
   for (let i = 0; i < selectedImg.value.length; i++) {
     formData.append('images', selectedImg.value[i]);
   }
 
   const json = JSON.stringify({ content: content.value });
   const blob = new Blob([json], { type: "application/json" });
-  // FormData에 다른 데이터 추가
   formData.append('request', blob);
 
-  await axios.post('http://localhost:8080/api/articles', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-      Authorization: `Bearer ${authStore.token}`,
-    },
-  }).then(({ data }) => { alert("게시글이 등록되었습니다!") }).catch();
-
-  move('main')
-}
+  try {
+    await axios.post('http://localhost:8080/api/articles', formData, {
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+      },
+    });
+    alert("게시글이 등록되었습니다!");
+    move('main');
+  } catch (error) {
+    alert('게시글 작성 실패!');
+  }
+};
 </script>
+
+
+
+
+
 
 <style scoped>
 .write-content-page {

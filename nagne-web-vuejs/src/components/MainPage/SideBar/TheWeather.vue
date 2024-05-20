@@ -13,6 +13,8 @@
 import axios from 'axios';
 import { onMounted, ref } from 'vue';
 import {weather_icons} from '@/assets/weather_icon/weather_icons.js';
+import { useMapStore } from '@/store/map';
+const mapStore = useMapStore();
 
 const userLocation = ref({});
 const userWeather = ref({});
@@ -38,7 +40,8 @@ onMounted(async() => {
   navigator.geolocation.getCurrentPosition((position) => {
       let lat = position.coords.latitude;
       let lon = position.coords.longitude;
-      userLocation.value = {lat, lon}
+      userLocation.value = {lat, lon};
+      mapStore.userLocation = {lat, lon};
       getUserLocaWeather();
   })
 })

@@ -1,6 +1,5 @@
 <template>
   <div class="main">
-    <!--  메인 영역 -->
     <div class="main-container">
       <TheSwipper />
       <div class="wrapper">
@@ -16,13 +15,13 @@
               <font-awesome-icon :icon="faPen" class="write-icon" />
             </div>
           </div>
-          <div class="article-container">
+          <div class="article-container" ref="articleContainer">
             <TheArticle v-for="(article, index) in articles" :article="article" :key="article.id"
               @open-article-modal="openModal" />
           </div>
+          <img v-if="isLoading" src="@/assets/blue_spinner.svg" alt="Loading" class="spinner" />
         </div>
         <div class="vertical-line"></div>
-        <!-- 사이드바 -->
         <div class="side" ref="sideSection">
           <div class="side-content">
             <TheWeather />
@@ -33,16 +32,19 @@
         </div>
       </div>
     </div>
+    <ArticleDetailModal v-if="isOpenModal && store.isAuthenticated" :articleId="modalArticleId"
+      @close-modal="closeModal" @changed="fetchArticles" />
+    <div class="navbar-icons-wrapper" id="faArrowUp-button" @click="scrollToTop">
+      <font-awesome-icon :icon="faArrowUp" class="icon" id="faArrowUp" />
+    </div>
   </div>
-  <ArticleDetailModal v-if="isOpenModal && store.isAuthenticated" :key="modalArticle[0].id"
-    :articleId="modalArticle[0].id" @close-modal="closeModal" @changed="stateChanged" />
 </template>
 
 <script setup>
-import { faUser, faPen } from "@fortawesome/free-solid-svg-icons";
+import { faUser, faPen, faArrowUp } from "@fortawesome/free-solid-svg-icons";
 import TheArticle from "@/components/MainPage/Article/TheArticle.vue";
-import { onMounted, ref, onUnmounted, watch } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { onMounted, ref, onUnmounted } from "vue";
+import { useRouter } from "vue-router";
 import axios from "axios";
 import TheWeather from "@/components/MainPage/SideBar/TheWeather.vue";
 import TheNotice from "@/components/MainPage/SideBar/TheNotice.vue";
@@ -54,95 +56,88 @@ import { useAuthStore } from "@/store/auth";
 const store = useAuthStore();
 
 const articles = ref([]);
-onMounted(() => {
-  if (store.isAuthenticated) { //로그인 o
-    axios
-      .get("http://localhost:8080/api/articles?size=7", {
-        //토큰 넣어서게시글 받아오기
-        headers: {
-          Authorization: `Bearer ${store.token}`,
-        },
-      })
-      .then(({ data }) => {
-        articles.value = data.response.articles;
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  } else { //로그인 x
-    axios
-      .get("http://localhost:8080/api/articles?size=7", {
-      })
-      .then(({ data }) => {
-        articles.value = data.response.articles;
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+const router = useRouter();
+const isOpenModal = ref(false);
+const modalArticleId = ref(null);
+const lastIndex = ref(null);
+const isLoading = ref(false);
+const noMoreData = ref(false);
+
+const fetchArticles = async () => {
+  if (isLoading.value || noMoreData.value) return;
+
+  isLoading.value = true;
+  let url = `http://localhost:8080/api/articles?size=5`;
+  if (lastIndex.value !== null) {
+    url += `&lastIndex=${lastIndex.value}`;
   }
-});
+
+  axios.get(url, {
+    headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` }
+  })
+    .then(response => {
+      const articlesData = response.data.response.articles;
+      if (articlesData.length < 5) {
+        noMoreData.value = true;
+      }
+      articles.value.push(...articlesData); // 데이터 누적
+      if (articlesData.length > 0) {
+        lastIndex.value = articlesData[articlesData.length - 1].id; // 마지막 데이터의 ID로 업데이트
+      }
+    })
+    .catch(error => {
+      console.error(error);
+    })
+    .finally(() => {
+      isLoading.value = false;
+    });
+};
+
+const handleScroll = () => {
+  const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+  if (scrollTop + clientHeight >= scrollHeight - 100 && !isLoading.value && !noMoreData.value) {
+    fetchArticles();
+  }
+};
+
+const openModal = (id) => {
+  if (store.isAuthenticated) {
+    isOpenModal.value = true;
+    modalArticleId.value = id;
+  }
+};
+
+const closeModal = () => {
+  isOpenModal.value = false;
+  modalArticleId.value = null;
+};
+
+const moveWrite = () => {
+  router.push({ name: 'write' });
+};
+
+const scrollToTop = () => {
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
+};
 
 const sideSection = ref(null);
 
 onMounted(() => {
-  const handleScroll = () => {
-    if (sideSection.value) {
-      sideSection.value.scrollTo({
-        top: window.scrollY,
-        behavior: "smooth", // 부드러운 스크롤
-      });
-    }
-  };
+  fetchArticles();
 
   window.addEventListener("scroll", handleScroll);
 
-  // 컴포넌트가 언마운트될 때 이벤트 리스너 제거
   onUnmounted(() => {
     window.removeEventListener("scroll", handleScroll);
   });
 });
-
-const isOpenModal = ref(false);
-const modalArticle = ref({});
-const openModal = (id) => {
-  if (store.isAuthenticated) {
-    //로그인 상태이면 게시글 로드
-    isOpenModal.value = true;
-    modalArticle.value = articles.value.filter(a => a.id === id);
-  }
-};
-const router = useRouter();
-const closeModal = () => {
-  isOpenModal.value = false;
-  modalArticle.value = {};
-  stateChanged();
-}
-//좋아요, 북마크 클릭시 갯수 렌더링을 위한 비동기
-const stateChanged = async () => {
-  if (!store.isAuthenticated) { //이미 로그인 되어 있으면 토큰 갱신
-    alert("로그인 후 이용하세요!");
-    return;
-  }
-  await useAuthStore().getToken();
-
-  await axios.get("http://localhost:8080/api/articles?size=7", {
-    //토큰 넣어서게시글 받아오기
-    headers: {
-      Authorization: `Bearer ${store.token}`,
-    },
-  })
-    .then(({ data }) => {
-      articles.value = data.response.articles;
-    })
-    .catch((error) => {
-      console.error(error);
-    });
-}
-
-const moveWrite = () => {
-  router.push({ name: 'write' });
-}
 </script>
+
+
+
 
 <style scoped>
 .main {
@@ -172,6 +167,7 @@ const moveWrite = () => {
   width: 100%;
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 15px;
 }
 
@@ -231,7 +227,6 @@ const moveWrite = () => {
   height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 20px;
   border-radius: 15px 15px 0px 0px;
 }
 
@@ -259,7 +254,7 @@ const moveWrite = () => {
 
 .side-content {
   width: 340px;
-  height: 1500px;
+  height: 1800px;
   margin-left: 40px;
 
   gap: 20px;
@@ -324,5 +319,60 @@ const moveWrite = () => {
   .article-container {
     margin-top: 20px;
   }
+}
+
+.navbar-icons-wrapper {
+  background-color: white;
+  border-radius: 50px;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 200ms;
+  position: relative;
+}
+
+.navbar-icons-wrapper:hover {
+  scale: 1.1;
+  transition: all 100ms;
+  cursor: pointer;
+  background-color: rgb(118, 189, 255);
+
+  .icon {
+    color: white;
+    scale: 1.1;
+    transition: all 200ms;
+  }
+}
+
+#faArrowUp-button {
+  background-color: rgb(118, 189, 255);
+  color: white;
+  position: fixed;
+  bottom: 20px;
+  right: 30px;
+  z-index: 99;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 50px;
+}
+
+#faArrowUp-button:active {
+  background-color: #2a79ff;
+}
+
+#faArrowUp {
+  width: 30px;
+  height: 30px;
+}
+
+.spinner {
+  width: 300px;
+  height: 300px;
+  display: block;
+  margin: 120px auto 20px auto;
 }
 </style>

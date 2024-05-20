@@ -12,7 +12,7 @@
       <div class="selected-imgs-list">
         <div class="selected-img" v-for="(img, index) in store.selectedImg" :key="index">
           <p class="img-text noto-sans-kr-regular">{{ truncatedName(img) }}</p>
-          <button class="delete-img jua-regular" @click="deleteImg">삭제</button>
+          <button class="delete-img jua-regular" @click="() => deleteImg(index)">삭제</button>
         </div>
       </div>
     </div>
@@ -29,15 +29,19 @@
 </template>
 
 <script setup>
-import { faArrowLeft, faArrowRight, faImage, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight, faImage, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useWriteStore } from "@/store/write";
+import { storeToRefs } from 'pinia';
+import imageCompression from "browser-image-compression";
+
 const store = useWriteStore();
+// const { selectedImg, tempUrl } = storeToRefs(store);
 
 const router = useRouter();
-const baseImg = ref("/src/assets/logo/logo.png");
 const inputFileRef = ref(null);
+
 const move = (path) => {
   switch (path) {
     case 'back':
@@ -49,20 +53,34 @@ const move = (path) => {
       break;
   }
 };
+
 onMounted(() => {
   store.selectedImg = [];
   store.tempUrl = [];
-})
+});
 
-
-const fileChangeHandler = (event) => {
+const fileChangeHandler = async (event) => {
   if (event.target.files && event.target.files.length > 0) {
-    // store.selectedImg = Array.from(event.target.files);
-    Array.from(event.target.files).map(i => { 
-      store.selectedImg.push(i);
-      let url = URL.createObjectURL(i); //임시 url 생성
+    for (let file of event.target.files) {
+      const compressedFile = await compressImage(file);
+      store.selectedImg.push(compressedFile);
+      const url = URL.createObjectURL(compressedFile);
       store.tempUrl.push(url);
-    })
+    }
+  }
+};
+
+const compressImage = async (file) => {
+  const options = {
+    maxSizeMB: 1,
+    maxWidthOrHeight: 1920,
+    useWebWorker: true
+  };
+  try {
+    return await imageCompression(file, options);
+  } catch (error) {
+    console.error(error);
+    return file;
   }
 };
 
@@ -71,17 +89,20 @@ const inputImg = () => {
 };
 
 const deleteImg = (index) => {
-  store.selectedImg.splice(index, 1);
-  store.tempUrl.splice(index, 1);
+  selectedImg.value.splice(index, 1);
+  tempUrl.value.splice(index, 1);
 };
 
 const truncatedName = (img) => {
   if (img && img.name) {
     return img.name.length > 10 ? img.name.substring(0, 10) + '..' : img.name;
   }
-  return
+  return '';
 };
 </script>
+
+
+
 
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400&display=swap");
@@ -413,7 +434,7 @@ input[type="file"] {
       min-height: 60%;
     }
 
-    .select-section{
+    .select-section {
       flex-direction: column;
     }
   }
