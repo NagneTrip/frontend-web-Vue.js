@@ -1,21 +1,23 @@
 <template>
-  <KakaoMap class="map" :ref="map" :lat="mapLocation.lat" :lng="mapLocation.lng" :draggable="true" :width="'100%'"
-    :height="'89vh'" @onLoadKakaoMap="onLoadKakaoMap">
-    <!-- 싸피 마커 -->
-    <KakaoMapMarker :lat="ssafyLocation.lat" :lng="ssafyLocation.lng"
-      :image="{ imageSrc: '/src/assets/map_marker/ssafy_logo.png', imageWidth: 60, imageHeight: 30, imageOption: {} }"
-      :infoWindow="{ content: 'SSAFY 광주 캠퍼스', visible: visibleRef }" @mouseOverKakaoMapMarker="mouseOverKakaoMapMarker"
-      @mouseOutKakaoMapMarker="mouseOutKakaoMapMarker">
-    </KakaoMapMarker>
-    <!-- 내 위치 마커 -->
-    <KakaoMapMarker v-if="gpsLocation.lat" :lat="gpsLocation.lat" :lng="gpsLocation.lng"
-      :image="{ imageSrc: '/src/assets/logo/logo_img.png', imageWidth: 50, imageHeight: 40, imageOption: {} }">
-    </KakaoMapMarker>
-  </KakaoMap>
-  <button type="button" class="btn btn-secondary gps-btn" @click="setGPSLoca">
-    <font-awesome-icon :icon="faLocationCrosshairs" class="icon" id="faArrowUp" />
-  </button>
-  <TourList class="left-sidebar"></TourList>
+  <div>
+    <KakaoMap class="map" ref="map" :lat="mapLocation.lat" :lng="mapLocation.lng" :draggable="true" :width="'100%'"
+      :height="'89vh'" @onLoadKakaoMap="onLoadKakaoMap">
+      <!-- 싸피 마커 -->
+      <KakaoMapMarker :lat="ssafyLocation.lat" :lng="ssafyLocation.lng"
+        :image="{ imageSrc: '/src/assets/map_marker/ssafy_logo.png', imageWidth: 60, imageHeight: 30, imageOption: {} }"
+        :infoWindow="{ content: 'SSAFY 광주 캠퍼스', visible: visibleRef }"
+        @mouseOverKakaoMapMarker="mouseOverKakaoMapMarker" @mouseOutKakaoMapMarker="mouseOutKakaoMapMarker">
+      </KakaoMapMarker>
+      <!-- 내 위치 마커 -->
+      <KakaoMapMarker v-if="gpsLocation.lat" :lat="gpsLocation.lat" :lng="gpsLocation.lng"
+        :image="{ imageSrc: '/src/assets/logo/logo_img.png', imageWidth: 50, imageHeight: 40, imageOption: {} }">
+      </KakaoMapMarker>
+    </KakaoMap>
+    <button type="button" class="btn btn-secondary gps-btn" @click="setGPSLoca">
+      <font-awesome-icon :icon="faLocationCrosshairs" class="icon" id="faArrowUp" />
+    </button>
+    <TourList class="left-sidebar" :attractionsList="attractionsList"></TourList>
+  </div>
 </template>
 
 <script setup>
@@ -41,6 +43,10 @@ const mapLocation = ref({
 });
 const gpsLocation = ref({});
 
+
+const keyword = ref("");
+const attractionsList = ref([]);
+
 const onLoadKakaoMap = async (mapRef) => {
   map.value = mapRef;
   isGps.value = true;
@@ -56,7 +62,11 @@ const fetchAttractionData = async () => {
     return;
   }
 
-  await axios()
+  await axios(`http://localhost:8080/api/attractions?keyword=${keyword.value}`, {
+    headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` }
+  }).then(({ data }) => {
+    attractionsList.value = data.response.attractions;
+  })
 }
 
 const getLoaction = () => {
@@ -87,7 +97,7 @@ const mouseOutKakaoMapMarker = () => {
 </script>
 
 <style scoped>
-#map {
+.map {
   width: 100%;
   height: 89vh;
 }

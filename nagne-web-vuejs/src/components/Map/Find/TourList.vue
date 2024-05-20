@@ -14,7 +14,8 @@
         </button>
       </div>
       <div class="list-container">
-        <TourListItem class="list-item" v-for="(item, index) in 50" :key="index" />
+        <TourListItem class="list-item" v-for="(attraction, index) in attractionsList" :attraction="attraction"
+          :key="index" />
       </div>
     </div>
     <div class="select-btn">
@@ -22,13 +23,8 @@
         <img :src="selectBtn[0].img" :alt="selectBtn[0].name" />
       </div>
       <transition-group name="slide-fade" tag="div">
-        <div
-          v-for="(btn, index) in selectBtn.slice(1)"
-          :key="btn.name"
-          v-if="isExpanded"
-          :class="['select', { 'selected': btn.isSelected }]"
-          @click="toggleSelectButton(btn)"
-        >
+        <div v-for="(btn, index) in selectBtn.slice(1)" :key="btn.name" v-if="isExpanded"
+          :class="['select', { 'selected': btn.isSelected }]" @click="toggleSelectButton(btn)">
           <img :src="btn.img" :alt="btn.name" />
         </div>
       </transition-group>
@@ -44,6 +40,10 @@ import { ref } from 'vue';
 const isOpen = ref(true);
 const isExpanded = ref(true); // 초기값을 false로 설정하여 처음에는 숨겨진 상태로 시작
 const selectedBtn = ref(null); // 선택된 버튼을 저장할 변수
+
+const props = defineProps({
+  attractionsList: Object,
+})
 
 const toggleSidebar = () => {
   isOpen.value = !isOpen.value;
@@ -204,17 +204,20 @@ const selectBtn = ref([
 }
 
 /* 애니메이션 설정 */
-.slide-fade-enter-active, .slide-fade-leave-active {
+.slide-fade-enter-active,
+.slide-fade-leave-active {
   transition: all 0.5s ease;
 }
 
 .slide-fade-enter-from {
-  transform: translateY(-10px); /* 슬라이드 다운 효과를 바로 아래로 */
+  transform: translateY(-10px);
+  /* 슬라이드 다운 효과를 바로 아래로 */
   opacity: 0;
 }
 
 .slide-fade-leave-to {
-  transform: translateY(-10px); /* 슬라이드 업 효과를 위로 */
+  transform: translateY(-10px);
+  /* 슬라이드 업 효과를 위로 */
   opacity: 0;
 }
 </style>
