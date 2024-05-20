@@ -1,8 +1,10 @@
 <template>
   <div class="article-detail-page" @click="closeModal">
     <div class="modal-wrapper">
+      
       <div class="modal-box" @click.stop>
-        <div class="modal-left" @click="closeDotMenu">
+        <img v-if="isLoading" src="/src/assets/blue_spinner.svg" alt="" class="modal-left" />
+        <div v-if="!isLoading" class="modal-left" @click="closeDotMenu">
           <img :src="'./src/assets/logo/logo.png'" class="modal-left-img" />
         </div>
         <div class="modal-right" @click="closeDotMenu">
@@ -120,12 +122,15 @@ const isUsersArticle = ref(false);
 const isLiked = ref(false);
 const isBookmarked = ref(false);
 const isDotMenuOpen = ref(false);
+const isLoading = ref(false);
 
 const dotMenuStyle = ref({});
 const commentInput = ref(null);
 
 onMounted(async () => {
+  isLoading.value = true;
   await fetchArticleData();
+  isLoading.value = false;
   if (article.value.userId === Number(sessionStorage.getItem('loginUserId'))) {
     isUsersArticle.value = true;
   }
