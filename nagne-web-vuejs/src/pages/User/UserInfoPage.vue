@@ -112,7 +112,6 @@ onMounted(async () => {
     await fetchUserInfo();
     // 유저가 작성한 게시물 로드
     await fetchUserArticles();
-
 })
 
 watch(() => route.params.id, async (newId) => {
