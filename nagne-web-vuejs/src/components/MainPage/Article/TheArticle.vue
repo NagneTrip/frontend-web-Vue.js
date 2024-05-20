@@ -68,9 +68,6 @@
         </div>
       </div>
     </div>
-    <template v-if="comments[0]">
-      <CommentListItem class="comment" :comment="comments[0]" />
-    </template>
 
   </div>
 
@@ -157,19 +154,19 @@ watch(article, async () => {
       })
       .catch()
 
-    //댓글 정보 받아오기
-    axios.get(`http://localhost:8080/api/comments?articleId=${props.article.id}`,
-      {
-        headers: {
-          Authorization: `Bearer ${sessionStorage.getItem('token')}`,
-        },
-      }
-    )
-      .then(({ data }) => {
-        comments.value = data.response.comments
-      })
-      .catch
-    return;
+    // //댓글 정보 받아오기
+    // axios.get(`http://localhost:8080/api/comments?articleId=${props.article.id}`,
+    //   {
+    //     headers: {
+    //       Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+    //     },
+    //   }
+    // )
+    //   .then(({ data }) => {
+    //     comments.value = data.response.comments
+    //   })
+    //   .catch
+    // return;
   }
 
   else { // 로그인 안된 상태 -> 제한된 정보 API
