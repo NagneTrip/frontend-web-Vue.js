@@ -17,7 +17,8 @@
                 </div>
             </div>
             <div class="notice-content">
-                <p v-if="notice.type == 'LIKE'" class="notice-type jua-regular" @click="moveTo('article')">회원님의 게시글에 좋아요를
+                <p v-if="notice.type == 'LIKE'" class="notice-type jua-regular" @click="moveTo('article')">회원님의 게시글에
+                    좋아요를
                     눌렀어요.</p>
                 <p v-if="notice.type == 'COMMENT'" class="notice-type jua-regular" @click="moveTo('article')">회원님의 게시글에
                     댓글을 달았어요.</p>
@@ -27,12 +28,13 @@
                     했어요.</p>
             </div>
         </div>
-        <button class="unread-btn btn jua-regular">확인</button>
-        <!-- <button class="read-btn btn jua-regular">읽음</button> -->
+        <button v-if="!isReaded" class="unread-btn btn jua-regular" @click="readNotice">확인</button>
+        <button v-if="isReaded" class="read-btn btn jua-regular">읽음</button>
     </li>
 </template>
 
 <script setup>
+import axios from 'axios';
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router'
 const router = useRouter();
@@ -44,21 +46,31 @@ const emit = defineEmits([
     'closeNotice'
 ])
 
+const isReaded = ref(false);
+
 const moveTo = (to) => {
     emit('closeNotice');
     let pathTo;
     switch (to) {
         case 'user':
-            pathTo = {name : 'user', params : {'id' : props.notice.fromUserId}}
+            pathTo = { name: 'user', params: { 'id': props.notice.fromUserId } }
             break;
 
         case 'article':
-            pathTo = {name : 'main'}
+            pathTo = { name: 'main' }
             break;
     }
-
-    
     router.push(pathTo)
+}
+
+const readNotice = () => {
+    axios.patch(`http://localhost:8080/api/notifications/${props.notice.id}`, {
+        headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+        },
+    }).then(({data})=>{
+        isReaded.value = data.success;
+    })
 }
 </script>
 
