@@ -58,16 +58,16 @@
             @click="() => move('user')">{{
               userInfo.nickname }}</h1>
           <p class="jua-regular" data-bs-dismiss="modal"> 님을 기다리는 소식</p>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="closeNotice"></button>
         </div>
         <div class="modal-body">
           <ul class="notice-box">
-            <NoticeItem v-for="(notice, index) in userNotices" :notice="notice" :key="notice.id"/>
+            <NoticeItem v-for="(notice, index) in userNotices" :notice="notice" @closeNotice="closeNotice" :key="notice.id"/>
           </ul>
         </div>
         <div class="modal-footer">
           <button type="button" class="jua-regular-large btn noti-allread">모두 확인하기</button>
-          <button type="button" class="jua-regular-large btn noti-close" data-bs-dismiss="modal">닫기</button>
+          <button type="button" class="jua-regular-large btn noti-close" data-bs-dismiss="modal" @click="closeNotice">닫기</button>
         </div>
       </div>
     </div>
@@ -189,6 +189,11 @@ function toggleUserMenu(event) {
     };
   }
 }
+
+const closeNotice = () => {
+  const modal = new bootstrap.Modal(document.getElementById('exampleModal'));
+  modal.hide();
+};
 
 
 </script>
