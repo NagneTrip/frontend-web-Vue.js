@@ -59,7 +59,7 @@ const articles = ref([]);
 const router = useRouter();
 const isOpenModal = ref(false);
 const modalArticleId = ref(null);
-const lastIndex = ref(null); // null로 초기화하여 첫 번째 요청에서는 사용되지 않도록 설정
+const lastIndex = ref(null);
 const isLoading = ref(false);
 const noMoreData = ref(false);
 
