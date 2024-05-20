@@ -15,10 +15,11 @@
               <font-awesome-icon :icon="faPen" class="write-icon" />
             </div>
           </div>
-          <div class="article-container">
+          <div class="article-container" ref="articleContainer">
             <TheArticle v-for="(article, index) in articles" :article="article" :key="article.id"
               @open-article-modal="openModal" />
           </div>
+          <img v-if="isLoading" src="@/assets/blue_spinner.svg" alt="Loading" class="spinner" />
         </div>
         <div class="vertical-line"></div>
         <div class="side" ref="sideSection">
@@ -58,19 +59,46 @@ const articles = ref([]);
 const router = useRouter();
 const isOpenModal = ref(false);
 const modalArticleId = ref(null);
+const lastIndex = ref(null); // null로 초기화하여 첫 번째 요청에서는 사용되지 않도록 설정
+const isLoading = ref(false);
+const noMoreData = ref(false);
 
 const fetchArticles = async () => {
-  try {
-    const response = await axios.get("http://localhost:8080/api/articles?size=7", {
-      headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` }
-    })
-    articles.value = response.data.response.articles;
-  } catch (error) {
-    console.error(error);
+  if (isLoading.value || noMoreData.value) return;
+
+  isLoading.value = true;
+  let url = `http://localhost:8080/api/articles`;
+  if (lastIndex.value !== null) {
+    url += `?lastIndex=${lastIndex.value}`;
   }
+
+  axios.get(url, {
+    headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` }
+  })
+    .then(response => {
+      const articlesData = response.data.response.articles;
+      if (articlesData.length < 10) {
+        noMoreData.value = true;
+      }
+      articles.value.push(...articlesData); // 데이터 누적
+      if (articlesData.length > 0) {
+        lastIndex.value = articlesData[articlesData.length - 1].id; // 마지막 데이터의 ID로 업데이트
+      }
+    })
+    .catch(error => {
+      console.error(error);
+    })
+    .finally(() => {
+      isLoading.value = false;
+    });
 };
 
-onMounted(fetchArticles);
+const handleScroll = () => {
+  const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+  if (scrollTop + clientHeight >= scrollHeight - 100 && !isLoading.value && !noMoreData.value) {
+    fetchArticles();
+  }
+};
 
 const openModal = (id) => {
   if (store.isAuthenticated) {
@@ -98,14 +126,7 @@ const scrollToTop = () => {
 const sideSection = ref(null);
 
 onMounted(() => {
-  const handleScroll = () => {
-    if (sideSection.value) {
-      sideSection.value.scrollTo({
-        top: window.scrollY,
-        behavior: "smooth",
-      });
-    }
-  };
+  fetchArticles();
 
   window.addEventListener("scroll", handleScroll);
 
@@ -114,6 +135,8 @@ onMounted(() => {
   });
 });
 </script>
+
+
 
 
 <style scoped>
@@ -344,5 +367,12 @@ onMounted(() => {
 #faArrowUp {
   width: 30px;
   height: 30px;
+}
+
+.spinner {
+  width: 300px;
+  height: 300px;
+  display: block;
+  margin: 120px auto 20px auto;
 }
 </style>

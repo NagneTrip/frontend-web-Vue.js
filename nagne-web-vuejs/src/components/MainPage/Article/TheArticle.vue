@@ -136,33 +136,33 @@ onMounted(async () => {
   }
 })
 
-watch(article, async () => {
-  if (store.isAuthenticated && props.article) { //이미 로그인 되어 있으면 토큰 갱신
-    // await store.getToken();
+// watch(article, async () => {
+//   if (store.isAuthenticated && props.article) { //이미 로그인 되어 있으면 토큰 갱신
+//     // await store.getToken();
 
-    //로그인 된 상태 -> 모든 정보 API
-    //게시물 정보 받아오기
-    axios.get(`http://localhost:8080/api/articles/${props.article.id}`, {
-      headers: {
-        Authorization: `Bearer ${sessionStorage.getItem('token')}`,
-      },
-    })
-      .then(({ data }) => {
-        article.value = data.response.articleInfo;
-        isLiked.value = data.response.articleInfo.isLiked;
-        isBookmarked.value = data.response.articleInfo.isBookmarked;
-      })
-      .catch()
+//     //로그인 된 상태 -> 모든 정보 API
+//     //게시물 정보 받아오기
+//     axios.get(`http://localhost:8080/api/articles/${props.article.id}`, {
+//       headers: {
+//         Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+//       },
+//     })
+//       .then(({ data }) => {
+//         article.value = data.response.articleInfo;
+//         isLiked.value = data.response.articleInfo.isLiked;
+//         isBookmarked.value = data.response.articleInfo.isBookmarked;
+//       })
+//       .catch()
 
-  }
+//   }
 
-  else { // 로그인 안된 상태 -> 제한된 정보 API
-    //게시물 정보 받아오기
-    article.value = props.article;
-    isLiked.value = false;
-    isBookmarked.value = false;
-  }
-})
+//   else { // 로그인 안된 상태 -> 제한된 정보 API
+//     //게시물 정보 받아오기
+//     article.value = props.article;
+//     isLiked.value = false;
+//     isBookmarked.value = false;
+//   }
+// })
 
 const openArticleModal = () => {
   if (!store.isAuthenticated) {
