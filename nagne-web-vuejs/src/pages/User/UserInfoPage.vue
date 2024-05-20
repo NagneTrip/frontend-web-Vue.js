@@ -29,7 +29,8 @@
             <button class="tab jua-regular" :class="{ 'tab-selected': tabState === 'article' }"
                 @click="changeTab('article')">게시물</button>
             <button class="tab jua-regular" :class="{ 'tab-selected': tabState === 'plan' }"
-                @click="changeTab('plan')">여행 계획</button>
+                @click="changeTab('plan')">여행
+                계획</button>
         </div>
         <div class="article-section">
             <template v-if="tabState === 'article'">
@@ -39,8 +40,10 @@
                 <UserPlan />
             </template>
         </div>
-        <UserFollowing v-if="isFollowingOpen" :userInfo="userInfo" @follow-changed="followChanged" @close-follow-modal="closeFollowModal" />
-        <UserFollowers v-if="isFollowersOpen" :userInfo="userInfo" @follow-changed="followChanged" @close-follow-modal="closeFollowModal" />
+        <UserFollowing v-if="isFollowingOpen" :userInfo="userInfo" @follow-changed="followChanged"
+            @close-follow-modal="closeFollowModal" />
+        <UserFollowers v-if="isFollowersOpen" :userInfo="userInfo" @follow-changed="followChanged"
+            @close-follow-modal="closeFollowModal" />
     </div>
 </template>
 
@@ -88,7 +91,7 @@ const closeFollowModal = () => {
     isFollowingOpen.value = false;
 }
 
-const followChanged = async() => {
+const followChanged = async () => {
     await fetchUserInfo();
 }
 
@@ -109,7 +112,7 @@ onMounted(async () => {
     await fetchUserInfo();
     // 유저가 작성한 게시물 로드
     await fetchUserArticles();
-    
+
 })
 
 watch(() => route.params.id, async (newId) => {
@@ -142,7 +145,7 @@ const fetchUserInfo = async () => {
 // 유저가 작성한 게시물 로드
 const fetchUserArticles = async () => {
     await axios.get(`http://localhost:8080/api/articles/by?userId=${userIdByParams.value}`, {
-        headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}`}
+        headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` }
     }).then(({ data }) => {
         userArticles.value = data.response.articles;
     })
@@ -158,15 +161,15 @@ const follow = async () => {
         return;
     }
 
-    await axios.post(`http://localhost:8080/api/follow`, {"followId": Number(userIdByParams.value)}, {
+    await axios.post(`http://localhost:8080/api/follow`, { "followId": Number(userIdByParams.value) }, {
         headers: {
             Authorization: `Bearer ${sessionStorage.getItem('token')}`,
         }
-    }).then(({data}) => {
+    }).then(({ data }) => {
         isFollow.value = true;
     })
 }
-console.log(userIdByParams.value)
+
 const unfollow = async () => {
     if (!sessionStorage.getItem('token') || !authStore.isAuthenticated) {
         alert('에러 발생! 로그인을 다시 진행하세요!')
