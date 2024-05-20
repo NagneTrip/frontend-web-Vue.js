@@ -112,6 +112,8 @@ onMounted(async () => {
     await fetchUserInfo();
     // 유저가 작성한 게시물 로드
     await fetchUserArticles();
+    // 로그인한 유저(자신)가 아니면 팔로우 여부 조회
+    await fetchIsFollow();
 })
 
 watch(() => route.params.id, async (newId) => {
@@ -150,6 +152,15 @@ const fetchUserArticles = async () => {
     })
 }
 
+// 로그인한 유저(자신)가 아니면 팔로우 여부 조회
+const fetchIsFollow = async () => {
+    await axios.get(`http://localhost:8080/api/follow/${userIdByParams.value}`, {
+        headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` }
+    }).then(({ data }) => {
+        isFollow.value = data.response.checkFollow;
+    })
+};
+
 const userArticlesLen = computed(() => {
     return userArticles.value.length;
 })
@@ -160,7 +171,7 @@ const follow = async () => {
         return;
     }
 
-    await axios.post(`http://localhost:8080/api/follow`, { "followId": Number(userIdByParams.value) }, {
+    await axios.post(`http://localhost:8080/api/follow`, { "followId": userIdByParams.value }, {
         headers: {
             Authorization: `Bearer ${sessionStorage.getItem('token')}`,
         }
