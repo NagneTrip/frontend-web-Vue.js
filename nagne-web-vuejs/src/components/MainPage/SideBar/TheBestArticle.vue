@@ -3,10 +3,10 @@
     <div class="header">
       <p class="title jua-regular">베스트 나그네</p>
       <div class="buttons">
-        <button class="filter">
+        <button class="filter" :class="{isSelected : sortState==='like'}" @click="changeSortState('like')">
           <p class="jua-regular">좋아요순</p>
         </button>
-        <button class="filter">
+        <button class="filter" :class="{isSelected : sortState==='comment'}" @click="changeSortState('comment')">
           <p class="jua-regular">댓글순</p>
         </button>
       </div>
@@ -24,20 +24,25 @@
 <script setup>
 import axios from "axios";
 import BestArticleItem from './BestArticleItem.vue';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { useAuthStore } from '@/store/auth.js'
 const authStore = useAuthStore();
 
 const bestArticles = ref([]);
 const isLoading = ref(false);
+const sortState = ref('like');
 
-onMounted(() => {
-  getBestArticles();
+onMounted(async() => {
+  await fetchBestArticles();
 })
 
-const getBestArticles = async () => {
+watch(sortState, async ()=>{
+  await fetchBestArticles();
+})
+
+const fetchBestArticles = async () => {
   isLoading.value = true;
-  await axios.get('http://localhost:8080/api/articles/best', {
+  await axios.get(`http://localhost:8080/api/articles/best?sort=${sortState.value}`, {
     headers: {
       Authorization: `Bearer ${sessionStorage.getItem('token')}`,
     }
@@ -49,6 +54,10 @@ const getBestArticles = async () => {
     
   }
   )
+}
+
+const changeSortState = (changeTo)=> {
+  sortState.value = changeTo;
 }
 
 </script>
@@ -97,8 +106,16 @@ const getBestArticles = async () => {
 
 .filter p {
   font-size: 12px;
-  color: rgb(118, 189, 255);
+  color: rgb(118, 173, 255);
   margin: 0;
+}
+
+.isSelected {
+  background-color: rgb(65, 139, 244);
+  
+  p {
+    color: white;
+  }
 }
 
 .article-container {
