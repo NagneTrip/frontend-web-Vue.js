@@ -67,9 +67,9 @@ const fetchArticles = async () => {
   if (isLoading.value || noMoreData.value) return;
 
   isLoading.value = true;
-  let url = `http://localhost:8080/api/articles`;
+  let url = `http://localhost:8080/api/articles?size=5`;
   if (lastIndex.value !== null) {
-    url += `?lastIndex=${lastIndex.value}`;
+    url += `&lastIndex=${lastIndex.value}`;
   }
 
   axios.get(url, {
@@ -77,7 +77,7 @@ const fetchArticles = async () => {
   })
     .then(response => {
       const articlesData = response.data.response.articles;
-      if (articlesData.length < 10) {
+      if (articlesData.length < 5) {
         noMoreData.value = true;
       }
       articles.value.push(...articlesData); // 데이터 누적
@@ -167,6 +167,7 @@ onMounted(() => {
   width: 100%;
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 15px;
 }
 
@@ -226,7 +227,6 @@ onMounted(() => {
   height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 20px;
   border-radius: 15px 15px 0px 0px;
 }
 
