@@ -19,9 +19,12 @@
                 </div>
                 <div class="info-box-social">
                     <p class="jua-regular">게시물 {{ userArticlesLen }}</p>
+                    <p class="jua-regular">여행 계획 {{ userInfo.followings }}
+                    </p>
                     <p class="jua-regular social" @click="openFollowModal('followers')">팔로워 {{ userInfo.followers }}</p>
                     <p class="jua-regular social" @click="openFollowModal('following')">팔로잉 {{ userInfo.followings }}
                     </p>
+
                 </div>
             </div>
         </div>
@@ -215,6 +218,7 @@ p {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 20px;
     margin: 70px 0 0 0;
     padding: 0 30px 50px 30px;
     border-bottom: 2px solid rgb(219, 219, 219);
@@ -234,7 +238,7 @@ p {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    width: 300px;
+    width: 450px;
     height: 100%;
 }
 
@@ -246,8 +250,10 @@ p {
 
 .info-box-social {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     font-size: 20px;
+    width: 100%;
+    margin: 0 auto 0 auto;
 }
 
 .info-name {

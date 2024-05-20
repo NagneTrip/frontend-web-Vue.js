@@ -96,8 +96,8 @@ li {
 }
 
 .modal-content {
-    width: 400px;
-    height: 500px;
+    width: 500px;
+    height: 600px;
     background: white;
     padding: 30px;
     border-radius: 12px;
