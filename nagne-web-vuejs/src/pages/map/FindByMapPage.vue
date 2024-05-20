@@ -2,10 +2,9 @@
   <KakaoMap class="map" :ref="map" :lat="mapLocation.lat" :lng="mapLocation.lng" :draggable="true" :width="'100%'"
     :height="'89vh'" @onLoadKakaoMap="onLoadKakaoMap">
     <!-- 싸피 마커 -->
-    <KakaoMapMarker :lat="ssafyLocation.lat" :lng="ssafyLocation.lng" 
+    <KakaoMapMarker :lat="ssafyLocation.lat" :lng="ssafyLocation.lng"
       :image="{ imageSrc: '/src/assets/map_marker/ssafy_logo.png', imageWidth: 60, imageHeight: 30, imageOption: {} }"
-      :infoWindow="{ content: 'SSAFY 광주 캠퍼스', visible: visibleRef }"
-      @mouseOverKakaoMapMarker="mouseOverKakaoMapMarker"
+      :infoWindow="{ content: 'SSAFY 광주 캠퍼스', visible: visibleRef }" @mouseOverKakaoMapMarker="mouseOverKakaoMapMarker"
       @mouseOutKakaoMapMarker="mouseOutKakaoMapMarker">
     </KakaoMapMarker>
     <!-- 내 위치 마커 -->
@@ -21,12 +20,14 @@
 
 <script setup>
 /* global kakao */
+import axios from "axios";
 import TourList from "@/components/Map/Find/TourList.vue";
 import { faLocationCrosshairs } from "@fortawesome/free-solid-svg-icons";
 import { ref, onMounted, watch } from 'vue';
 import { useMapStore } from '@/store/map';
+import { useAuthStore } from '@/store/auth';
 import { KakaoMap, KakaoMapMarker } from 'vue3-kakao-maps';
-
+const authStore = useAuthStore();
 const mapStore = useMapStore();
 const map = ref(null);
 const isGps = ref(false);
@@ -40,14 +41,26 @@ const mapLocation = ref({
 });
 const gpsLocation = ref({});
 
-const onLoadKakaoMap = (mapRef) => {
+const onLoadKakaoMap = async (mapRef) => {
   map.value = mapRef;
   isGps.value = true;
   getLoaction();
+
+  //관광지 데이터 호출
+  await fetchAttractionData();
 };
 
-const getLoaction = async()=> {
-    await navigator.geolocation.getCurrentPosition((position) => {
+//관광지 데이터 호출
+const fetchAttractionData = async () => {
+  if (!sessionStorage.getItem('token') || !authStore.isAuthenticated) {
+    return;
+  }
+
+  await axios()
+}
+
+const getLoaction = () => {
+  navigator.geolocation.getCurrentPosition((position) => {
     let lat = position.coords.latitude;
     let lng = position.coords.longitude;
     mapStore.userLocation = { lat, lng };
@@ -110,6 +123,4 @@ const mouseOutKakaoMapMarker = () => {
     color: #2a79ff;
   }
 }
-
-
 </style>
