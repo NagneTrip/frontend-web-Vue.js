@@ -99,7 +99,7 @@ const emit = defineEmits([
 
 
 onMounted(async () => {
-  if (sessionStorage.getItem('token')) { //이미 로그인 되어 있으면 토큰 갱신
+  if (sessionStorage.getItem('token') && props.article) { //이미 로그인 되어 있으면 토큰 갱신
     // await store.getToken();
 
     //로그인 된 상태 -> 모든 정보 API
@@ -140,7 +140,7 @@ onMounted(async () => {
 })
 
 watch(article, async () => {
-  if (store.isAuthenticated) { //이미 로그인 되어 있으면 토큰 갱신
+  if (store.isAuthenticated && props.article) { //이미 로그인 되어 있으면 토큰 갱신
     // await store.getToken();
 
     //로그인 된 상태 -> 모든 정보 API
