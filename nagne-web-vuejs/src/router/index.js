@@ -15,6 +15,7 @@ import MyTripPlanPage from "@/pages/map/MyTripPlanPage.vue";
 import UserInfoPage from "@/pages/User/UserInfoPage.vue";
 import UserFollowing from "@/components/User/UserFollowing.vue";
 import UserFollowers from "@/components/User/UserFollowers.vue";
+import BookMarkPage from "@/pages/BookMark/BookMarkPage.vue";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -103,7 +104,11 @@ const router = createRouter({
       name: "user",
       component: UserInfoPage,
     },
-    
+    {
+      path: "/bookmark",
+      name: 'bookmark',
+      component: BookMarkPage,
+    }
   ],
 });
 
