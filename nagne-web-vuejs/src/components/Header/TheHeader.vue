@@ -176,6 +176,11 @@ const fetchUserInfo = async () => {
   })
 }
 
+// 알림 전체 읽기 기능 추가 필요
+const readAllNotice = async ()=> {
+  
+}
+
 const move = (path) => {
   let moveTo = { name: path };
   switch (path) {

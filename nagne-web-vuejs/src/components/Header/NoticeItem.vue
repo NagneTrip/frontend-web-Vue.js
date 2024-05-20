@@ -63,6 +63,7 @@ const moveTo = (to) => {
     router.push(pathTo)
 }
 
+// 알림 읽기 -> 401 에러 : 백엔드 수정 필요
 const readNotice = () => {
     axios.patch(`http://localhost:8080/api/notifications/${props.notice.id}`, {
         headers: {
