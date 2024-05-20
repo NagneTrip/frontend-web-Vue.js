@@ -37,8 +37,8 @@ const emit = defineEmits([
 
 const isFollow = ref(false);
 
-const moveToUser = ()=> {
-    router.push({name : 'user', params : {'id' : props.followItem.id}})
+const moveToUser = () => {
+    router.push({ name: 'user', params: { 'id': props.followItem.id } })
 }
 
 onMounted(async () => {
@@ -47,7 +47,7 @@ onMounted(async () => {
     }
 
     // 로그인한 유저와 목록의 유저가 동일한지 확인
-    if (Number(props.followItem.id)===Number(sessionStorage.getItem('loginUserId'))) {
+    if (Number(props.followItem.id) === Number(sessionStorage.getItem('loginUserId'))) {
         isNowLoginUser.value = true;
     }
 
