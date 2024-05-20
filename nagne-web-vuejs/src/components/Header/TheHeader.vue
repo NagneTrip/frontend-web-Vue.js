@@ -61,7 +61,9 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          ...
+          <ul class="notice-box">
+            <NoticeItem v-for="(notice, index) in userNotices" :notice="notice" :key="notice.id"/>
+          </ul>
         </div>
         <div class="modal-footer">
           <button type="button" class="jua-regular-large btn noti-allread">모두 확인하기</button>
@@ -91,23 +93,41 @@ import { useAuthStore } from "@/store/auth";
 const authStore = useAuthStore();
 import { storeToRefs } from 'pinia';
 import axios from "axios";
+import NoticeItem from "./NoticeItem.vue";
 const { isAuthenticated } = storeToRefs(authStore);
 
 const store = useAuthStore();
 const router = useRouter();
 const isLogin = ref(false);
 const userInfo = ref({})
+const userNotices = ref([]);
 
 onMounted(async () => {
   store.loadAuthState();
 
-  //유저 정보 조회
+  // 유저 로그인 여부 검증
   if (!store.isAuthenticated || !sessionStorage.getItem('token')) {
     return;
   }
+  // 유저 정보 조회
   await fetchUserInfo();
+
+  // 유저 알림 조회
+  await fetchUserNotice();
 })
 
+// 유저 알림 조회
+const fetchUserNotice = async ()=> {
+  await axios.get(`http://localhost:8080/api/notifications`, {
+    headers: {
+      Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+    },
+  }).then(({data})=>{
+    userNotices.value = data.response;
+  })
+}
+
+// 유저 정보 조회
 const fetchUserInfo = async () => {
   await axios.get(`http://localhost:8080/api/users/${sessionStorage.getItem('loginUserId')}`, {
     headers: {
@@ -482,4 +502,17 @@ a {
   scale: 1.05;
   transition: 0.2s all;
 }
+
+.notice-box {
+  width: 100%;
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  justify-content: flex-start;
+  margin: 0;
+  padding: 0 20px 0 20px;
+}
+
 </style>
