@@ -2,14 +2,14 @@
     <li class="notice-item">
         <div class="noticer-img">
             <img :src="notice.fromUserProfileImage || '/src/assets/logo/logo_img.png'" alt="" :width="50"
-                :height="50" />
+                :height="50" @click="moveTo('user')"/>
         </div>
         <div class="notice-info">
             <div class="noticer-info">
                 <div class="noticer">
                     <div class="name-tier" @click="moveTo('user')">
                         <p class="noticer-name jua-regular">{{ notice.fromUserNickname }}</p>
-                        <img :src="`/src/assets/tier/${notice.fromUserTier}.svg`" @click="moveTo('user')" alt=""
+                        <img :src="`/src/assets/tier/${notice.fromUserTier}.svg`" alt=""
                             :width="14" :height="16">
                     </div>
 
@@ -57,7 +57,7 @@ const moveTo = (to) => {
             break;
 
         case 'article':
-            pathTo = { name: 'main' }
+            pathTo = { name: 'articleDetail', params: {'id': props.notice.articleId} }
             break;
     }
     router.push(pathTo)
@@ -98,6 +98,10 @@ const readNotice = () => {
     overflow: hidden;
 }
 
+.noticer-img img {
+    cursor: pointer;
+}
+
 .notice-info {
     display: flex;
     gap: 8px;
@@ -115,6 +119,7 @@ const readNotice = () => {
     display: flex;
     align-items: center;
     gap: 8px;
+    cursor: pointer;
 }
 
 .noticer-name {
@@ -128,6 +133,7 @@ const readNotice = () => {
 
 .notice-type {
     font-size: 15px;
+    cursor: pointer;
 }
 
 .unread-btn {
