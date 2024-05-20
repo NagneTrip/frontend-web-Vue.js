@@ -16,7 +16,8 @@
             </div>
           </div>
           <div class="article-container">
-            <TheArticle v-for="(article, index) in articles" :article="article" :key="article.id" @open-article-modal="openModal" />
+            <TheArticle v-for="(article, index) in articles" :article="article" :key="article.id"
+              @open-article-modal="openModal" />
           </div>
         </div>
         <div class="vertical-line"></div>
@@ -30,7 +31,8 @@
         </div>
       </div>
     </div>
-    <ArticleDetailModal v-if="isOpenModal && store.isAuthenticated" :articleId="modalArticleId" @close-modal="closeModal" @changed="fetchArticles" />
+    <ArticleDetailModal v-if="isOpenModal && store.isAuthenticated" :articleId="modalArticleId"
+      @close-modal="closeModal" @changed="fetchArticles" />
     <div class="navbar-icons-wrapper" id="faArrowUp-button" @click="scrollToTop">
       <font-awesome-icon :icon="faArrowUp" class="icon" id="faArrowUp" />
     </div>
@@ -60,8 +62,8 @@ const modalArticleId = ref(null);
 const fetchArticles = async () => {
   try {
     const response = await axios.get("http://localhost:8080/api/articles?size=7", {
-      headers: sessionStorage.getItem('token') ? { Authorization: `Bearer ${sessionStorage.getItem('token')}` } : {},
-    });
+      headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` }
+    })
     articles.value = response.data.response.articles;
   } catch (error) {
     console.error(error);
