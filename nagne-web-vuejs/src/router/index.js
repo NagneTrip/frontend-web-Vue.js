@@ -17,6 +17,7 @@ import UserFollowing from "@/components/User/UserFollowing.vue";
 import UserFollowers from "@/components/User/UserFollowers.vue";
 import BookMarkPage from "@/pages/BookMark/BookMarkPage.vue";
 import ArticleDetailPage from "@/pages/ArticleDetail/ArticleDetailPage.vue";
+import EditProfile from "@/pages/EditProfile/EditProfile.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -115,6 +116,11 @@ const router = createRouter({
       path: "/bookmark",
       name: 'bookmark',
       component: BookMarkPage,
+    },
+    {
+      path: "/editProfile",
+      name: 'edit',
+      component: EditProfile,
     }
   ],
 });
