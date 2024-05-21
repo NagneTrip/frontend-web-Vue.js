@@ -58,9 +58,8 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5 jua-regular-large noti-user-name" id="modalLabel"
-            @click="() => move('user')">{{
-              userInfo.nickname }}</h1>
+          <h1 class="modal-title fs-5 jua-regular-large noti-user-name" id="modalLabel" @click="() => move('user')">{{
+            userInfo.nickname }}</h1>
           <p v-if="isAuthenticated" class="jua-regular" data-bs-dismiss="modal"> 님을 기다리는 소식</p>
           <p v-if="!isAuthenticated" class="jua-regular" data-bs-dismiss="modal"> 로그인 후 확인하세요!</p>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
@@ -68,7 +67,7 @@
         </div>
         <div class="modal-body">
           <ul class="notice-box">
-            <NoticeItem v-for="(notice, index) in userNotices" :notice="notice" @closeNotice="closeNotice"
+            <NoticeItem v-for="(notice, index) in userNotices" :notice="notice" @close-notice="closeNotice"
               :key="notice.id" />
           </ul>
         </div>

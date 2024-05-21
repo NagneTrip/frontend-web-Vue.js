@@ -66,8 +66,8 @@ const moveTo = (to) => {
 }
 
 // 알림 읽기 -> 401 에러 : 백엔드 수정 필요
-const readNotice = () => {
-    axios.patch(`http://localhost:8080/api/notifications/${props.notice.id}`, {
+const readNotice = async () => {
+    await axios.patch(`http://localhost:8080/api/notifications/${props.notice.id}`, {}, {
         headers: {
             Authorization: `Bearer ${sessionStorage.getItem('token')}`,
         },
