@@ -1,7 +1,6 @@
 <template>
   <div class="article-detail-page" @click="closeModal">
     <div class="modal-wrapper">
-
       <div class="modal-box" @click.stop>
         <img v-if="isLoading" src="/src/assets/blue_spinner.svg" alt="" class="modal-left" />
         <div v-if="!isLoading" class="modal-left" @click="closeDotMenu">
@@ -36,7 +35,7 @@
               <span class="content-main noto-sans-kr-bold">
                 {{ article.content }}
               </span>
-              <CommentList :articleId="Number(articleIdByParams)" />
+              <CommentList :articleId="Number(articleIdByParams)" @updateComments="fetchComments = true" />
             </div>
             <div class="right-footer">
               <div class="social-box">
@@ -124,6 +123,7 @@ const isLoading = ref(false);
 const dotMenuStyle = ref({});
 const commentInput = ref(null);
 const commentContent = ref("");
+const fetchComments = ref(false);
 
 onMounted(async () => {
   isLoading.value = true;
@@ -245,17 +245,23 @@ const toggleDotMenu = (event) => {
   }
 };
 
-const postComment = () => {
-  axios.get(`http://localhost:8080/api/comments`, {
-    articleId: props.articleIdByParams,
-    content: commentContent.value,
-  }, {
-    headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` },
-  }).then(({ data }) => alert('댓글이 작성되었습니다.'))
-}
+const postComment = async () => {
+  try {
+    await axios.post(`http://localhost:8080/api/comments`, {
+      articleId: articleIdByParams,
+      content: commentContent.value,
+    }, {
+      headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` },
+    });
+    commentContent.value = '';
+    // 댓글 작성 후 댓글 목록을 갱신
+    fetchComments.value = true;
+    alert('댓글이 작성되었습니다.')
+  } catch (error) {
+    console.error('댓글 작성 중 오류 발생:', error);
+  }
+};
 </script>
-
-
 
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400&display=swap");

@@ -8,36 +8,35 @@
 </template>
 
 <script setup>
-import CommentListItem from "./CommentListItem.vue"
+import CommentListItem from "./CommentListItem.vue";
 import axios from "axios";
 import { ref, onMounted } from "vue";
-import { useAuthStore } from "@/store/auth";
-const store = useAuthStore();
 
 const props = defineProps({
   articleId: Number,
-})
+});
 
 const comments = ref([]);
-onMounted(async () => {
-  // if (store.isAuthenticated) { //이미 로그인 되어 있으면 토큰 갱신
-  //   await store.getToken();
-  // }
-  axios.get(`http://localhost:8080/api/comments?articleId=${props.articleId}`,
-    {
+
+const fetchComments = async () => {
+  try {
+    const { data } = await axios.get(`http://localhost:8080/api/comments?articleId=${props.articleId}`, {
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem('token')}`,
       },
-    }
-  )
-    .then(({ data }) => {
-      comments.value = data.response.comments
-    })
-    .catch
-}
-)
+    });
+    comments.value = data.response.comments;
+  } catch (error) {
+    console.error(error);
+  }
+};
 
+onMounted(fetchComments);
+
+const emit = defineEmits(["updateComments"]);
+emit("updateComments", true);
 </script>
+
 
 <style scoped>
 .comment-list {

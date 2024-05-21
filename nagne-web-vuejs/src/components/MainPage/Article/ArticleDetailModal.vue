@@ -36,7 +36,7 @@
               <span class="content-main noto-sans-kr-bold">
                 {{ article.content }}
               </span>
-              <CommentList :articleId="articleId" />
+              <CommentList :articleId="articleId" @updateComments="fetchComments = true" />
             </div>
             <div class="right-footer">
               <div class="social-box">
@@ -123,6 +123,7 @@ const isLiked = ref(false);
 const isBookmarked = ref(false);
 const isDotMenuOpen = ref(false);
 const isLoading = ref(false);
+const fetchComments = ref(false);
 
 const dotMenuStyle = ref({});
 const commentInput = ref(null);
@@ -248,13 +249,17 @@ const toggleDotMenu = (event) => {
   }
 };
 
-const postComment = () => {
-  axios.get(`http://localhost:8080/api/comments`, {
+const postComment = async () => {
+  await axios.post(`http://localhost:8080/api/comments`, {
     articleId: props.articleId,
     content: commentContent.value,
   }, {
     headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` },
-  }).then(({ data }) => alert('댓글이 작성되었습니다.'))
+  }).then(({ data }) => {
+    alert('댓글이 작성되었습니다.')
+    commentContent.value = '';
+    fetchComments.value = true;
+  })
 }
 
 </script>
