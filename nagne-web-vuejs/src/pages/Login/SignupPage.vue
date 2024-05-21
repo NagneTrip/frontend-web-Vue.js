@@ -212,6 +212,7 @@ onMounted(() => {
     authStore.token = token;
     sessionStorage.setItem('token', token);
     sessionStorage.setItem('loginUserId', userInfo.id);
+    sessionStorage.setItem('socialLogin', true);
     authStore.isAuthenticated = true;
     authStore.loginUserId = userInfo.id;
     authStore.userEmail = userInfo.username;
