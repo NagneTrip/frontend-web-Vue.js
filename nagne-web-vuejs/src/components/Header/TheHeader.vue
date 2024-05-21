@@ -180,7 +180,14 @@ const fetchUserInfo = async () => {
 
 // 알림 전체 읽기 기능 추가 필요
 const readAllNotice = async () => {
-  console.log('readAllNotice')
+  await axios.patch(`http://localhost:8080/api/notifications`, {}, {
+    headers: {
+      Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+    },
+  }).then(()=>{
+    fecthIsNotice();
+    fetchUserNotice();
+  })
 }
 
 const move = (path) => {
