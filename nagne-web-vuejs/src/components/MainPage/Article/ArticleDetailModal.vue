@@ -1,7 +1,7 @@
 <template>
   <div class="article-detail-page" @click="closeModal">
     <div class="modal-wrapper">
-      
+
       <div class="modal-box" @click.stop>
         <img v-if="isLoading" src="/src/assets/blue_spinner.svg" alt="" class="modal-left" />
         <div v-if="!isLoading" class="modal-left" @click="closeDotMenu">
@@ -310,6 +310,7 @@ const toggleDotMenu = (event) => {
   display: flex;
   flex-direction: row;
   justify-content: center;
+  height: 100%;
 }
 
 .modal-left {
@@ -333,9 +334,10 @@ const toggleDotMenu = (event) => {
 .modal-right {
   /* 기존 스타일 유지, overflow-y 스타일 제거 */
   width: 480px;
+  height: 100%;
   background-color: #f7f7f7;
   border-radius: 0 8px 8px 0;
-  box-shadow: 6px 4px 6px 0 rgba(0, 0, 0, 0.1);
+  /* box-shadow: 6px 4px 6px 0 rgba(0, 0, 0, 0.1); */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -571,7 +573,7 @@ const toggleDotMenu = (event) => {
     width: 560px;
     min-height: 100%;
     border-radius: 0 0 8px 8px;
-    box-shadow: 0 6px 6px 4px rgba(0, 0, 0, 0.1);
+    /* box-shadow: 0 6px 6px 4px rgba(0, 0, 0, 0.1); */
   }
 
   .modal-right-wrapper {
