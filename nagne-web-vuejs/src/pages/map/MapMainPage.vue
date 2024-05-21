@@ -1,10 +1,10 @@
 <template>
     <div class="write-page">
-        <button class="address-btn jua-regular" @click="clickBtn">
+        <!-- <button class="address-btn jua-regular" @click="clickBtn">
             <font-awesome-icon :icon="faLocationCrosshairs" class="gps-btn" />
             <p>현 위치로 주소 설정하기</p>
-        </button>
-        <p class="write-top jua-regular">나그네와 함께 [] 를 둘러봐요.</p>
+        </button> -->
+        <p class="write-top jua-regular">나그네와 함께 여행을 떠나봐요!</p>
         <div class="write-menu">
             <div class="row-container">
                 <div class="write" id="gps-icon" @click="move('find')">
@@ -12,14 +12,14 @@
                     <p class="jua-regular">주변 둘러보기</p>
                 </div>
                 <div class="write" id="hashtag-icon" @click="move('tag')">
-                    <font-awesome-icon :icon="faEarthAsia" class="add-img-icon " />
-                    <p class="jua-regular">지역 선택 하기</p>
+                    <font-awesome-icon :icon="faHashtag" class="add-img-icon " />
+                    <p class="jua-regular">키워드로 찾기</p>
                 </div>
             </div>
             <div class="row-container">
                 <div class="write" id="pin-icon" @click="move('save')">
-                    <font-awesome-icon :icon="faHashtag" class="add-img-icon" />
-                    <p class="jua-regular">키워드로 찾기</p>
+                    <font-awesome-icon :icon="faEarthAsia" class="add-img-icon" />
+                    <p class="jua-regular">내 장소 보기</p>
                 </div>
                 <div class="write" id="carrier-icon" @click="move('plan')">
                     <font-awesome-icon :icon="faSuitcaseRolling" class="add-img-icon" />
@@ -41,7 +41,7 @@ const router = useRouter();
 const move = (path) => {
     if (!sessionStorage.getItem('token')) {
         alert('로그인 후 이용하세요!')
-        router.push({name : 'login'});
+        router.push({ name: 'login' });
     }
 
     router.push(`/map/${path}`);
@@ -49,33 +49,33 @@ const move = (path) => {
 
 const gpsLocation = ref({});
 
-const clickBtn = ()=> {
+const clickBtn = () => {
     console.log('눌림')
     getLoaction();
     locaToAddress();
 }
 
-const getLoaction = ()=> {
+const getLoaction = () => {
     navigator.geolocation.getCurrentPosition((position) => {
-    let lat = position.coords.latitude;
-    let lng = position.coords.longitude;
-    mapStore.userLocation = { lat, lng };
-    gpsLocation.value = mapStore.userLocation;
-  }, (error) => {
-    console.error("Geolocation error:", error);
-  });
+        let lat = position.coords.latitude;
+        let lng = position.coords.longitude;
+        mapStore.userLocation = { lat, lng };
+        gpsLocation.value = mapStore.userLocation;
+    }, (error) => {
+        console.error("Geolocation error:", error);
+    });
 }
 
-const locaToAddress = async ()=>{
-    await axios.get(`/map-reversegeocode/v2/gc?coords=${gpsLocation.value.lat},${gpsLocation.value.lng}&output=json`, {
-        headers : {
-            'X-NCP-APIGW-API-KEY-ID' : import.meta.env.VITE_GC_ID,
-            'X-NCP-APIGW-API-KEY' : import.meta.env.VITE_GC_SECRET
-        }
-    })
-    .then((data)=>console.log(data))
-    .catch()
-}
+// const locaToAddress = async () => {
+//     await axios.get(`/map-reversegeocode/v2/gc?coords=${gpsLocation.value.lat},${gpsLocation.value.lng}&output=json`, {
+//         headers: {
+//             'X-NCP-APIGW-API-KEY-ID': import.meta.env.VITE_GC_ID,
+//             'X-NCP-APIGW-API-KEY': import.meta.env.VITE_GC_SECRET
+//         }
+//     })
+//         .then((data) => console.log(data))
+//         .catch()
+// }
 </script>
 
 <style scoped>
@@ -106,7 +106,7 @@ const locaToAddress = async ()=>{
     justify-content: center;
     align-items: center;
     gap: 10px;
-    margin : 30px 0 10px 0;
+    margin: 30px 0 10px 0;
     border: none;
     box-shadow: 0px 2px 3px 2px rgba(0, 0, 0, 0.2);
     transition: all 0.2s;
@@ -117,13 +117,14 @@ const locaToAddress = async ()=>{
     color: rgb(134, 184, 255);
     scale: 1.05;
     transition: all 0.2s;
+
     .gps-btn {
         color: rgb(134, 184, 255);
     }
 }
 
 .address-btn p {
-    margin:0;
+    margin: 0;
 }
 
 .gps-btn {
@@ -133,11 +134,13 @@ const locaToAddress = async ()=>{
 }
 
 .write-top {
-    margin: 0 0 20px 0;
-    font-size: 30px;
+    margin: 50px 0 20px 0;
+    font-size: 50px;
     letter-spacing: 1.5px;
     color: rgb(255, 255, 255);
     font-weight: 500;
+    text-shadow: 2px 2px 3px grey;
+    cursor: default;
 }
 
 .write-menu {
