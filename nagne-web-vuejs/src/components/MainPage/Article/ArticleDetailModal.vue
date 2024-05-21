@@ -8,7 +8,7 @@
           <img :src="'./src/assets/logo/logo.png'" class="modal-left-img" />
         </div>
         <div class="modal-right" @click="closeDotMenu">
-          <div class="modal-right-wrapper">
+          <div class="modal-right-wrapper" ref="modalRightWrapper" @scroll="handleScroll">
             <div class="right-header">
               <div class="user-info">
                 <div>
@@ -36,7 +36,7 @@
               <span class="content-main noto-sans-kr-bold">
                 {{ newArticle.content }}
               </span>
-              <CommentList :articleId="newArticle.id" @updateComments="fetchComments = true" />
+              <CommentList :articleid="newArticle.id" ref="commentList" @updateComments="fetchComments = 0" :gencomments="fetchComments"/>
             </div>
             <div class="right-footer">
               <div class="social-box">
@@ -104,9 +104,15 @@ import axios from "axios";
 import { onMounted, ref } from "vue";
 import CommentList from "./CommentList.vue";
 import { useAuthStore } from "@/store/auth";
+import { useWriteStore } from "@/store/write";
 import { useRouter } from "vue-router";
 const router = useRouter();
 const store = useAuthStore();
+const writeStore = useWriteStore();
+import { storeToRefs } from "pinia";
+const { getComment } = storeToRefs(writeStore);
+const { genComments, resetComments } = writeStore
+
 const newArticle = ref({});
 
 const props = defineProps({
@@ -128,9 +134,13 @@ const isDotMenuOpen = ref(false);
 const dotMenuStyle = ref({}); //게시물 옵션 버튼
 const isLoading = ref(false);
 
-const fetchComments = ref(false);
+const fetchComments = ref(0);
 const commentInput = ref(null);
 const commentContent = ref("");
+const modalRightWrapper = ref(null);
+const noMoreData = ref(false);
+const lastIndex = ref(1000000000);
+const commentList = ref(null);
 
 onMounted(async () => {
 
@@ -139,7 +149,6 @@ onMounted(async () => {
     isLoading.value = false;
   }, 500);
 
-  console.log(props.article)
   newArticle.value = props.article;
   isLiked.value = props.article.isLiked;
   commentCount.value = props.article.commentCount;
@@ -151,7 +160,24 @@ onMounted(async () => {
   if (newArticle.value.userId === Number(sessionStorage.getItem('loginUserId'))) {
     isUsersArticle.value = true;
   }
+
+  await fetchArticleDetail();
 });
+
+const fetchArticleDetail = async () => {
+  await axios.get(`http://localhost:8080/api/articles/${props.article.id}`, {
+    headers: {
+      Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+    }
+  }).then(({ data }) => {
+    newArticle.value = data.response.articleInfo;
+    isLiked.value = newArticle.value.isLiked;
+    commentCount.value = newArticle.value.commentCount;
+    isBookmarked.value = newArticle.value.isBookmarked;
+    likeCount.value = newArticle.value.likeCount;
+    commentContent.value = newArticle.value.commentContent;
+  })
+}
 
 const moveTo = (action) => {
   switch (action) {
@@ -195,14 +221,15 @@ const clickSocialBtn = async (btnName) => {
     alert('로그인 후 진행하세요!');
     return;
   }
-
-  const headers = {
-    Authorization: `Bearer ${sessionStorage.getItem('token')}`
-  };
+  console.log(newArticle.value.id)
   try {
     switch (btnName) {
       case 'like':
-        await axios.post('http://localhost:8080/api/articles/like', { articleId: newArticle.value.id }, { headers })
+        await axios.post('http://localhost:8080/api/articles/like', { articleId: newArticle.value.id }, {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('token')}`
+          }
+        })
           .then(() => {
             isLiked.value = true;
             likeCount.value++;
@@ -210,7 +237,11 @@ const clickSocialBtn = async (btnName) => {
           })
         break;
       case 'unlike':
-        await axios.delete(`http://localhost:8080/api/articles/like/${newArticle.value.id}`, { headers })
+        await axios.delete(`http://localhost:8080/api/articles/like/${newArticle.value.id}`, {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('token')}`
+          }
+        })
           .then(() => {
             isLiked.value = false;
             likeCount.value--;
@@ -219,13 +250,21 @@ const clickSocialBtn = async (btnName) => {
         break;
       case 'bookMark':
         if (!isBookmarked.value) {
-          await axios.post('http://localhost:8080/api/bookmark', { articleId: newArticle.value.id }, { headers })
+          await axios.post('http://localhost:8080/api/bookmark', { articleId: newArticle.value.id }, {
+            headers: {
+              Authorization: `Bearer ${sessionStorage.getItem('token')}`
+            }
+          })
             .then(() => {
               isBookmarked.value = true;
               emit('bookmark');
             })
         } else {
-          await axios.delete(`http://localhost:8080/api/bookmark/${newArticle.value.id}`, { headers })
+          await axios.delete(`http://localhost:8080/api/bookmark/${newArticle.value.id}`, {
+            headers: {
+              Authorization: `Bearer ${sessionStorage.getItem('token')}`
+            }
+          })
             .then(() => {
               isBookmarked.value = false
               emit('unbookmark');
@@ -240,16 +279,6 @@ const clickSocialBtn = async (btnName) => {
     }
   } catch (error) {
     console.error('Error during social button click:', error);
-    if (error.response) {
-      // Server responded with a status other than 2xx
-      alert(`Error: ${error.response.data.message || 'An error occurred'}`);
-    } else if (error.request) {
-      // No response was received
-      alert('No response from server. Please try again later.');
-    } else {
-      // Other errors
-      alert(`Request error: ${error.message}`);
-    }
   }
 };
 
@@ -280,9 +309,17 @@ const postComment = async () => {
   }).then(({ data }) => {
     alert('댓글이 작성되었습니다.')
     commentContent.value = '';
-    fetchComments.value = true;
+    writeStore.genComments();
   })
 }
+
+
+const handleScroll = () => {
+  const { scrollTop, scrollHeight, clientHeight } = modalRightWrapper.value;
+  if (scrollTop + clientHeight >= scrollHeight - 5) {
+    commentList.value.fetchComments();
+  }
+};
 
 </script>
 
@@ -392,11 +429,11 @@ const postComment = async () => {
   .modal-right-wrapper {
     overflow-y: auto;
     /* 내용이 넘칠 경우 세로 스크롤 활성화 */
-    scrollbar-width: none;
+    /* scrollbar-width: none; */
 
-    ::-webkit-scrollbar {
+    /* ::-webkit-scrollbar {
       display: none;
-    }
+    } */
   }
 }
 

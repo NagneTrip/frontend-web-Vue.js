@@ -3,12 +3,12 @@
     <div class="comment-box">
       <div class="user-info">
         <div class="user-profile-img">
-          <img src="@/assets/logo/logo_img.png" :width="50" :height="50" alt="" />
+          <img src="@/assets/logo/logo_img.png" class="profile-img" @click="moveTo" :width="50" :height="50" alt="" />
         </div>
         <div class="user-info-text">
-          <div class="user-info-main">
-            <p class="noto-sans-kr-bold user-nickname">{{ userInfo.nickname }}</p>
-            <img :src="`src/assets/tier/${userInfo.tier}.svg`" alt="" class="tier-img" :width="15" :height="15" />
+          <div class="user-info-main" @click="moveTo">
+            <p class="noto-sans-kr-bold user-nickname">{{ comment.userNickname }}</p>
+            <img :src="`src/assets/tier/${comment.userTier}.svg`" alt="" class="tier-img" :width="15" :height="15" />
           </div>
           <p class="user-info-date noto-sans-kr-regular">{{ comment?.createdDate?.split("T")[0] }}</p>
         </div>
@@ -42,7 +42,9 @@ import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import { ref, onMounted } from "vue";
 import { useAuthStore } from "@/store/auth";
+import { useRouter } from "vue-router";
 const store = useAuthStore();
+const router = useRouter();
 
 const props = defineProps({
   comment: Object,
@@ -50,16 +52,11 @@ const props = defineProps({
 
 const userInfo = ref({});
 onMounted(async () => {
-  // if (store.isAuthenticated) { //이미 로그인 되어 있으면 토큰 갱신
-  //   await store.getToken();
-  // }
-  //게시글 객체 속 유저id로 유저 정보 받아오기
-  axios.get(`http://localhost:8080/api/users/${props.comment.userId}`, {
-    headers: {
-      Authorization: `Bearer ${sessionStorage.getItem('token')}`,
-    },
-  }).then(({ data }) => userInfo.value = data.response.userInfo).catch()
 })
+
+const moveTo =()=> {
+  router.push({name :'user', params: {'id' : props.comment.userId}})
+}
 </script>
 
 <style scoped>
@@ -102,9 +99,14 @@ p {
   gap: 5px;
 }
 
+.profile-img {
+  cursor: pointer;
+}
+
 .user-nickname {
   font-size: 17px;
   font-weight: 600;
+  cursor: pointer;
 }
 
 .tier-img {

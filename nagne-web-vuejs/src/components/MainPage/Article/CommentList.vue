@@ -8,28 +8,18 @@
 </template>
 
 <script setup>
-import CommentListItem from "./CommentListItem.vue";
 import axios from "axios";
 import { ref, watch, onMounted } from "vue";
+import CommentListItem from "./CommentListItem.vue";
+import { useWriteStore } from "@/store/write";
+import { storeToRefs } from "pinia";
 
+const writeStore = useWriteStore();
+const { getComment } = storeToRefs(writeStore);
 
 const props = defineProps({
-  articleId: Number,
-});
-
-onMounted(() => {
-  if (props.articleId) {
-    fetchComments();
-  }
-});
-
-watch(() => props.articleId, (newId) => {
-  if (newId) {
-    comments.value = [];
-    lastIndex.value = 1000000000;
-    noMoreData.value = false;
-    fetchComments();
-  }
+  articleid: Number,
+  gencomments: Number,
 });
 
 const isLoading = ref(false);
@@ -41,7 +31,7 @@ const fetchComments = async () => {
   if (isLoading.value || noMoreData.value) return;
 
   isLoading.value = true;
-  let url = `http://localhost:8080/api/comments?articleId=${props.articleId}&size=5`;
+  let url = `http://localhost:8080/api/comments?articleId=${props.articleid}&size=10`;
   if (lastIndex.value !== null) {
     url += `&lastIndex=${lastIndex.value}`;
   }
@@ -52,24 +42,50 @@ const fetchComments = async () => {
     },
   }).then(({ data }) => {
     const commentsData = data.response.comments;
-    if (commentsData.length < 5) {
+    if (commentsData.length < 10) {
       noMoreData.value = true;
     }
 
-    comments.value.push(...commentsData); // 데이터 누적
+    comments.value.push(...commentsData);
 
     if (commentsData.length > 0) {
-      lastIndex.value = commentsData[commentsData.length - 1].id; // 마지막 데이터의 ID로 업데이트
+      lastIndex.value = commentsData[commentsData.length - 1].id;
     }
-  })
+  }).finally(() => {
+    isLoading.value = false;
+  });
 };
 
+onMounted(async () => {
+  if (props.articleid) {
+    await fetchComments();
+  }
+});
 
+watch(() => props.articleid, async (newId) => {
+  if (newId) {
+    comments.value = [];
+    lastIndex.value = 1000000000;
+    noMoreData.value = false;
+    await fetchComments();
+  }
+});
 
-const emit = defineEmits(["updateComments"]);
-emit("updateComments", true);
+watch(() => props.gencomments, async (newVal) => {
+  if (newVal) {
+    await fetchComments();
+  }
+});
+
+watch(getComment, async (newVal) => {
+  if (newVal) {
+    comments.value = [];
+    lastIndex.value = 1000000000;
+    noMoreData.value = false;
+    await fetchComments();
+  }
+});
 </script>
-
 
 <style scoped>
 .comment-list {
