@@ -32,8 +32,9 @@
         </div>
       </div>
     </div>
-    <ArticleDetailModal v-if="isOpenModal && store.isAuthenticated" :articleId="modalArticleId"
-      @close-modal="closeModal" @changed="fetchArticles" />
+    <ArticleDetailModal v-if="isOpenModal && authStore.isAuthenticated" :article="modalArticle[0]"
+      @close-modal="closeModal" @like="change('like')" @unlike="change('unlike')" @bookmark="change('bookmark')"
+      @unbookmark="change('unbookmark')" />
     <div class="navbar-icons-wrapper" id="faArrowUp-button" @click="scrollToTop">
       <font-awesome-icon :icon="faArrowUp" class="icon" id="faArrowUp" />
     </div>
@@ -53,17 +54,17 @@ import TheFooter from "@/components/MainPage/SideBar/TheFooter.vue";
 import TheSwipper from "../components/MainPage/SideBar/TheSwipper.vue";
 import ArticleDetailModal from "@/components/MainPage/Article/ArticleDetailModal.vue";
 import { useAuthStore } from "@/store/auth";
-const store = useAuthStore();
+const authStore = useAuthStore();
 
 const articles = ref([]);
 const router = useRouter();
 const isOpenModal = ref(false);
-const modalArticleId = ref(null);
-const lastIndex = ref(null);
+const modalArticle = ref(null);
+const lastIndex = ref(10000000);
 const isLoading = ref(false);
 const noMoreData = ref(false);
 
-const fetchArticles = async () => {
+onMounted(() => {
   if (isLoading.value || noMoreData.value) return;
 
   isLoading.value = true;
@@ -72,15 +73,41 @@ const fetchArticles = async () => {
     url += `&lastIndex=${lastIndex.value}`;
   }
 
-  axios.get(url, {
-    headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` }
+  if (!sessionStorage.getItem('token') || !authStore.isAuthenticated) {
+    fetchArticles(url);
+  } else {
+    fetchArticlesAtLogin(url);
+  }
+
+
+  window.addEventListener("scroll", handleScroll);
+
+  onUnmounted(() => {
+    window.removeEventListener("scroll", handleScroll);
+  });
+});
+
+const fetchArticlesAtLogin = async (url) => {
+  await getAxiosReq(url, {
+    headers: {
+      Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+    },
   })
+}
+const fetchArticles = async (url) => {
+  await getAxiosReq(url, {})
+};
+
+const getAxiosReq = async (url, hd) => {
+  await axios.get(url, {}, hd)
     .then(response => {
       const articlesData = response.data.response.articles;
       if (articlesData.length < 5) {
         noMoreData.value = true;
       }
+
       articles.value.push(...articlesData); // 데이터 누적
+
       if (articlesData.length > 0) {
         lastIndex.value = articlesData[articlesData.length - 1].id; // 마지막 데이터의 ID로 업데이트
       }
@@ -91,25 +118,46 @@ const fetchArticles = async () => {
     .finally(() => {
       isLoading.value = false;
     });
-};
+}
 
 const handleScroll = () => {
   const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
   if (scrollTop + clientHeight >= scrollHeight - 100 && !isLoading.value && !noMoreData.value) {
-    fetchArticles();
+    isLoading.value = true;
+    const url = `http://localhost:8080/api/articles?size=5&lastIndex=${lastIndex.value}`;
+    if (!sessionStorage.getItem('token') || !authStore.isAuthenticated) {
+      fetchArticles(url);
+    } else {
+      fetchArticlesAtLogin(url);
+    }
+
   }
 };
 
+// 여기서부터 수정해야 함
+const change = (what) => {
+  switch (what) {
+    case 'like':
+      break;
+    case 'unlike':
+      break;
+    case 'bookmark':
+      break;
+    case 'unbookmark':
+      break;
+  }
+}
+
 const openModal = (id) => {
-  if (store.isAuthenticated) {
+  if (authStore.isAuthenticated) {
     isOpenModal.value = true;
-    modalArticleId.value = id;
+    modalArticle.value = articles.value.filter(article => article.id === id);
   }
 };
 
 const closeModal = () => {
   isOpenModal.value = false;
-  modalArticleId.value = null;
+  modalArticle.value = null;
 };
 
 const moveWrite = () => {
@@ -125,15 +173,7 @@ const scrollToTop = () => {
 
 const sideSection = ref(null);
 
-onMounted(() => {
-  fetchArticles();
 
-  window.addEventListener("scroll", handleScroll);
-
-  onUnmounted(() => {
-    window.removeEventListener("scroll", handleScroll);
-  });
-});
 </script>
 
 
@@ -373,6 +413,6 @@ onMounted(() => {
   width: 300px;
   height: 300px;
   display: block;
-  margin: 120px auto 20px auto;
+  margin: 50px auto 20px auto;
 }
 </style>
