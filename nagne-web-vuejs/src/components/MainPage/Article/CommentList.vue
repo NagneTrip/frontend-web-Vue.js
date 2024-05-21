@@ -8,35 +8,83 @@
 </template>
 
 <script setup>
-import CommentListItem from "./CommentListItem.vue"
 import axios from "axios";
-import { ref, onMounted } from "vue";
-import { useAuthStore } from "@/store/auth";
-const store = useAuthStore();
+import { ref, watch, onMounted } from "vue";
+import CommentListItem from "./CommentListItem.vue";
+import { useWriteStore } from "@/store/write";
+import { storeToRefs } from "pinia";
+
+const writeStore = useWriteStore();
+const { getComment } = storeToRefs(writeStore);
 
 const props = defineProps({
-  articleId: Number,
-})
+  articleid: Number,
+  gencomments: Number,
+});
 
+const isLoading = ref(false);
+const lastIndex = ref(1000000000);
 const comments = ref([]);
-onMounted(async () => {
-  // if (store.isAuthenticated) { //이미 로그인 되어 있으면 토큰 갱신
-  //   await store.getToken();
-  // }
-  axios.get(`http://localhost:8080/api/comments?articleId=${props.articleId}`,
-    {
-      headers: {
-        Authorization: `Bearer ${sessionStorage.getItem('token')}`,
-      },
-    }
-  )
-    .then(({ data }) => {
-      comments.value = data.response.comments
-    })
-    .catch
-}
-)
+const noMoreData = ref(false);
 
+const fetchComments = async () => {
+  if (isLoading.value || noMoreData.value) return;
+
+  isLoading.value = true;
+  let url = `http://localhost:8080/api/comments?articleId=${props.articleid}&size=10`;
+  if (lastIndex.value !== null) {
+    url += `&lastIndex=${lastIndex.value}`;
+  }
+
+  await axios.get(url, {
+    headers: {
+      Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+    },
+  }).then(({ data }) => {
+    const commentsData = data.response.comments;
+    if (commentsData.length < 10) {
+      noMoreData.value = true;
+    }
+
+    comments.value.push(...commentsData);
+
+    if (commentsData.length > 0) {
+      lastIndex.value = commentsData[commentsData.length - 1].id;
+    }
+  }).finally(() => {
+    isLoading.value = false;
+  });
+};
+
+onMounted(async () => {
+  if (props.articleid) {
+    await fetchComments();
+  }
+});
+
+watch(() => props.articleid, async (newId) => {
+  if (newId) {
+    comments.value = [];
+    lastIndex.value = 1000000000;
+    noMoreData.value = false;
+    await fetchComments();
+  }
+});
+
+watch(() => props.gencomments, async (newVal) => {
+  if (newVal) {
+    await fetchComments();
+  }
+});
+
+watch(getComment, async (newVal) => {
+  if (newVal) {
+    comments.value = [];
+    lastIndex.value = 1000000000;
+    noMoreData.value = false;
+    await fetchComments();
+  }
+});
 </script>
 
 <style scoped>

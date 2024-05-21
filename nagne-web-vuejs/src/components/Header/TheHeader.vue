@@ -11,7 +11,8 @@
           <font-awesome-icon class="icon" id="navbar-search-btn" :icon="faMagnifyingGlass" />
         </div>
         <div class="navbar-icons-wrapper" id="bell-wrapper" data-bs-toggle="modal" data-bs-target="#exampleModal">
-          <span :style="{display: isNewNotice ? 'block' : 'none'}" class="badge position-absolute top-2 end-40 translate-middle p-2 bg-danger border-0 rounded-circle">
+          <span :style="{ display: isNewNotice ? 'block' : 'none' }"
+            class="badge position-absolute top-2 end-40 translate-middle p-2 bg-danger border-0 rounded-circle">
             <span class="visually-hidden">New alerts</span>
           </span>
           <font-awesome-icon class="icon" :icon="faBell" id="navbar-bell" />
@@ -47,7 +48,7 @@
     <ul v-show="showUserMenu" class="user-menu list-group" :style="userMenuStyle">
       <li v-show="!store.isAuthenticated" class="list-group-item" @click="() => move('login')">로그인</li>
       <li v-show="store.isAuthenticated" class="list-group-item" @click="() => move('user')">내 프로필</li>
-      <li v-show="store.isAuthenticated" class="list-group-item">저장한 게시물</li>
+      <li v-show="store.isAuthenticated" class="list-group-item" @click="() => move('bookmark')">저장한 게시물</li>
       <li v-show="store.isAuthenticated" class="list-group-item">내정보 수정</li>
       <li v-show="store.isAuthenticated" class="list-group-item" style="border-top: 1px solid black;">고객센터</li>
       <li v-show="store.isAuthenticated" class="list-group-item" @click="() => move('logout')">로그아웃</li>
@@ -57,9 +58,8 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5 jua-regular-large noti-user-name" id="modalLabel" data-bs-dismiss="modal"
-            @click="() => move('user')">{{
-              userInfo.nickname }}</h1>
+          <h1 class="modal-title fs-5 jua-regular-large noti-user-name" id="modalLabel" @click="() => move('user')">{{
+            userInfo.nickname }}</h1>
           <p v-if="isAuthenticated" class="jua-regular" data-bs-dismiss="modal"> 님을 기다리는 소식</p>
           <p v-if="!isAuthenticated" class="jua-regular" data-bs-dismiss="modal"> 로그인 후 확인하세요!</p>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
@@ -67,14 +67,12 @@
         </div>
         <div class="modal-body">
           <ul class="notice-box">
-            <NoticeItem v-for="(notice, index) in userNotices" :notice="notice" @closeNotice="closeNotice"
-              :key="notice.id" />
+            <NoticeItem v-for="(notice, index) in userNotices" :notice="notice" @close-notice="closeNotice"
+              @reload-comments="reloadComments" :key="notice.id" />
           </ul>
         </div>
         <div class="modal-footer">
-          <button type="button" class="jua-regular-large btn noti-allread">모두 확인하기</button>
-          <button type="button" class="jua-regular-large btn noti-close" data-bs-dismiss="modal"
-            @click="closeNotice">닫기</button>
+          <button type="button" class="jua-regular-large btn noti-allread" @click="readAllNotice">모두 확인하기</button>
         </div>
       </div>
     </div>
@@ -126,7 +124,7 @@ onMounted(async () => {
   await fetchUserNotice();
 })
 // 로그인 정보가 변경되면, 다시 호출
-watch(isAuthenticated, async()=>{
+watch(isAuthenticated, async () => {
   if (!store.isAuthenticated || !sessionStorage.getItem('token')) {
     return;
   }
@@ -141,6 +139,10 @@ watch(isAuthenticated, async()=>{
   await fetchUserNotice();
 })
 
+const reloadComments = async () => {
+  await fecthIsNotice();
+  await fetchUserNotice();
+}
 
 // 새로운 알림 여부 조회
 const fecthIsNotice = async () => {
@@ -177,8 +179,15 @@ const fetchUserInfo = async () => {
 }
 
 // 알림 전체 읽기 기능 추가 필요
-const readAllNotice = async ()=> {
-  
+const readAllNotice = async () => {
+  await axios.patch(`http://localhost:8080/api/notifications`, {}, {
+    headers: {
+      Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+    },
+  }).then(()=>{
+    fecthIsNotice();
+    fetchUserNotice();
+  })
 }
 
 const move = (path) => {
@@ -198,6 +207,9 @@ const move = (path) => {
       break;
     case 'user':
       moveTo = { name: path, params: { 'id': Number(sessionStorage.getItem('loginUserId')) } }
+      break;
+    case 'bookmark':
+      moveTo = { name: path }
       break;
   }
   // 페이지 이동 시 열려있는 메뉴 전부 닫기
@@ -553,6 +565,9 @@ a {
   justify-content: flex-start;
   margin: 0;
   padding: 0 20px 0 20px;
+  overflow-y: scroll;
+  scrollbar-width: none;
+  scroll-behavior: smooth;
 }
 
 .badge {

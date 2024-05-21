@@ -1,14 +1,14 @@
 <template>
   <div class="article-detail-page" @click="closeModal">
     <div class="modal-wrapper">
-      
+
       <div class="modal-box" @click.stop>
         <img v-if="isLoading" src="/src/assets/blue_spinner.svg" alt="" class="modal-left" />
         <div v-if="!isLoading" class="modal-left" @click="closeDotMenu">
           <img :src="'./src/assets/logo/logo.png'" class="modal-left-img" />
         </div>
         <div class="modal-right" @click="closeDotMenu">
-          <div class="modal-right-wrapper">
+          <div class="modal-right-wrapper" ref="modalRightWrapper" @scroll="handleScroll">
             <div class="right-header">
               <div class="user-info">
                 <div>
@@ -16,11 +16,11 @@
                 </div>
                 <div class="user-info-text">
                   <div class="user-info-main">
-                    <p class="noto-sans-kr-bold">{{ article?.userNickname }}</p>
-                    <img :src="`src/assets/tier/${article.userTier}.svg`" alt="" class="tier-img" :width="17"
+                    <p class="noto-sans-kr-bold">{{ newArticle.userNickname }}</p>
+                    <img :src="`src/assets/tier/${newArticle.userTier}.svg`" alt="" class="tier-img" :width="17"
                       :height="17" />
                   </div>
-                  <p class="user-info-date noto-sans-kr-regular">{{ article?.createdDate?.split('T')[0] }}</p>
+                  <p class="user-info-date noto-sans-kr-regular">{{ newArticle?.createdDate?.split('T')[0] }}</p>
                 </div>
               </div>
               <div class="right-button">
@@ -34,25 +34,25 @@
             </div>
             <div class="right-content-box">
               <span class="content-main noto-sans-kr-bold">
-                {{ article.content }}
+                {{ newArticle.content }}
               </span>
-              <CommentList :articleId="articleId" />
+              <CommentList :articleid="newArticle.id" ref="commentList" @updateComments="fetchComments = 0" :gencomments="fetchComments"/>
             </div>
             <div class="right-footer">
               <div class="social-box">
                 <div class="social-left-box">
                   <div class="social-like">
-                    <svg v-show="!isLiked" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="social-btn"
+                    <svg v-if="!isLiked" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="social-btn"
                       @click="() => clickSocialBtn('like')">
                       <path
                         d="M225.8 468.2l-2.5-2.3L48.1 303.2C17.4 274.7 0 234.7 0 192.8v-3.3c0-70.4 50-130.8 119.2-144C158.6 37.9 198.9 47 231 69.6c9 6.4 17.4 13.8 25 22.3c4.2-4.8 8.7-9.2 13.5-13.3c3.7-3.2 7.5-6.2 11.5-9c0 0 0 0 0 0C313.1 47 353.4 37.9 392.8 45.4C462 58.6 512 119.1 512 189.5v3.3c0 41.9-17.4 81.9-48.1 110.4L288.7 465.9l-2.5 2.3c-8.2 7.6-19 11.9-30.2 11.9s-22-4.2-30.2-11.9zM239.1 145c-.4-.3-.7-.7-1-1.1l-17.8-20c0 0-.1-.1-.1-.1c0 0 0 0 0 0c-23.1-25.9-58-37.7-92-31.2C81.6 101.5 48 142.1 48 189.5v3.3c0 28.5 11.9 55.8 32.8 75.2L256 430.7 431.2 268c20.9-19.4 32.8-46.7 32.8-75.2v-3.3c0-47.3-33.6-88-80.1-96.9c-34-6.5-69 5.4-92 31.2c0 0 0 0-.1 .1s0 0-.1 .1l-17.8 20c-.3 .4-.7 .7-1 1.1c-4.5 4.5-10.6 7-16.9 7s-12.4-2.5-16.9-7z" />
                     </svg>
-                    <svg v-show="isLiked" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="social-btn"
-                      @click="() => clickSocialBtn('like')">
+                    <svg v-if="isLiked" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="social-btn"
+                      @click="() => clickSocialBtn('unlike')">
                       <path fill="#ff0000"
                         d="M47.6 300.4L228.3 469.1c7.5 7 17.4 10.9 27.7 10.9s20.2-3.9 27.7-10.9L464.4 300.4c30.4-28.3 47.6-68 47.6-109.5v-5.8c0-69.9-50.5-129.5-119.4-141C347 36.5 300.6 51.4 268 84L256 96 244 84c-32.6-32.6-79-47.5-124.6-39.9C50.5 55.6 0 115.2 0 185.1v5.8c0 41.5 17.2 81.2 47.6 109.5z" />
                     </svg>
-                    <p class="jua-regular">{{ article?.likeCount }}</p>
+                    <p class="jua-regular">{{ likeCount }}</p>
                   </div>
                   <div class="social-comment">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="social-btn"
@@ -60,17 +60,17 @@
                       <path
                         d="M123.6 391.3c12.9-9.4 29.6-11.8 44.6-6.4c26.5 9.6 56.2 15.1 87.8 15.1c124.7 0 208-80.5 208-160s-83.3-160-208-160S48 160.5 48 240c0 32 12.4 62.8 35.7 89.2c8.6 9.7 12.8 22.5 11.8 35.5c-1.4 18.1-5.7 34.7-11.3 49.4c17-7.9 31.1-16.7 39.4-22.7zM21.2 431.9c1.8-2.7 3.5-5.4 5.1-8.1c10-16.6 19.5-38.4 21.4-62.9C17.7 326.8 0 285.1 0 240C0 125.1 114.6 32 256 32s256 93.1 256 208s-114.6 208-256 208c-37.1 0-72.3-6.4-104.1-17.9c-11.9 8.7-31.3 20.6-54.3 30.6c-15.1 6.6-32.3 12.6-50.1 16.1c-.8 .2-1.6 .3-2.4 .5c-4.4 .8-8.7 1.5-13.2 1.9c-.2 0-.5 .1-.7 .1c-5.1 .5-10.2 .8-15.3 .8c-6.5 0-12.3-3.9-14.8-9.9c-2.5-6-1.1-12.8 3.4-17.4c4.1-4.2 7.8-8.7 11.3-13.5c1.7-2.3 3.3-4.6 4.8-6.9c.1-.2 .2-.3 .3-.5z" />
                     </svg>
-                    <p class="jua-regular">{{ article.commentCount }}</p>
+                    <p class="jua-regular">{{ commentCount }}</p>
                   </div>
                 </div>
                 <div class="social-right-box">
                   <div class="social-bookmark">
-                    <svg v-show="isBookmarked" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"
-                      class="social-btn" @click="() => clickSocialBtn('bookMark')">
+                    <svg v-if="isBookmarked" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" class="social-btn"
+                      @click="() => clickSocialBtn('bookMark')">
                       <path
                         d="M0 48V487.7C0 501.1 10.9 512 24.3 512c5 0 9.9-1.5 14-4.4L192 400 345.7 507.6c4.1 2.9 9 4.4 14 4.4c13.4 0 24.3-10.9 24.3-24.3V48c0-26.5-21.5-48-48-48H48C21.5 0 0 21.5 0 48z" />
                     </svg>
-                    <svg v-show="!isBookmarked" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"
+                    <svg v-if="!isBookmarked" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"
                       class="social-btn" @click="() => clickSocialBtn('bookMark')">
                       <path
                         d="M0 48C0 21.5 21.5 0 48 0l0 48V441.4l130.1-92.9c8.3-6 19.6-6 27.9 0L336 441.4V48H48V0H336c26.5 0 48 21.5 48 48V488c0 9-5 17.2-13 21.3s-17.6 3.4-24.9-1.8L192 397.5 37.9 507.5c-7.3 5.2-16.9 5.9-24.9 1.8S0 497 0 488V48z" />
@@ -80,9 +80,9 @@
               </div>
               <div class="write-comment-box">
                 <div class="comment-input">
-                  <input type="text" class="noto-sans-kr-bold" ref="commentInput" />
+                  <input type="text" class="noto-sans-kr-bold" ref="commentInput" v-model="commentContent" />
                 </div>
-                <button class="jua-regular">게시</button>
+                <button class="jua-regular" @click="postComment">게시</button>
               </div>
             </div>
           </div>
@@ -104,59 +104,85 @@ import axios from "axios";
 import { onMounted, ref } from "vue";
 import CommentList from "./CommentList.vue";
 import { useAuthStore } from "@/store/auth";
+import { useWriteStore } from "@/store/write";
 import { useRouter } from "vue-router";
 const router = useRouter();
 const store = useAuthStore();
-const article = ref({});
+const writeStore = useWriteStore();
+import { storeToRefs } from "pinia";
+const { getComment } = storeToRefs(writeStore);
+const { genComments, resetComments } = writeStore
+
+const newArticle = ref({});
 
 const props = defineProps({
-  articleId: Number,
+  article: Object,
 });
 
-const emit = defineEmits(["closeModal", "changed"]);
+const emit = defineEmits(["closeModal", "like", "unlike", "bookmark", "unbookmark"]);
 const closeModal = () => {
   emit("closeModal");
 };
 
-const isUsersArticle = ref(false);
+const isUsersArticle = ref(false); // 유저 검증
+
+const likeCount = ref(0);
+const commentCount = ref(0);
 const isLiked = ref(false);
 const isBookmarked = ref(false);
 const isDotMenuOpen = ref(false);
+const dotMenuStyle = ref({}); //게시물 옵션 버튼
 const isLoading = ref(false);
 
-const dotMenuStyle = ref({});
+const fetchComments = ref(0);
 const commentInput = ref(null);
+const commentContent = ref("");
+const modalRightWrapper = ref(null);
+const noMoreData = ref(false);
+const lastIndex = ref(1000000000);
+const commentList = ref(null);
 
 onMounted(async () => {
+
   isLoading.value = true;
-  await fetchArticleData();
-  isLoading.value = false;
-  if (article.value.userId === Number(sessionStorage.getItem('loginUserId'))) {
+  setTimeout(() => {
+    isLoading.value = false;
+  }, 500);
+
+  newArticle.value = props.article;
+  isLiked.value = props.article.isLiked;
+  commentCount.value = props.article.commentCount;
+  isBookmarked.value = props.article.isBookmarked;
+  likeCount.value = props.article.likeCount;
+  commentContent.value = props.article.commentContent;
+
+  //게시글 작성자가 현재 로그인한 유저와 일치하는지 확인
+  if (newArticle.value.userId === Number(sessionStorage.getItem('loginUserId'))) {
     isUsersArticle.value = true;
   }
+
+  await fetchArticleDetail();
 });
 
-const fetchArticleData = async () => {
-  if (sessionStorage.getItem('token') !== '') {
-    try {
-      const { data } = await axios.get(`http://localhost:8080/api/articles/${props.articleId}`, {
-        headers: {
-          Authorization: `Bearer ${sessionStorage.getItem('token')}`,
-        },
-      });
-      article.value = data.response.articleInfo;
-      isLiked.value = article.value.isLiked;
-      isBookmarked.value = article.value.isBookmarked;
-    } catch (error) {
-      console.error(error);
+const fetchArticleDetail = async () => {
+  await axios.get(`http://localhost:8080/api/articles/${props.article.id}`, {
+    headers: {
+      Authorization: `Bearer ${sessionStorage.getItem('token')}`,
     }
-  }
-};
+  }).then(({ data }) => {
+    newArticle.value = data.response.articleInfo;
+    isLiked.value = newArticle.value.isLiked;
+    commentCount.value = newArticle.value.commentCount;
+    isBookmarked.value = newArticle.value.isBookmarked;
+    likeCount.value = newArticle.value.likeCount;
+    commentContent.value = newArticle.value.commentContent;
+  })
+}
 
 const moveTo = (action) => {
   switch (action) {
     case 'modify':
-      router.push({ name: 'articleModify', params: { id: props.articleId } });
+      router.push({ name: 'articleModify', params: { id: newArticle.value.id } });
       break;
 
     case 'delete':
@@ -172,13 +198,13 @@ const moveTo = (action) => {
 }
 
 const deleteArticle = async () => {
-  if (article.value.userId !== Number(sessionStorage.getItem('loginUserId'))) {
+  if (newArticle.value.userId !== Number(sessionStorage.getItem('loginUserId'))) {
     alert("게시글 삭제에 실패했습니다.");
     return;
   }
 
   try {
-    await axios.delete(`http://localhost:8080/api/articles/${props.articleId}`, {
+    await axios.delete(`http://localhost:8080/api/articles/${newArticle.value.id}`, {
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem('token')}`,
       }
@@ -192,28 +218,57 @@ const deleteArticle = async () => {
 
 const clickSocialBtn = async (btnName) => {
   if (!store.isAuthenticated || !sessionStorage.getItem('token')) {
-    alert('로그인 후 진행하세요!')
+    alert('로그인 후 진행하세요!');
     return;
   }
-
+  console.log(newArticle.value.id)
   try {
     switch (btnName) {
       case 'like':
-        if (!isLiked.value) {
-          isLiked.value = true;
-          await axios.post(`http://localhost:8080/api/articles/like`, { articleId: props.articleId }, { headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` } });
-        } else {
-          isLiked.value = false;
-          await axios.delete(`http://localhost:8080/api/articles/like/${props.articleId}`, { headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` } });
-        }
+        await axios.post('http://localhost:8080/api/articles/like', { articleId: newArticle.value.id }, {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('token')}`
+          }
+        })
+          .then(() => {
+            isLiked.value = true;
+            likeCount.value++;
+            emit('like');
+          })
+        break;
+      case 'unlike':
+        await axios.delete(`http://localhost:8080/api/articles/like/${newArticle.value.id}`, {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('token')}`
+          }
+        })
+          .then(() => {
+            isLiked.value = false;
+            likeCount.value--;
+            emit('unlike');
+          })
         break;
       case 'bookMark':
         if (!isBookmarked.value) {
-          isBookmarked.value = true;
-          await axios.post(`http://localhost:8080/api/bookmark`, { articleId: props.articleId }, { headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` } });
+          await axios.post('http://localhost:8080/api/bookmark', { articleId: newArticle.value.id }, {
+            headers: {
+              Authorization: `Bearer ${sessionStorage.getItem('token')}`
+            }
+          })
+            .then(() => {
+              isBookmarked.value = true;
+              emit('bookmark');
+            })
         } else {
-          isBookmarked.value = false;
-          await axios.delete(`http://localhost:8080/api/bookmark/${props.articleId}`, { headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` } });
+          await axios.delete(`http://localhost:8080/api/bookmark/${newArticle.value.id}`, {
+            headers: {
+              Authorization: `Bearer ${sessionStorage.getItem('token')}`
+            }
+          })
+            .then(() => {
+              isBookmarked.value = false
+              emit('unbookmark');
+            })
         }
         break;
       case 'comment':
@@ -222,10 +277,8 @@ const clickSocialBtn = async (btnName) => {
         }
         break;
     }
-    await fetchArticleData(); // Update the article data after any social button click
-    emit('changed'); // Emit the event to notify the parent component of the change
   } catch (error) {
-    console.error(error);
+    console.error('Error during social button click:', error);
   }
 };
 
@@ -246,6 +299,28 @@ const toggleDotMenu = (event) => {
     dotMenuStyle.value = {};
   }
 };
+
+const postComment = async () => {
+  await axios.post(`http://localhost:8080/api/comments`, {
+    articleId: newArticle.value.id,
+    content: commentContent.value,
+  }, {
+    headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` },
+  }).then(({ data }) => {
+    alert('댓글이 작성되었습니다.')
+    commentContent.value = '';
+    writeStore.genComments();
+  })
+}
+
+
+const handleScroll = () => {
+  const { scrollTop, scrollHeight, clientHeight } = modalRightWrapper.value;
+  if (scrollTop + clientHeight >= scrollHeight - 5) {
+    commentList.value.fetchComments();
+  }
+};
+
 </script>
 
 
@@ -310,6 +385,7 @@ const toggleDotMenu = (event) => {
   display: flex;
   flex-direction: row;
   justify-content: center;
+  height: 100%;
 }
 
 .modal-left {
@@ -333,9 +409,10 @@ const toggleDotMenu = (event) => {
 .modal-right {
   /* 기존 스타일 유지, overflow-y 스타일 제거 */
   width: 480px;
+  height: 100%;
   background-color: #f7f7f7;
   border-radius: 0 8px 8px 0;
-  box-shadow: 6px 4px 6px 0 rgba(0, 0, 0, 0.1);
+  /* box-shadow: 6px 4px 6px 0 rgba(0, 0, 0, 0.1); */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -352,11 +429,11 @@ const toggleDotMenu = (event) => {
   .modal-right-wrapper {
     overflow-y: auto;
     /* 내용이 넘칠 경우 세로 스크롤 활성화 */
-    scrollbar-width: none;
+    /* scrollbar-width: none; */
 
-    ::-webkit-scrollbar {
+    /* ::-webkit-scrollbar {
       display: none;
-    }
+    } */
   }
 }
 
@@ -571,7 +648,7 @@ const toggleDotMenu = (event) => {
     width: 560px;
     min-height: 100%;
     border-radius: 0 0 8px 8px;
-    box-shadow: 0 6px 6px 4px rgba(0, 0, 0, 0.1);
+    /* box-shadow: 0 6px 6px 4px rgba(0, 0, 0, 0.1); */
   }
 
   .modal-right-wrapper {

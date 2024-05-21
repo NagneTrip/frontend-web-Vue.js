@@ -10,28 +10,20 @@
                         <p class="nickname jua-regular">{{ userInfo.nickname}}</p>
                         <img :src="`/src/assets/tier/${userInfo.tier}.svg`" :width="25" :height="25" alt="" class="tier-img" />
                     </div>
-                    <button class="edit-profile-btn jua-regular">프로필 상세</button>
+                    <button class="edit-profile-btn jua-regular" @click="move">프로필 상세</button>
                 </div>
                 <div class="info-box-social">
                     <p class="jua-regular">북마크한 게시물 {{ }} < - 갯수</p>
                 </div>
             </div>
         </div>
-        <div class="tab-btn">
-            <button class="tab jua-regular" :class="{ 'tab-selected': tabState === 'grid' }" @click="changeTab('grid')">
-                <font-awesome-icon :icon="faTableCells" class="burger-menu-icon" />
-            </button>
-            <button class="tab jua-regular" :class="{ 'tab-selected': tabState === 'page' }" @click="changeTab('page')">
-                <font-awesome-icon :icon="faExpand" class="burger-menu-icon" />
-            </button>
-        </div>
         <div class="article-section">
-            <!-- <template v-if="tabState === 'grid'"> -->
+            <template v-if="tabState === 'grid'">
                 <GridView :bookMarkList="bookMarkList"/>
-            <!-- </template> -->
-            <!-- <template v-if="tabState === 'page'">
-
-            </template> -->
+            </template>
+            <template v-if="tabState === 'page'">
+                <PageView :bookMarkList="bookMarkList"/>
+            </template>
         </div>
 
     </div>
@@ -42,6 +34,8 @@ import axios from 'axios';
 import { faTableCells, faExpand } from "@fortawesome/free-solid-svg-icons";
 import { useAuthStore } from '@/store/auth';
 import { ref, onMounted } from 'vue';
+import {useRouter } from "vue-router"
+const router = useRouter();
 import GridView from '@/components/BookMark/GridView.vue';
 const authStore = useAuthStore();
 
@@ -74,9 +68,11 @@ const fetchBookMarkList = async () => {
         })
 }
 
-const changeTab = (tabTo) => {
-    tabState.value = tabTo;
+const move = () => {
+    router.push({name : 'user', params : {'id' : userInfo.value.id}})
 }
+
+
 </script>
 
 <style scoped>
@@ -212,5 +208,9 @@ p {
 
 .tab-selected {
     color: #0068FF;
+}
+
+.article-section {
+    margin-top: 30px;
 }
 </style>

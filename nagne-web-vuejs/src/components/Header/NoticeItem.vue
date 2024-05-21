@@ -1,16 +1,15 @@
 <template>
     <li class="notice-item">
         <div class="noticer-img">
-            <img :src="notice.fromUserProfileImage || '/src/assets/logo/logo_img.png'" alt="" :width="50"
-                :height="50" />
+            <img :src="notice.fromUserProfileImage || '/src/assets/logo/logo_img.png'" alt="" :width="50" :height="50"
+                @click="moveTo('user')" />
         </div>
         <div class="notice-info">
             <div class="noticer-info">
                 <div class="noticer">
                     <div class="name-tier" @click="moveTo('user')">
                         <p class="noticer-name jua-regular">{{ notice.fromUserNickname }}</p>
-                        <img :src="`/src/assets/tier/${notice.fromUserTier}.svg`" @click="moveTo('user')" alt=""
-                            :width="14" :height="16">
+                        <img :src="`/src/assets/tier/${notice.fromUserTier}.svg`" alt="" :width="14" :height="16">
                     </div>
 
                     <p class="notice-date jua-regular">{{ notice?.createdDate.split("T")[0] }}</p>
@@ -24,12 +23,12 @@
                     댓글을 달았어요.</p>
                 <p v-if="notice.type == 'BOOKMARK'" class="notice-type jua-regular" @click="moveTo('article')">회원님의 게시글을
                     저장했어요.</p>
-                <p v-if="notice.type == 'FOLLOW'" class="notice-type jua-regular" @click="moveTo('article')">회원님을 팔로우
+                <p v-if="notice.type == 'FOLLOW'" class="notice-type jua-regular" @click="moveTo('follow')">회원님을 팔로우
                     했어요.</p>
             </div>
         </div>
-        <button v-if="!isReaded" class="unread-btn btn jua-regular" @click="readNotice">확인</button>
-        <button v-if="isReaded" class="read-btn btn jua-regular">읽음</button>
+        <button v-if="notice.isNew" class="unread-btn jua-regular" @click="readNotice">확인</button>
+        <button v-if="!notice.isNew" class="read-btn jua-regular">읽음</button>
     </li>
 </template>
 
@@ -43,10 +42,13 @@ const props = defineProps({
     notice: Object,
 })
 const emit = defineEmits([
-    'closeNotice'
+    'closeNotice', 'reloadComments'
 ])
 
-const isReaded = ref(false);
+const isNew = ref(false);
+onMounted(() => {
+    isNew.value = props.notice.isNew;
+})
 
 const moveTo = (to) => {
     emit('closeNotice');
@@ -57,20 +59,23 @@ const moveTo = (to) => {
             break;
 
         case 'article':
-            pathTo = { name: 'main' }
+            pathTo = { name: 'articleDetail', params: { 'id': props.notice.articleId } }
+            break;
+        case 'follow':
+            pathTo = { name: 'user', params: { 'id': props.notice.fromUserId } };
             break;
     }
     router.push(pathTo)
 }
 
-// 알림 읽기 -> 401 에러 : 백엔드 수정 필요
-const readNotice = () => {
-    axios.patch(`http://localhost:8080/api/notifications/${props.notice.id}`, {
+// 알림 읽기
+const readNotice = async () => {
+    await axios.patch(`http://localhost:8080/api/notifications/${props.notice.id}`, {}, {
         headers: {
             Authorization: `Bearer ${sessionStorage.getItem('token')}`,
         },
-    }).then(({data})=>{
-        isReaded.value = data.success;
+    }).then(({ data }) => {
+        emit('reloadComments');
     })
 }
 </script>
@@ -98,6 +103,10 @@ const readNotice = () => {
     overflow: hidden;
 }
 
+.noticer-img img {
+    cursor: pointer;
+}
+
 .notice-info {
     display: flex;
     gap: 8px;
@@ -115,6 +124,7 @@ const readNotice = () => {
     display: flex;
     align-items: center;
     gap: 8px;
+    cursor: pointer;
 }
 
 .noticer-name {
@@ -128,6 +138,7 @@ const readNotice = () => {
 
 .notice-type {
     font-size: 15px;
+    cursor: pointer;
 }
 
 .unread-btn {
