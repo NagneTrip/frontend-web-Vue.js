@@ -68,7 +68,7 @@
         <div class="modal-body">
           <ul class="notice-box">
             <NoticeItem v-for="(notice, index) in userNotices" :notice="notice" @close-notice="closeNotice"
-              :key="notice.id" />
+              @reload-comments="reloadComments" :key="notice.id" />
           </ul>
         </div>
         <div class="modal-footer">
@@ -139,6 +139,10 @@ watch(isAuthenticated, async () => {
   await fetchUserNotice();
 })
 
+const reloadComments = async () => {
+  await fecthIsNotice();
+  await fetchUserNotice();
+}
 
 // 새로운 알림 여부 조회
 const fecthIsNotice = async () => {
@@ -554,6 +558,9 @@ a {
   justify-content: flex-start;
   margin: 0;
   padding: 0 20px 0 20px;
+  overflow-y: scroll;
+  scrollbar-width: none;
+  scroll-behavior: smooth;
 }
 
 .badge {

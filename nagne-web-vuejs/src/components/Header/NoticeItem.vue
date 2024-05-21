@@ -27,8 +27,8 @@
                     했어요.</p>
             </div>
         </div>
-        <button v-if="!isReaded" class="unread-btn btn jua-regular" @click="readNotice">확인</button>
-        <button v-if="isReaded" class="read-btn btn jua-regular">읽음</button>
+        <button v-if="notice.isNew" class="unread-btn jua-regular" @click="readNotice">확인</button>
+        <button v-if="!notice.isNew" class="read-btn jua-regular">읽음</button>
     </li>
 </template>
 
@@ -42,10 +42,13 @@ const props = defineProps({
     notice: Object,
 })
 const emit = defineEmits([
-    'closeNotice'
+    'closeNotice', 'reloadComments'
 ])
 
-const isReaded = ref(false);
+const isNew = ref(false);
+onMounted(() => {
+    isNew.value = props.notice.isNew;
+})
 
 const moveTo = (to) => {
     emit('closeNotice');
@@ -65,14 +68,14 @@ const moveTo = (to) => {
     router.push(pathTo)
 }
 
-// 알림 읽기 -> 401 에러 : 백엔드 수정 필요
+// 알림 읽기
 const readNotice = async () => {
     await axios.patch(`http://localhost:8080/api/notifications/${props.notice.id}`, {}, {
         headers: {
             Authorization: `Bearer ${sessionStorage.getItem('token')}`,
         },
     }).then(({ data }) => {
-        isReaded.value = data.success;
+        emit('reloadComments');
     })
 }
 </script>
