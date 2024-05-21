@@ -80,9 +80,9 @@
               </div>
               <div class="write-comment-box">
                 <div class="comment-input">
-                  <input type="text" class="noto-sans-kr-bold" ref="commentInput" />
+                  <input type="text" class="noto-sans-kr-bold" ref="commentInput" v-model="commentContent" />
                 </div>
-                <button class="jua-regular">게시</button>
+                <button class="jua-regular" @click="postComment">게시</button>
               </div>
             </div>
           </div>
@@ -126,6 +126,7 @@ const isLoading = ref(false);
 
 const dotMenuStyle = ref({});
 const commentInput = ref(null);
+const commentContent = ref("");
 
 onMounted(async () => {
   isLoading.value = true;
@@ -222,8 +223,8 @@ const clickSocialBtn = async (btnName) => {
         }
         break;
     }
-    await fetchArticleData(); // Update the article data after any social button click
-    emit('changed'); // Emit the event to notify the parent component of the change
+    await fetchArticleData();
+    emit('changed');
   } catch (error) {
     console.error(error);
   }
@@ -246,6 +247,16 @@ const toggleDotMenu = (event) => {
     dotMenuStyle.value = {};
   }
 };
+
+const postComment = () => {
+  axios.get(`http://localhost:8080/api/comments`, {
+    articleId: props.articleId,
+    content: commentContent.value,
+  }, {
+    headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` },
+  }).then(({ data }) => alert('댓글이 작성되었습니다.'))
+}
+
 </script>
 
 
