@@ -76,7 +76,7 @@ const uploadFile = async () => {
   formData.append('encrypt', "multipart/form-data");
 
   for (let i = 0; i < selectedImg.value.length; i++) {
-    formData.append('images', selectedImg.value[i]);
+    formData.append('images', selectedImg.value[i], selectedImg.value[i].name);
   }
 
   const json = JSON.stringify({ content: content.value });
