@@ -16,7 +16,7 @@
     <button type="button" class="btn btn-secondary gps-btn" @click="setGPSLoca">
       <font-awesome-icon :icon="faLocationCrosshairs" class="icon" id="faArrowUp" />
     </button>
-    <TourList class="left-sidebar" :attractionsList="attractionsList"></TourList>
+    <TourList class="left-sidebar" :attractionsList="attractionsList" @load-attraction="loadAttraction" @update-filter="updateFilter"/>
   </div>
 </template>
 
@@ -45,28 +45,57 @@ const gpsLocation = ref({});
 
 
 const keyword = ref("");
+const lastIndex = ref(100000000);
 const attractionsList = ref([]);
+const attractionTypeId = ref(0);
+const attractionTypeIdByFilter = ref('');
+const baseUrl = ref('http://localhost:8080/api/attractions?')
 
 const onLoadKakaoMap = async (mapRef) => {
   map.value = mapRef;
   isGps.value = true;
   getLoaction();
 
-  //관광지 데이터 호출
-  await fetchAttractionData();
+  //초기 관광지 데이터 호출
+  attractionsList.value = [];
+  await fetchFirstAttractionData();
 };
 
-//관광지 데이터 호출
-const fetchAttractionData = async () => {
+//초기 관광지 데이터 호출
+const fetchFirstAttractionData = async () => {
   if (!sessionStorage.getItem('token') || !authStore.isAuthenticated) {
     return;
   }
-
-  await axios(`http://localhost:8080/api/attractions?keyword=${keyword.value}`, {
+  await axios(baseUrl.value + `keyword=${keyword.value}&attractionTypeId=${attractionTypeId.value}&lastIndex=${lastIndex.value}&size=15`, {
     headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` }
   }).then(({ data }) => {
     attractionsList.value = data.response.attractions;
+    lastIndex.value = attractionsList.value[attractionsList.value.length-1].id;
   })
+}
+
+//무한 스크롤 이벤트가 동작할때 호출
+const loadAttraction = async ()=> {
+  await fetchMoreAttractionData();
+}
+
+const fetchMoreAttractionData = async ()=> {
+  if (!sessionStorage.getItem('token') || !authStore.isAuthenticated) {
+    return;
+  }
+  await axios(baseUrl.value + `keyword=${keyword.value}&attractionTypeId=${attractionTypeId.value}&lastIndex=${lastIndex.value}&size=10`, {
+    headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` }
+  }).then(({ data }) => {
+    attractionsList.value.push(...data.response.attractions);
+    lastIndex.value = attractionsList.value[attractionsList.value.length-1].id;
+  })
+}
+
+const updateFilter = async (filterId)=> {
+  attractionTypeId.value = filterId;
+  lastIndex.value = 10000000;
+  //필터 변경되면 다시 초기 부터 로드해야 함
+  await fetchFirstAttractionData();
 }
 
 const getLoaction = () => {

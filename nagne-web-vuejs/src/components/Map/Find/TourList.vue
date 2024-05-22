@@ -14,68 +14,164 @@
         </button>
       </div>
       <div class="list-container">
-        <TourListItem class="list-item" v-for="(attraction, index) in attractionsList" :attraction="attraction"
-          :key="index" />
+        <TourListItem
+          class="list-item"
+          v-for="(attraction, index) in attractionsList"
+          :attraction="attraction"
+          :key="index"
+        />
+        <InfiniteLoading @infinite="loadData" />
       </div>
     </div>
     <div class="select-btn">
       <div class="select" @click="toggleExpand">
-        <img :src="selectBtn[0].img" :alt="selectBtn[0].name" onerror="this.src='/src/assets/logo/sad_logo.png'" />
+        <img
+          :src="selectBtn[0].img"
+          :alt="selectBtn[0].name"
+          onerror="this.src='/src/assets/logo/sad_logo.png'"
+        />
       </div>
       <transition-group name="slide-fade" tag="div">
-        <div v-for="(btn, index) in selectBtn.slice(1)" :key="btn.name" v-if="isExpanded"
-          :class="['select', { 'selected': btn.isSelected }]" @click="toggleSelectButton(btn)">
+        <div
+          v-for="(btn, index) in selectBtn.slice(1)"
+          :key="btn.name"
+          v-if="isExpanded"
+          :class="['select', { selected: btn.isSelected }]"
+          @click="toggleSelectButton(btn)"
+        >
           <img :src="btn.img" :alt="btn.name" onerror="this.src='/src/assets/logo/sad_logo.png'" />
         </div>
       </transition-group>
     </div>
   </div>
+  <div class="cart">
+    <select class="form-select jua-regular" @change="updateTripday">
+      <option selected>여행 일정을 선택하세요!</option>
+      <option value="1">당일 여행</option>
+      <option value="2">1박 2일</option>
+      <option value="3">2박 3일</option>
+      <option value="4">3박 4일</option>
+    </select>
+    <div class="tripSection" v-for="(day, index) in tripDay" :key="day">
+      <div class="trip-item">아아</div>
+    </div>
+  </div>
+
 </template>
 
 <script setup>
 import { faBars, faXmark } from "@fortawesome/free-solid-svg-icons";
-import TourListItem from './TourListItem.vue';
-import { ref } from 'vue';
+import TourListItem from "./TourListItem.vue";
+import { ref, watch } from "vue";
+import InfiniteLoading from "v3-infinite-loading";
+import "v3-infinite-loading/lib/style.css";
 
 const isOpen = ref(true);
-const isExpanded = ref(true); // 초기값을 false로 설정하여 처음에는 숨겨진 상태로 시작
+const isExpanded = ref(false); // 초기값을 false로 설정하여 처음에는 숨겨진 상태로 시작
 const selectedBtn = ref(null); // 선택된 버튼을 저장할 변수
+const tripDay = ref(1);
+
+const updateTripday = (event) => {
+  tripDay.value = event.target.value
+}
 
 const props = defineProps({
   attractionsList: Object,
-})
+});
 
-const toggleSidebar = () => {
-  isOpen.value = !isOpen.value;
-  if (!isOpen.value) {
-    selectedBtn.value = null;
-    selectBtn.value.forEach(btn => {
-      btn.isSelected = false;
-    });
-    console.log("버튼 해제");
-  }
-}
+const emit = defineEmits(["loadAttraction", "updateFilter"]);
+
+const loadData = () => {
+  emit("loadAttraction");
+};
+
+
 
 const toggleExpand = () => {
   isExpanded.value = !isExpanded.value;
-}
+  if (!isExpanded.value) {
+    // 리스트가 닫힐 때 'all' 버튼을 선택 상태로 변경하고 다른 버튼 초기화
+    selectBtn.value.forEach((btn) => {
+      btn.isSelected = btn.name === "all";
+    });
+    emit("updateFilter", selectBtn.value.find((btn) => btn.name === "all").attractionTypeId);
+  } else {
+    // 리스트가 열릴 때 'all' 버튼을 선택 해제 상태로 변경
+    const allButton = selectBtn.value.find((btn) => btn.name === "all");
+    if (allButton) {
+      allButton.isSelected = false;
+    }
+  }
+  console.log(selectBtn)
+};
 
 const toggleSelectButton = (btn) => {
-  btn.isSelected = !btn.isSelected;
+  if (isExpanded.value) {
+    selectBtn.value.forEach((b) => {
+      b.isSelected = b === btn;
+    });
+    emit("updateFilter", btn.attractionTypeId);
+  }
   console.log(`Selected button: ${btn.name}, isSelected: ${btn.isSelected}`);
-}
+};
 
 const selectBtn = ref([
-  { name: 'all', img: '/src/assets/logo/logo_img.png', isSelected: true },
-  { name: 'food', img: '/src/assets/map_marker/food.png', isSelected: true },
-  { name: 'shopping', img: '/src/assets/map_marker/shopping.png', isSelected: true },
-  { name: 'activity', img: '/src/assets/map_marker/activity.png', isSelected: true },
-  { name: 'festival', img: '/src/assets/map_marker/festival.png', isSelected: true },
-  { name: 'nature', img: '/src/assets/map_marker/nature.png', isSelected: true },
-  { name: 'sleep', img: '/src/assets/map_marker/sleep.png', isSelected: true },
-  { name: 'culture', img: '/src/assets/map_marker/culture.png', isSelected: true },
-  { name: 'trip', img: '/src/assets/map_marker/trip.png', isSelected: true },
+  { attractionTypeId: "", name: "all", img: "/src/assets/logo/logo_img.png", isSelected: true },
+  { attractionTypeId: 39, name: "food", img: "/src/assets/map_marker/food.png", isSelected: false },
+  {
+    attractionTypeId: 38,
+    name: "shopping",
+    img: "/src/assets/map_marker/shopping.png",
+    isSelected: false,
+  },
+  {
+    attractionTypeId: 28,
+    name: "activity",
+    img: "/src/assets/map_marker/activity.png",
+    isSelected: false,
+  },
+  {
+    attractionTypeId: 15,
+    name: "festival",
+    img: "/src/assets/map_marker/festival.png",
+    isSelected: false,
+  },
+  {
+    attractionTypeId: 12,
+    name: "nature",
+    img: "/src/assets/map_marker/nature.png",
+    isSelected: false,
+  },
+  {
+    attractionTypeId: 32,
+    name: "sleep",
+    img: "/src/assets/map_marker/sleep.png",
+    isSelected: false,
+  },
+  {
+    attractionTypeId: 14,
+    name: "culture",
+    img: "/src/assets/map_marker/culture.png",
+    isSelected: false,
+  },
+  { attractionTypeId: 25, name: "trip", img: "/src/assets/map_marker/trip.png", isSelected: false },
 ]);
+
+// 리스트 상태가 변경될 때마다 'all' 버튼 상태를 적절히 설정
+watch(isExpanded, (newVal) => {
+  if (!newVal) {
+    const allButton = selectBtn.value.find((btn) => btn.name === "all");
+    if (allButton) {
+      allButton.isSelected = true;
+    }
+    emit("updateFilter", allButton.attractionTypeId);
+  } else {
+    const allButton = selectBtn.value.find((btn) => btn.name === "all");
+    if (allButton) {
+      allButton.isSelected = false;
+    }
+  }
+});
 </script>
 
 <style scoped>
@@ -92,9 +188,9 @@ const selectBtn = ref([
   border-radius: 10px;
   display: flex;
   justify-content: space-between;
-  gap: 15px;
+  gap: 5px;
   align-items: center;
-  transition: all 0.2s;
+  transition: all 0.3s;
   overflow: hidden;
 }
 
@@ -220,5 +316,43 @@ const selectBtn = ref([
   transform: translateY(-10px);
   /* 슬라이드 업 효과를 위로 */
   opacity: 0;
+}
+
+.cart {
+  display: inline-block;
+  width: 500px;
+  height: 75vh;
+  background-color: #eeeeee;
+  color: white;
+  position: fixed;
+  right: 10px;
+  top: 130px;
+  z-index: 99;
+  padding: 5px;
+  border-radius: 18px;
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+  gap: 5px;
+  align-items: center;
+  transition: all 0.2s;
+  overflow: hidden;
+  padding-top: 10px;
+}
+
+.form-select {
+  border-radius: 12px;
+}
+
+.tripSection {
+  width: 100%;
+  
+  border: 40px;
+}
+
+.trip-item {
+  width: 90%;
+  min-height: 200px;
+  background-color: rgb(243, 243, 243);
 }
 </style>

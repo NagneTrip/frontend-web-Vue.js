@@ -59,20 +59,20 @@ onMounted(() => {
   color: black;
   background-color: white;
   border: 3.5px solid rgb(118, 189, 255);
-  width: 90%;
+  width: 95%;
   height: 550px;
   border-radius: 25px;
-  margin: 0 auto 20px auto;
   padding: 20px;
-  box-shadow: 7px 7px 20px 2px #aacdff;
+  box-shadow: 2px 2px 5px 2px #aacdff;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 30px;
+  margin-bottom: 30px;
 }
 
 .item-img {
-  width: 400px;
+  width: 100%;
   height: 320px;
   display: flex;
   justify-content: center;
