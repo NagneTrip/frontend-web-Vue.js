@@ -21,7 +21,7 @@
           <font-awesome-icon class="icon" :icon="faMap" id="navbar-map" />
         </div>
         <div class="navbar-icons-wrapper" @click="toggleUserMenu">
-          <font-awesome-icon v-if="!userInfo" class="icon" :icon="faUser" id="navbar-user" />
+          <font-awesome-icon v-if="!userInfo?.profileImage" class="icon" :icon="faUser" id="navbar-user" />
           <img v-if="userInfo" :src="userInfo.profileImage" onerror="this.src='/src/assets/logo/sad_logo.png'"
             id="navbar-profile" />
         </div>
