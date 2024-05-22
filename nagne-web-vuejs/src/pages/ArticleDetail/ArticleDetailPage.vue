@@ -15,9 +15,9 @@
         <div class="modal-right" @click="closeDotMenu">
           <div class="modal-right-wrapper">
             <div class="right-header">
-              <div class="user-info">
+              <div class="user-info" @click="moveTo('user')">
                 <div>
-                  <img :src="article.userProfileImage" :width="50" onerror="this.src='/src/assets/logo/sad_logo.png'"
+                  <img :src="article?.userProfileImage || './src/assets/logo/logo.png'" :width="50" onerror="this.src='/src/assets/logo/sad_logo.png'"
                     :height="50" alt="" />
                 </div>
                 <div class="user-info-text">
@@ -179,6 +179,8 @@ const moveTo = (action) => {
         deleteArticle();
       }
       break;
+    case 'user':
+    router.push({ name: 'user', params: { id: article.value.userId } });
 
     case 'declare':
       // 신고하기
