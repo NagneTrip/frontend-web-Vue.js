@@ -1,5 +1,5 @@
 <template>
-  <div class="user-article-item">
+  <div class="user-article-item" @click="move">
     <img :src="userArticle.imageUrls[0]" onerror="this.src='/src/assets/logo/sad_logo.png'" alt="">
   </div>
 </template>
@@ -12,6 +12,10 @@ const router = useRouter();
 const props = defineProps({
   userArticle: Object,
 });
+
+const move = ()=>{
+  router.push({name : 'articleDetail', params : {'id' : props.userArticle.id}})
+}
 
 
 </script>
