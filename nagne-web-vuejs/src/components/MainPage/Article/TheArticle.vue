@@ -3,7 +3,7 @@
     <div class="article">
       <div class="user-info">
         <div class="user-profile-img">
-          <img src="@/assets/logo/logo_img.png" alt="" />
+          <img :src="article.userProfileImage || '@/assets/logo/logo_img.png'" alt="" />
         </div>
         <div class="user-info-text">
           <div class="user-info-main">
@@ -14,7 +14,7 @@
         </div>
       </div>
       <div class="img-container">
-        <img class="main-img" :src="'./src/assets/logo/logo.png'" />
+        <img class="main-img" :src="article.imageUrls || './src/assets/logo/logo.png'" />
         <div class=" image-overlay">
         </div>
         <p class="noto-sans-kr-regular img-container-text">{{ article.content }}</p>

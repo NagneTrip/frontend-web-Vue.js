@@ -166,7 +166,7 @@ onMounted(async () => {
 });
 
 const fetchArticleDetail = async () => {
-  await axios.get(`http://localhost:8080/api/articles/${props.article.id}`, {
+  await axios.get(`http://localhost:8080/api/articles/${newArticle.value.id}`, {
     headers: {
       Authorization: `Bearer ${sessionStorage.getItem('token')}`,
     }
