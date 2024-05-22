@@ -149,8 +149,19 @@ p {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 20px;
-  height: 20px;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  border-radius: 15px;
+  transition: 0.3s all;
+
+}
+
+.dot-button-wrapper:hover {
+background-color: rgb(65, 139, 244);
+color: white;
+transition: 0.3s all;
+scale: 1.05;
 }
 
 .like-btn-box {
