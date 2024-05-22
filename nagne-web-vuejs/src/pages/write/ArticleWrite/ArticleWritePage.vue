@@ -3,7 +3,7 @@
     <div class="modal-wrapper">
       <div class="modal-box" @click.stop>
         <div class="modal-left">
-          <template v-if="renderBaseImg">
+          <template v-if="!isManyImg">
             <img class="modal-left-img" :src="!isManyImg" alt="" :width="650" :height="600"
               onerror="this.src='/src/assets/logo/sad_logo.png'">
           </template>
