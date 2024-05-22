@@ -11,7 +11,7 @@
                         <img :src="`/src/assets/tier/${userInfo.tier}.svg`" :width="25" :height="25" alt=""
                             class="tier-img" />
                     </div>
-                    <button v-if="isNowLoginUser" class="edit-profile-btn jua-regular">프로필 변경</button>
+                    <button v-if="isNowLoginUser" class="edit-profile-btn jua-regular" @click="moveEdit">프로필 변경</button>
                     <template v-if="!isNowLoginUser">
                         <button v-if="!isFollow" class="edit-profile-btn jua-regular" @click="follow">팔로우</button>
                         <button v-if="isFollow" class="unfollow jua-regular" @click="unfollow">팔로잉</button>
@@ -76,6 +76,10 @@ const isFollow = ref(false);
 
 const changeTab = (tab) => {
     tabState.value = tab;
+}
+
+const moveEdit = () => {
+    router.push({ name: 'edit' })
 }
 
 const openFollowModal = (type) => {
