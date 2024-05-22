@@ -5,8 +5,14 @@
       <div class="modal-box" @click.stop>
         <img v-if="isLoading" src="/src/assets/blue_spinner.svg" alt="" class="modal-left" />
         <div v-if="!isLoading" class="modal-left" @click="closeDotMenu">
-          <img :src="newArticle.imageUrls || './src/assets/logo/logo.png'"
-            onerror="this.src='/src/assets/logo/sad_logo.png'" class="modal-left-img" />
+          <template v-if="!isManyImg">
+            <img :src="newArticle.imageUrls || './src/assets/logo/logo.png'"
+              onerror="this.src='/src/assets/logo/sad_logo.png'" class="modal-left-img" />
+          </template>
+          <template v-if="isManyImg">
+            <ArticleWriteSwiper :imgUrls="imgUrls" class="modal-left-img" :width="650" :height="600" />
+          </template>
+
         </div>
         <div class="modal-right" @click="closeDotMenu">
           <div class="modal-right-wrapper" ref="modalRightWrapper" @scroll="handleScroll">
@@ -115,6 +121,7 @@ const route = useRoute();
 const store = useAuthStore();
 const writeStore = useWriteStore();
 import { storeToRefs } from "pinia";
+import ArticleWriteSwiper from "@/components/Write/Article/ArticleWriteSwiper.vue";
 const { getComment } = storeToRefs(writeStore);
 const { genComments, resetComments } = writeStore
 
@@ -146,16 +153,14 @@ const modalRightWrapper = ref(null);
 const noMoreData = ref(false);
 const lastIndex = ref(1000000000);
 const commentList = ref(null);
+const imgUrls = ref([]);
+const isManyImg = ref(false);
 
 const idByParams = route.params.id;
 
 onMounted(async () => {
 
   isLoading.value = true;
-  setTimeout(() => {
-    isLoading.value = false;
-  }, 500);
-
   if (props) {
     newArticle.value = props.article;
     isLiked.value = props.article.isLiked;
@@ -185,6 +190,13 @@ const fetchArticleDetail = async () => {
     isBookmarked.value = newArticle.value.isBookmarked;
     likeCount.value = newArticle.value.likeCount;
     commentContent.value = newArticle.value.commentContent;
+    isLoading.value = false;
+    imgUrls.value = newArticle.value.imageUrls;
+    if (imgUrls.value.length > 1) {
+      isManyImg.value = true;
+    } else {
+      isManyImg.value = false;
+    }
   })
 }
 
@@ -412,6 +424,7 @@ const postComment = async () => {
 .modal-left-img {
   width: 100%;
   height: 100%;
+  border-radius: 20px;
 }
 
 .modal-right {

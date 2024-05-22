@@ -4,7 +4,13 @@
       <div class="modal-box" @click.stop>
         <img v-if="isLoading" src="/src/assets/blue_spinner.svg" alt="" class="modal-left" />
         <div v-if="!isLoading" class="modal-left" @click="closeDotMenu">
-          <img :src="article.imageUrls" class="modal-left-img" onerror="this.src='/src/assets/logo/sad_logo.png'" />
+          <template v-if="!isManyImg">
+            <img :src="article.imageUrls || './src/assets/logo/logo.png'"
+              onerror="this.src='/src/assets/logo/sad_logo.png'" class="modal-left-img" />
+          </template>
+          <template v-if="isManyImg">
+            <ArticleWriteSwiper :imgUrls="imgUrls" class="modal-left-img" :width="650" :height="600" />
+          </template>
         </div>
         <div class="modal-right" @click="closeDotMenu">
           <div class="modal-right-wrapper">
@@ -106,6 +112,7 @@ import { onMounted, ref } from "vue";
 import CommentList from "@/components/MainPage/Article/CommentList.vue";
 import { useAuthStore } from "@/store/auth";
 import { useRouter, useRoute } from "vue-router";
+import ArticleWriteSwiper from "@/components/Write/Article/ArticleWriteSwiper.vue";
 const router = useRouter();
 const route = useRoute();
 const store = useAuthStore();
@@ -126,11 +133,12 @@ const dotMenuStyle = ref({});
 const commentInput = ref(null);
 const commentContent = ref("");
 const fetchComments = ref(false);
+const imgUrls = ref([]);
+const isManyImg = ref(false);
 
 onMounted(async () => {
   isLoading.value = true;
   await fetchArticleData();
-  isLoading.value = false;
   if (article.value.userId === Number(sessionStorage.getItem('loginUserId'))) {
     isUsersArticle.value = true;
   }
@@ -147,6 +155,13 @@ const fetchArticleData = async () => {
       article.value = data.response.articleInfo;
       isLiked.value = article.value.isLiked;
       isBookmarked.value = article.value.isBookmarked;
+      isLoading.value = false;
+      imgUrls.value = article.value.imageUrls;
+      if (imgUrls.value.length > 1) {
+        isManyImg.value = true;
+      } else {
+        isManyImg.value = false;
+      }
     } catch (error) {
       console.error(error);
     }
