@@ -30,6 +30,11 @@ const move = () => {
   cursor: pointer;
 }
 
+.user-article-item {
+  width: 250px;
+  height: 250px;
+}
+
 .user-article-item:hover {
   scale: 1.1;
   transition: 0.2s all;
