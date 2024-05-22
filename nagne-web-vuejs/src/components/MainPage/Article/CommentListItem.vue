@@ -3,7 +3,8 @@
     <div class="comment-box">
       <div class="user-info">
         <div class="user-profile-img">
-          <img src="@/assets/logo/logo_img.png" class="profile-img" @click="moveTo" :width="50" :height="50" alt="" />
+          <img :src="comment.userProfileImage || '@/assets/logo/logo_img.png'" class="profile-img" @click="moveTo"
+            :width="50" :height="50" alt="" />
         </div>
         <div class="user-info-text">
           <div class="user-info-main" @click="moveTo">
@@ -54,8 +55,8 @@ const userInfo = ref({});
 onMounted(async () => {
 })
 
-const moveTo =()=> {
-  router.push({name :'user', params: {'id' : props.comment.userId}})
+const moveTo = () => {
+  router.push({ name: 'user', params: { 'id': props.comment.userId } })
 }
 </script>
 

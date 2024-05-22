@@ -5,14 +5,14 @@
       <div class="modal-box" @click.stop>
         <img v-if="isLoading" src="/src/assets/blue_spinner.svg" alt="" class="modal-left" />
         <div v-if="!isLoading" class="modal-left" @click="closeDotMenu">
-          <img :src="'./src/assets/logo/logo.png'" class="modal-left-img" />
+          <img :src="newArticle.userProfileImage || './src/assets/logo/logo.png'" class="modal-left-img" />
         </div>
         <div class="modal-right" @click="closeDotMenu">
           <div class="modal-right-wrapper" ref="modalRightWrapper" @scroll="handleScroll">
             <div class="right-header">
               <div class="user-info">
                 <div>
-                  <img src="@/assets/logo/logo_img.png" :width="50" :height="50" alt="" />
+                  <img :src="newArticle.imageUrls || '@/assets/logo/logo_img.png'" :width="50" :height="50" alt="" />
                 </div>
                 <div class="user-info-text">
                   <div class="user-info-main">
