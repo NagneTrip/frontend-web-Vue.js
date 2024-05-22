@@ -156,7 +156,7 @@
     <div class="card card-body">
       <div class="search-box">
         <font-awesome-icon class="serach-icon icon" id="navbar-search-btn" :icon="faMagnifyingGlass" />
-        <input class="search-input jua-regular-large " placeholder="검색어를 입력하세요." v-model="searchContent" type="text" />
+        <input class="search-input jua-regular-large " placeholder="검색어를 입력하세요." @keyup.enter="move('search')" v-model="searchContent" type="text" />
         <button class="jua-regular search-btn" @click="move('search')">검색</button>
       </div>
     </div>
