@@ -74,6 +74,7 @@ const selectBtn = ref([
   { name: 'nature', img: '/src/assets/map_marker/nature.png', isSelected: true },
   { name: 'sleep', img: '/src/assets/map_marker/sleep.png', isSelected: true },
   { name: 'culture', img: '/src/assets/map_marker/culture.png', isSelected: true },
+  { name: 'trip', img: '/src/assets/map_marker/trip.png', isSelected: true },
 ]);
 </script>
 
