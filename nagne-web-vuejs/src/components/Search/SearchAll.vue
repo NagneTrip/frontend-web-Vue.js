@@ -32,7 +32,7 @@
         <button class="moreBtn jua-regular"  @click="clickMoreBtn('attraction')">더보기</button>
       </div>
       <div v-if="attractionByKeyword" class="attraction-result">
-        <div v-for="attracion in attractionByKeyword">{{ attracion.title }}</div>
+        <TourListItem v-for="attraction in attractionByKeyword" :attraction="attraction" :key="attraction.id"></TourListItem>
       </div>
       <div v-if="!attractionByKeyword[0]" class="result-text-box">
         <img src="/src/assets/logo/sad_logo.png" class="sad-img" alt="" :width="200" />
@@ -48,6 +48,7 @@ import { ref, onMounted } from "vue";
 import { useAuthStore } from "@/store/auth.js";
 import SearchUserItem from "./SearchUserItem.vue";
 import TheArticle from "../MainPage/Article/TheArticle.vue";
+import TourListItem from "../Map/Find/TourListItem.vue";
 const authStore = useAuthStore();
 
 const props = defineProps({
