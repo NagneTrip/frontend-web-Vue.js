@@ -22,7 +22,8 @@
         </div>
         <div class="navbar-icons-wrapper" @click="toggleUserMenu">
           <font-awesome-icon v-if="!userInfo" class="icon" :icon="faUser" id="navbar-user" />
-          <img v-if="userInfo" :src="userInfo.profileImage" class="icon" id="navbar-user" />
+          <img v-if="userInfo" :src="userInfo.profileImage" onerror="this.src='/src/assets/logo/sad_logo.png'"
+            id="navbar-profile" />
         </div>
         <div class="navbar-icons-wrapper" id="navbar-write-icon-wrapper" @click="move('write')">
           <font-awesome-icon :icon="faPen" class="icon" id="navbar-write-icon" />
@@ -177,6 +178,7 @@ const fetchUserInfo = async () => {
   }).then(({ data }) => {
     userInfo.value = data.response.userInfo;
     sessionStorage.setItem('profileImage', userInfo.profileImage)
+    console.log(userInfo.value)
   })
 }
 
@@ -327,6 +329,7 @@ a {
   align-items: center;
   transition: all 200ms;
   position: relative;
+  overflow: hidden;
 }
 
 .user-menu {
@@ -362,6 +365,18 @@ a {
   transition: all 100ms;
   cursor: pointer;
   background-color: #2a79ff;
+}
+
+#navbar-user {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#navbar-profile {
+  width: 50px;
+  width: 50px;
+  object-fit: fill;
 }
 
 .navbar-icons .icon {
