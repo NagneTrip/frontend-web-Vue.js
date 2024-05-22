@@ -2,7 +2,7 @@
     <div class="user-page">
         <div class="user-info">
             <div class="user-profile-img">
-                <img :src="userInfo.profileImage || '@/assets/logo/logo_img.png'" alt="">
+                <img :src="userInfo.profileImage || '@/assets/logo/logo_img.png'" alt="" :width="200" :height="200">
             </div>
             <div class="info-box">
                 <div class="info-box-top">
