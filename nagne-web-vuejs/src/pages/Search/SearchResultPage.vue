@@ -11,8 +11,9 @@
         placeholder="검색어를 입력하세요."
         type="text"
         v-model="inputContent"
+        @keyup.enter="moveTo('search')"
       />
-      <button class="jua-regular search-btn" @click="moveTo('search')">검색</button>
+      <button class="jua-regular search-btn" @click="moveTo('search')" >검색</button>
     </div>
   </div>
   <div class="main">
@@ -34,16 +35,18 @@
                 여행지
               </button>
             </div>
-            <SearchAll v-if="nowTab === 'all'" :usersByKeyword="usersByKeyword" :articlesByKeyword="articlesByKeyword" :attractionByKeyword="attractionByKeyword"/>
+            <p v-if="nowTab === 'all'" class="notice jua-regular">검색 결과는 최대 3개씩만 노출됩니다.</p>
+              <SearchAll v-if="nowTab === 'all'" @change-tab="changeTab" :usersByKeyword="usersByKeyword" :articlesByKeyword="articlesByKeyword" :attractionByKeyword="attractionByKeyword"/>
             <SearchUser v-if="nowTab === 'user'" />
             <SearchArticle v-if="nowTab === 'article'" />
             <SearchKeyword v-if="nowTab === 'attraction'" />
+            
           </div>
         </div>
         <div class="vertical-line"></div>
         <div class="side" ref="sideSection">
           <div class="side-content">
-            <TheWeather />
+            <TheWeather style="margin-top: 30px;" />
             <TheNotice />
             <TheBestArticle />
             <TheFooter />
@@ -57,7 +60,7 @@
 <script setup>
 import axios from 'axios';
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
-import { onMounted, ref } from "vue";
+import { onMounted, ref,watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useAuthStore } from "@/store/auth";
 import TheWeather from "@/components/MainPage/SideBar/TheWeather.vue";
@@ -81,6 +84,9 @@ const articlesByKeyword = ref([]);
 const attractionByKeyword = ref([]);
 
 
+const validKey = (event)=> {
+  console.log(event.target)
+}
 
 const inputContent = ref(keywordByQuery);
 const moveTo = (path) => {
@@ -106,8 +112,6 @@ onMounted(async() => {
     moveTo("login");
     return;
   }
-
-  isLoading.value = true;
   //키워드와 일치하는
   //유저 정보 조회
   await fetchUserByKeyword();
@@ -117,8 +121,18 @@ onMounted(async() => {
   await fetchAttractionByKeyword();
 });
 
+watch(keywordByQuery, async()=>{
+  //키워드와 일치하는
+  //유저 정보 조회
+  await fetchUserByKeyword();
+  //게시물 정보 조회
+  await fetchArticleByKeyword();
+  //여행지 정보 조회
+  await fetchAttractionByKeyword();
+})
+
 const fetchUserByKeyword = async ()=> {
-  await axios.get(`http://localhost:8080/api/users?keyword=${route.query.q.split(" ").join('')}&lastIndex=1000000&size=5`,{
+  await axios.get(`http://localhost:8080/api/users?keyword=${route.query.q.split(" ").join('')}&lastIndex=1000000&size=3`,{
     headers: {
       Authorization: `Bearer ${sessionStorage.getItem('token')}`,
     },
@@ -129,7 +143,7 @@ const fetchUserByKeyword = async ()=> {
 }
 
 const fetchArticleByKeyword = async()=> {
-  await axios.get(`http://localhost:8080/api/articles/tags?tags=%23${route.query.q.split(" ").join('')}`,{
+  await axios.get(`http://localhost:8080/api/articles/tags?tags=%23${route.query.q.trim().split(" ").join('')}&size=3`,{
     headers: {
       Authorization: `Bearer ${sessionStorage.getItem('token')}`,
     },
@@ -140,7 +154,7 @@ const fetchArticleByKeyword = async()=> {
 }
 
 const fetchAttractionByKeyword = async()=> {
-  await axios.get(`http://localhost:8080/api/attractions?keyword=${route.query.q.split(" ").join('')}`,{
+  await axios.get(`http://localhost:8080/api/attractions?keyword=${route.query.q.split(" ").join('')}&size=3`,{
     headers: {
       Authorization: `Bearer ${sessionStorage.getItem('token')}`,
     },
@@ -250,7 +264,7 @@ const fetchAttractionByKeyword = async()=> {
   display: flex;
   border-radius: 18px;
   overflow: hidden;
-  margin-bottom: 50px;
+  margin-bottom: 20px;
 }
 
 .tab-btn {
@@ -418,5 +432,14 @@ const fetchAttractionByKeyword = async()=> {
   height: 300px;
   display: block;
   margin: 50px auto 20px auto;
+}
+
+.notice {
+  font-size: 16px;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 40px;
+  color: #ababad;
+  letter-spacing: 1.5px;
 }
 </style>
