@@ -106,7 +106,6 @@ const emit = defineEmits([
 
 
 onMounted(async () => {
-  console.log(props.article)
   article.value = props.article;
   likeCount.value = props.article.likeCount;
   commentCount.value = props.article.commentCount;
