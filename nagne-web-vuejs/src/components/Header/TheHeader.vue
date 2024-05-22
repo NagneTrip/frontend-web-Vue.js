@@ -178,7 +178,6 @@ const fetchUserInfo = async () => {
   }).then(({ data }) => {
     userInfo.value = data.response.userInfo;
     sessionStorage.setItem('profileImage', userInfo.profileImage)
-    console.log(userInfo.value)
   })
 }
 
