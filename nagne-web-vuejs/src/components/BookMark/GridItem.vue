@@ -1,6 +1,6 @@
 <template>
   <div class="user-article-item" @click="move">
-    <img :src="bookMarkItem.imageUrls[0]" onerror="this.src='/src/assets/logo/sad_logo.png' alt="" />
+    <img :src="bookMarkItem.imageUrls[0]" onerror="this.src='/src/assets/logo/sad_logo.png'" alt="" />
   </div>
 </template>
 
@@ -12,7 +12,6 @@ const router = useRouter();
 const props = defineProps({
   bookMarkItem: Object,
 });
-console.log(props.bookMarkItem)
 
 const move = () => {
   router.push({ name: 'articleDetail', params: { 'id': props.bookMarkItem.id } })
@@ -30,7 +29,7 @@ const move = () => {
   cursor: pointer;
 }
 
-.user-article-item {
+.user-article-item img {
   width: 250px;
   height: 250px;
 }

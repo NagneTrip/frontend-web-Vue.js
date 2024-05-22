@@ -1,6 +1,9 @@
 <template>
     <div class="user-article">
-        <GridItem v-for="(bookMarkItem, index) in bookMarkList" :bookMarkItem="bookMarkItem" :key="bookMarkItem.id" />
+        <keep-alive>
+            <GridItem v-for="(bookMarkItem, index) in bookMarkList" :bookMarkItem="bookMarkItem"
+                :key="bookMarkItem.id" />
+        </keep-alive>
     </div>
 </template>
 
