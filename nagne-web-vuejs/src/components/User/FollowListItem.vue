@@ -2,12 +2,13 @@
     <div class="list">
         <div class="list-left" @click="moveToUser">
             <div class="img-section">
-                <img src="@/assets/logo/logo_img.png" alt="" :width="60" :height="60">
+                <img src="@/assets/logo/logo_img.png" alt="" onerror="this.src='/src/assets/logo/sad_logo.png'"
+                    :width="60" :height="60">
             </div>
             <div class="user-nickname">
                 <p class="jua-regular nickname">{{ followItem.nickname }}</p>
-                <img :src="`/src/assets/tier/${followItem.tier}.svg`" :width="18" :height="18" alt=""
-                    class="tier-img" />
+                <img :src="`/src/assets/tier/${followItem.tier}.svg`" :width="18" :height="18" alt="" class="tier-img"
+                    onerror="this.src='/src/assets/logo/sad_logo.png'" />
             </div>
         </div>
         <template v-if="!isNowLoginUser">

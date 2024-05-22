@@ -1,8 +1,10 @@
 <template>
     <div class="list-item">
         <div class="item-img">
-            <img v-if="attraction.imageUrl" :src="attraction.imageUrl" alt="">
-            <img v-if="!attraction.imageUrl" class="no-img" :src="'/src/assets/logo/sad_logo.png'" alt="">
+            <img v-if="attraction.imageUrl" :src="attraction.imageUrl"
+                onerror="this.src='/src/assets/logo/sad_logo.png'" alt="">
+            <img v-if="!attraction.imageUrl" class="no-img" :src="'/src/assets/logo/sad_logo.png'"
+                onerror="this.src='/src/assets/logo/sad_logo.png'" alt="">
         </div>
         <div class="item-info">
             <p class="title">{{ attraction.title }}</p>

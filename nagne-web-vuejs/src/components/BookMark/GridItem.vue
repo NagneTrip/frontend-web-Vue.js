@@ -1,6 +1,6 @@
 <template>
   <div class="user-article-item" @click="move">
-    <img :src="bookMarkItem.imageUrls[0]" alt="">
+    <img :src="bookMarkItem.imageUrls[0]" onerror="this.src='/src/assets/logo/sad_logo.png' alt="" />
   </div>
 </template>
 

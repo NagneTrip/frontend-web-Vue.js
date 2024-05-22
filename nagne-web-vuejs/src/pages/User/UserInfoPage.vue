@@ -2,14 +2,15 @@
     <div class="user-page">
         <div class="user-info">
             <div class="user-profile-img">
-                <img :src="userInfo.profileImage || '@/assets/logo/logo_img.png'" alt="" :width="200" :height="200">
+                <img :src="userInfo.profileImage || '@/assets/logo/logo_img.png'"
+                    onerror="this.src='/src/assets/logo/sad_logo.png'" alt="" :width="200" :height="200">
             </div>
             <div class="info-box">
                 <div class="info-box-top">
                     <div class="info-name">
                         <p class="nickname jua-regular">{{ userInfo.nickname }}</p>
                         <img :src="`/src/assets/tier/${userInfo.tier}.svg`" :width="25" :height="25" alt=""
-                            class="tier-img" />
+                            class="tier-img" onerror="this.src='/src/assets/logo/sad_logo.png'" />
                     </div>
                     <button v-if="isNowLoginUser" class="edit-profile-btn jua-regular" @click="moveEdit">프로필 변경</button>
                     <template v-if="!isNowLoginUser">

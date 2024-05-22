@@ -3,18 +3,21 @@
     <div class="article">
       <div class="user-info">
         <div class="user-profile-img">
-          <img :src="article.userProfileImage || '@/assets/logo/logo_img.png'" alt="" />
+          <img :src="article.userProfileImage || '@/assets/logo/logo_img.png'"
+            onerror="this.src='/src/assets/logo/sad_logo.png'" alt="" />
         </div>
         <div class="user-info-text">
           <div class="user-info-main">
             <p class="noto-sans-kr-bold">{{ article.userNickname }}</p>
-            <img :src="`src/assets/tier/${article.userTier}.svg`" alt="" class="tier-img" />
+            <img :src="`src/assets/tier/${article.userTier}.svg`" onerror="this.src='/src/assets/logo/sad_logo.png'"
+              alt="" class="tier-img" />
           </div>
           <p class="user-info-date noto-sans-kr-regular">{{ article?.createdDate?.split('T')[0] }}</p>
         </div>
       </div>
       <div class="img-container">
-        <img class="main-img" :src="article.imageUrls || './src/assets/logo/logo.png'" />
+        <img class="main-img" onerror="this.src='/src/assets/logo/sad_logo.png'"
+          :src="article.imageUrls || './src/assets/logo/logo.png'" />
         <div class=" image-overlay">
         </div>
         <p class="noto-sans-kr-regular img-container-text">{{ article.content }}</p>

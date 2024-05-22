@@ -1,7 +1,8 @@
 <template>
     <li class="notice-item">
         <div class="noticer-img">
-            <img :src="notice.fromUserProfileImage || '/src/assets/logo/logo_img.png'" alt="" :width="50" :height="50"
+            <img :src="notice.fromUserProfileImage || '/src/assets/logo/logo_img.png'"
+                onerror="this.src='/src/assets/logo/sad_logo.png'" alt="" :width="50" :height="50"
                 @click="moveTo('user')" />
         </div>
         <div class="notice-info">
@@ -9,7 +10,8 @@
                 <div class="noticer">
                     <div class="name-tier" @click="moveTo('user')">
                         <p class="noticer-name jua-regular">{{ notice.fromUserNickname }}</p>
-                        <img :src="`/src/assets/tier/${notice.fromUserTier}.svg`" alt="" :width="14" :height="16">
+                        <img :src="`/src/assets/tier/${notice.fromUserTier}.svg`"
+                            onerror="this.src='/src/assets/logo/sad_logo.png'" alt="" :width="14" :height="16">
                     </div>
 
                     <p class="notice-date jua-regular">{{ notice?.createdDate.split("T")[0] }}</p>

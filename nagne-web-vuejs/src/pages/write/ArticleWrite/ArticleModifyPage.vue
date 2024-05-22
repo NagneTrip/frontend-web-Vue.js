@@ -4,7 +4,8 @@
       <div class="modal-box" @click.stop>
         <div class="modal-left">
           <template v-if="renderBaseImg">
-            <img class="modal-left-img" :src="baseImg" alt="" :width="650" :height="600">
+            <img class="modal-left-img" :src="baseImg" alt="" :width="650" :height="600"
+              onerror="this.src='/src/assets/logo/sad_logo.png'">
           </template>
           <template v-if="!renderBaseImg">
             <ArticleWriteSwiper class="modal-left-img" v-if="!renderBaseImg" :width="650" :height="600" />

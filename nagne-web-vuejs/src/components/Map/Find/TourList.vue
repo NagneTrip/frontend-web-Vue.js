@@ -20,12 +20,12 @@
     </div>
     <div class="select-btn">
       <div class="select" @click="toggleExpand">
-        <img :src="selectBtn[0].img" :alt="selectBtn[0].name" />
+        <img :src="selectBtn[0].img" :alt="selectBtn[0].name" onerror="this.src='/src/assets/logo/sad_logo.png'" />
       </div>
       <transition-group name="slide-fade" tag="div">
         <div v-for="(btn, index) in selectBtn.slice(1)" :key="btn.name" v-if="isExpanded"
           :class="['select', { 'selected': btn.isSelected }]" @click="toggleSelectButton(btn)">
-          <img :src="btn.img" :alt="btn.name" />
+          <img :src="btn.img" :alt="btn.name" onerror="this.src='/src/assets/logo/sad_logo.png'" />
         </div>
       </transition-group>
     </div>

@@ -1,7 +1,8 @@
 <template>
   <div class="container">
     <p class="header jua-regular-large">로그아웃이 완료되었습니다.</p>
-    <img src="@/assets/logo/logo_img.png" :width="200" :height="180" alt="">
+    <img src="@/assets/logo/logo_img.png" :width="200" :height="180" alt=""
+      onerror="this.src='/src/assets/logo/sad_logo.png'">
     <p class="jua-regular-large count-notice">3초 뒤 메인 페이지로 이동합니다.</p>
     <p class="jua-regular-large timerCount">{{ timerCount }}</p>
   </div>

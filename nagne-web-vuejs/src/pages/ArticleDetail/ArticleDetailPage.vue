@@ -4,19 +4,21 @@
       <div class="modal-box" @click.stop>
         <img v-if="isLoading" src="/src/assets/blue_spinner.svg" alt="" class="modal-left" />
         <div v-if="!isLoading" class="modal-left" @click="closeDotMenu">
-          <img :src="'/src/assets/logo/logo.png'" class="modal-left-img" />
+          <img :src="article.imageUrls" class="modal-left-img" onerror="this.src='/src/assets/logo/sad_logo.png'" />
         </div>
         <div class="modal-right" @click="closeDotMenu">
           <div class="modal-right-wrapper">
             <div class="right-header">
               <div class="user-info">
                 <div>
-                  <img src="@/assets/logo/logo_img.png" :width="50" :height="50" alt="" />
+                  <img :src="article.userProfileImage" :width="50" onerror="this.src='/src/assets/logo/sad_logo.png'"
+                    :height="50" alt="" />
                 </div>
                 <div class="user-info-text">
                   <div class="user-info-main">
                     <p class="noto-sans-kr-bold">{{ article?.userNickname }}</p>
-                    <img :src="`src/assets/tier/${article.userTier}.svg`" alt="" class="tier-img" :width="17"
+                    <img :src="`src/assets/tier/${article.userTier}.svg`"
+                      onerror="this.src='/src/assets/logo/sad_logo.png'" alt="" class="tier-img" :width="17"
                       :height="17" />
                   </div>
                   <p class="user-info-date noto-sans-kr-regular">{{ article?.createdDate?.split('T')[0] }}</p>
