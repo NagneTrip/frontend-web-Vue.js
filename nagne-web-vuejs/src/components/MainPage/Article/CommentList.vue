@@ -67,15 +67,15 @@ const loadData = async ($state) => {
 
 onMounted(async () => {
   if (props.articleId) {
-    await fetchComments();
+    await fetchComments(props.articleId);
   }
 });
 
-const fetchComments = async () => {
+const fetchComments = async (id) => {
   if (isLoading.value || noMoreData.value) return;
 
   isLoading.value = true;
-  let url = `http://localhost:8080/api/comments?articleId=${props.articleId}&size=10`;
+  let url = `http://localhost:8080/api/comments?articleId=${id}&size=10`;
   if (lastIndex.value !== null) {
     url += `&lastIndex=${lastIndex.value}`;
   }
