@@ -83,10 +83,11 @@ import CommentListItem from "./CommentListItem.vue"
 import axios from "axios";
 import { onMounted } from "vue";
 import { ref, watch } from "vue";
-
+import { useRoute,useRouter } from "vue-router";
 import { useAuthStore } from "@/store/auth";
 const authStore = useAuthStore();
-
+const route = useRoute();
+const router = useRouter();
 
 const isManyImg = ref(false);
 
@@ -123,6 +124,10 @@ onMounted(async () => {
 const openArticleModal = () => {
   if (!authStore.isAuthenticated) {
     alert("게시물 상세보기는 로그인 후 이용하실 수 있습니다!");
+    return;
+  }
+  if (route.query.q){
+    router.push({name : 'articleDetail', params : {'id' : article.value.id}})
     return;
   }
   emit('openArticleModal', article.value.id);
