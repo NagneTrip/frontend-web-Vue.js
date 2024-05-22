@@ -106,8 +106,9 @@ import { onMounted, ref } from "vue";
 import CommentList from "./CommentList.vue";
 import { useAuthStore } from "@/store/auth";
 import { useWriteStore } from "@/store/write";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 const router = useRouter();
+const route = useRoute();
 const store = useAuthStore();
 const writeStore = useWriteStore();
 import { storeToRefs } from "pinia";
@@ -143,6 +144,8 @@ const noMoreData = ref(false);
 const lastIndex = ref(1000000000);
 const commentList = ref(null);
 
+const idByParams = route.params.id;
+
 onMounted(async () => {
 
   isLoading.value = true;
@@ -150,12 +153,14 @@ onMounted(async () => {
     isLoading.value = false;
   }, 500);
 
-  newArticle.value = props.article;
-  isLiked.value = props.article.isLiked;
-  commentCount.value = props.article.commentCount;
-  isBookmarked.value = props.article.isBookmarked;
-  likeCount.value = props.article.likeCount;
-  commentContent.value = props.article.commentContent;
+  if (props) {
+    newArticle.value = props.article;
+    isLiked.value = props.article.isLiked;
+    commentCount.value = props.article.commentCount;
+    isBookmarked.value = props.article.isBookmarked;
+    likeCount.value = props.article.likeCount;
+    commentContent.value = props.article.commentContent;
+  }
 
   //게시글 작성자가 현재 로그인한 유저와 일치하는지 확인
   if (newArticle.value.userId === Number(sessionStorage.getItem('loginUserId'))) {
@@ -183,7 +188,12 @@ const fetchArticleDetail = async () => {
 const moveTo = (action) => {
   switch (action) {
     case 'modify':
-      router.push({ name: 'articleModify', params: { id: newArticle.value.id } });
+      if (!idByParams) {
+        router.push({ name: 'articleModify', params: { id: newArticle.value.id } });
+      } else {
+        router.push({ name: 'articleModify', params: { id: idByParams } });
+      }
+
       break;
 
     case 'delete':

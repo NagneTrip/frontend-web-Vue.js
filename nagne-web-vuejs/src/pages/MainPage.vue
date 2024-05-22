@@ -7,7 +7,8 @@
           <div class="write-article-box" @click="moveWrite">
             <div class="write-article-left-box">
               <div class="write-article-icon-box">
-                <font-awesome-icon :icon="faUser" class="write-article-icon" />
+                <font-awesome-icon v-if="!profileImage" :icon="faUser" class="write-article-icon" />
+                <img v-if="profileImage" :src="profileImage" class="write-article-icon" />
               </div>
               <p class="jua-regular">나누고 싶은 추억이 있나요?</p>
             </div>
@@ -63,6 +64,7 @@ const modalArticle = ref(null);
 const lastIndex = ref(10000000);
 const isLoading = ref(false);
 const noMoreData = ref(false);
+const profileImage = ref('');
 
 onMounted(() => {
   if (isLoading.value || noMoreData.value) return;
@@ -76,6 +78,7 @@ onMounted(() => {
   if (!sessionStorage.getItem('token') || !authStore.isAuthenticated) {
     fetchArticles(url);
   } else {
+    profileImage.value = sessionStorage.getItem('profileImage');
     fetchArticlesAtLogin(url);
   }
 

@@ -21,7 +21,8 @@
           <font-awesome-icon class="icon" :icon="faMap" id="navbar-map" />
         </div>
         <div class="navbar-icons-wrapper" @click="toggleUserMenu">
-          <font-awesome-icon class="icon" :icon="faUser" id="navbar-user" />
+          <font-awesome-icon v-if="!userInfo" class="icon" :icon="faUser" id="navbar-user" />
+          <img v-if="userInfo" :src="userInfo.profileImage" class="icon" id="navbar-user" />
         </div>
         <div class="navbar-icons-wrapper" id="navbar-write-icon-wrapper" @click="move('write')">
           <font-awesome-icon :icon="faPen" class="icon" id="navbar-write-icon" />
@@ -175,6 +176,7 @@ const fetchUserInfo = async () => {
     },
   }).then(({ data }) => {
     userInfo.value = data.response.userInfo;
+    sessionStorage.setItem('profileImage', userInfo.profileImage)
   })
 }
 
@@ -184,7 +186,7 @@ const readAllNotice = async () => {
     headers: {
       Authorization: `Bearer ${sessionStorage.getItem('token')}`,
     },
-  }).then(()=>{
+  }).then(() => {
     fecthIsNotice();
     fetchUserNotice();
   })
@@ -212,7 +214,7 @@ const move = (path) => {
       moveTo = { name: path }
       break;
     case 'edit':
-      moveTo = { name : 'edit'}
+      moveTo = { name: 'edit' }
   }
   // 페이지 이동 시 열려있는 메뉴 전부 닫기
   showUserMenu.value = false;

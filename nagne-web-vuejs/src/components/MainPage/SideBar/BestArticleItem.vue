@@ -1,7 +1,7 @@
 <template>
   <div class="best-article" @click="moveTo('bestArticle')">
     <div class="img-box">
-      <img src="@/assets/logo/logo_img.png" alt="" :width="60" :height="60">
+      <img :src="bestArticle.userProfileImage || '@/assets/logo/logo_img.png'" alt="" :width="60" :height="60">
     </div>
     <div class="content-box">
       <p class="jua-regular">{{ truncatedContent }}</p>

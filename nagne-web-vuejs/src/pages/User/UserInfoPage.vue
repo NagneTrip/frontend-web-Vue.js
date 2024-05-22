@@ -2,7 +2,7 @@
     <div class="user-page">
         <div class="user-info">
             <div class="user-profile-img">
-                <img src="@/assets/logo/logo_img.png" alt="" :width="150" :height="150">
+                <img :src="userInfo.profileImage || '@/assets/logo/logo_img.png'" alt="" :width="200" :height="200">
             </div>
             <div class="info-box">
                 <div class="info-box-top">
@@ -11,7 +11,7 @@
                         <img :src="`/src/assets/tier/${userInfo.tier}.svg`" :width="25" :height="25" alt=""
                             class="tier-img" />
                     </div>
-                    <button v-if="isNowLoginUser" class="edit-profile-btn jua-regular">프로필 편집</button>
+                    <button v-if="isNowLoginUser" class="edit-profile-btn jua-regular">프로필 변경</button>
                     <template v-if="!isNowLoginUser">
                         <button v-if="!isFollow" class="edit-profile-btn jua-regular" @click="follow">팔로우</button>
                         <button v-if="isFollow" class="unfollow jua-regular" @click="unfollow">팔로잉</button>
@@ -231,7 +231,8 @@ p {
     justify-content: center;
     align-items: center;
     background-color: antiquewhite;
-    border-radius: 100px
+    border-radius: 100px;
+    overflow: hidden;
 }
 
 .info-box {

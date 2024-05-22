@@ -154,7 +154,7 @@ const fetchArticleData = async () => {
 const moveTo = (action) => {
   switch (action) {
     case 'modify':
-      router.push({ name: 'articleModify', params: { id: props.articleIdByParams } });
+      router.push({ name: 'articleModify', params: { id: articleIdByParams } });
       break;
 
     case 'delete':
