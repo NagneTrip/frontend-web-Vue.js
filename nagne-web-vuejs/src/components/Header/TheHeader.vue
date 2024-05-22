@@ -7,12 +7,27 @@
         <div class="left-logo2"></div>
       </div>
       <div class="navbar-icons">
-        <div class="navbar-icons-wrapper">
+        <div
+          class="navbar-icons-wrapper"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseExample"
+          aria-expanded="false"
+          aria-controls="collapseExample"
+          ref="openSearchBtn"
+        >
           <font-awesome-icon class="icon" id="navbar-search-btn" :icon="faMagnifyingGlass" />
         </div>
-        <div class="navbar-icons-wrapper" id="bell-wrapper" data-bs-toggle="modal" data-bs-target="#exampleModal">
-          <span :style="{ display: isNewNotice ? 'block' : 'none' }"
-            class="badge position-absolute top-2 end-40 translate-middle p-2 bg-danger border-0 rounded-circle">
+        <div
+          class="navbar-icons-wrapper"
+          id="bell-wrapper"
+          data-bs-toggle="modal"
+          data-bs-target="#exampleModal"
+        >
+          <span
+            :style="{ display: isNewNotice ? 'block' : 'none' }"
+            class="badge position-absolute top-2 end-40 translate-middle p-2 bg-danger border-0 rounded-circle"
+          >
             <span class="visually-hidden">New alerts</span>
           </span>
           <font-awesome-icon class="icon" :icon="faBell" id="navbar-bell" />
@@ -21,9 +36,18 @@
           <font-awesome-icon class="icon" :icon="faMap" id="navbar-map" />
         </div>
         <div class="navbar-icons-wrapper" @click="toggleUserMenu">
-          <font-awesome-icon v-if="!userInfo?.profileImage" class="icon" :icon="faUser" id="navbar-user" />
-          <img v-if="userInfo" :src="userInfo.profileImage" onerror="this.src='/src/assets/logo/sad_logo.png'"
-            id="navbar-profile" />
+          <font-awesome-icon
+            v-if="!userInfo?.profileImage"
+            class="icon"
+            :icon="faUser"
+            id="navbar-user"
+          />
+          <img
+            v-if="userInfo"
+            :src="userInfo.profileImage"
+            onerror="this.src='/src/assets/logo/sad_logo.png'"
+            id="navbar-profile"
+          />
         </div>
         <div class="navbar-icons-wrapper" id="navbar-write-icon-wrapper" @click="move('write')">
           <font-awesome-icon :icon="faPen" class="icon" id="navbar-write-icon" />
@@ -36,7 +60,11 @@
       <!-- phoneSize  -->
       <div class="phone-size-navmenu">
         <div class="navbar-icons-wrapper burger-menu-icon-wrapper" id="navbar-search-btn-wrapper">
-          <font-awesome-icon class="icon burger-menu-icon" id="navbar-search-btn" :icon="faMagnifyingGlass" />
+          <font-awesome-icon
+            class="icon burger-menu-icon"
+            id="navbar-search-btn"
+            :icon="faMagnifyingGlass"
+          />
         </div>
         <div class="navbar-icons-wrapper burger-menu-icon-wrapper" @click="toggleSidebar">
           <font-awesome-icon :icon="faBars" class="burger-menu-icon" />
@@ -48,40 +76,91 @@
 
     <!-- UserMenu -->
     <ul v-show="showUserMenu" class="user-menu list-group" :style="userMenuStyle">
-      <li v-show="!store.isAuthenticated" class="list-group-item" @click="() => move('login')">로그인</li>
-      <li v-show="store.isAuthenticated" class="list-group-item" @click="() => move('user')">내 프로필</li>
-      <li v-show="store.isAuthenticated" class="list-group-item" @click="() => move('bookmark')">저장한 게시물</li>
-      <li v-show="store.isAuthenticated" class="list-group-item" @click="() => move('edit')">내정보 수정</li>
-      <li v-show="store.isAuthenticated" class="list-group-item" style="border-top: 1px solid black;">고객센터</li>
-      <li v-show="store.isAuthenticated" class="list-group-item" @click="() => move('logout')">로그아웃</li>
+      <li v-show="!store.isAuthenticated" class="list-group-item" @click="() => move('login')">
+        로그인
+      </li>
+      <li v-show="store.isAuthenticated" class="list-group-item" @click="() => move('user')">
+        내 프로필
+      </li>
+      <li v-show="store.isAuthenticated" class="list-group-item" @click="() => move('bookmark')">
+        저장한 게시물
+      </li>
+      <li v-show="store.isAuthenticated" class="list-group-item" @click="() => move('edit')">
+        내정보 수정
+      </li>
+      <li
+        v-show="store.isAuthenticated"
+        class="list-group-item"
+        style="border-top: 1px solid black"
+      >
+        고객센터
+      </li>
+      <li v-show="store.isAuthenticated" class="list-group-item" @click="() => move('logout')">
+        로그아웃
+      </li>
     </ul>
   </div>
-  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+  <div
+    class="modal fade"
+    id="exampleModal"
+    tabindex="-1"
+    aria-labelledby="modalLabel"
+    aria-hidden="true"
+  >
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5 jua-regular-large noti-user-name" id="modalLabel" @click="() => move('user')">{{
-            userInfo.nickname }}</h1>
-          <p v-if="isAuthenticated" class="jua-regular" data-bs-dismiss="modal"> 님을 기다리는 소식</p>
-          <p v-if="!isAuthenticated" class="jua-regular" data-bs-dismiss="modal"> 로그인 후 확인하세요!</p>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-            @click="closeNotice"></button>
+          <h1
+            class="modal-title fs-5 jua-regular-large noti-user-name"
+            id="modalLabel"
+            @click="() => move('user')"
+          >
+            {{ userInfo.nickname }}
+          </h1>
+          <p v-if="isAuthenticated" class="jua-regular" data-bs-dismiss="modal">
+            님을 기다리는 소식
+          </p>
+          <p v-if="!isAuthenticated" class="jua-regular" data-bs-dismiss="modal">
+            로그인 후 확인하세요!
+          </p>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+            @click="closeNotice"
+          ></button>
         </div>
         <div class="modal-body">
           <ul class="notice-box">
-            <NoticeItem v-for="(notice, index) in userNotices" :notice="notice" @close-notice="closeNotice"
-              @reload-comments="reloadComments" :key="notice.id" />
+            <NoticeItem
+              v-for="(notice, index) in userNotices"
+              :notice="notice"
+              @close-notice="closeNotice"
+              @reload-comments="reloadComments"
+              :key="notice.id"
+            />
           </ul>
         </div>
         <div class="modal-footer">
-          <button type="button" class="jua-regular-large btn noti-allread" @click="readAllNotice">모두 확인하기</button>
+          <button type="button" class="jua-regular-large btn noti-allread" @click="readAllNotice">
+            모두 확인하기
+          </button>
         </div>
       </div>
     </div>
   </div>
-
-
   <div class="horizon-border"></div>
+  <!-- serach bar -->
+  <div class="collapse" id="collapseExample">
+    <div class="card card-body">
+      <div class="search-box">
+        <font-awesome-icon class="serach-icon icon" id="navbar-search-btn" :icon="faMagnifyingGlass" />
+        <input class="search-input jua-regular-large " placeholder="검색어를 입력하세요." v-model="searchContent" type="text" />
+        <button class="jua-regular search-btn" @click="move('search')">검색</button>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -98,22 +177,24 @@ import { ref, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/store/auth";
 const authStore = useAuthStore();
-import { storeToRefs } from 'pinia';
+import { storeToRefs } from "pinia";
 import axios from "axios";
 import NoticeItem from "./NoticeItem.vue";
 const { isAuthenticated } = storeToRefs(authStore);
 
 const store = useAuthStore();
 const router = useRouter();
-const userInfo = ref({})
+const userInfo = ref({});
 const userNotices = ref([]);
 const isNewNotice = ref(false);
+const searchContent = ref("");
+const openSearchBtn = ref(null);
 
 onMounted(async () => {
   store.loadAuthState();
 
   // 유저 로그인 여부 검증
-  if (!store.isAuthenticated || !sessionStorage.getItem('token')) {
+  if (!store.isAuthenticated || !sessionStorage.getItem("token")) {
     return;
   }
   // 유저 정보 조회
@@ -124,10 +205,10 @@ onMounted(async () => {
 
   // 유저 알림 조회
   await fetchUserNotice();
-})
+});
 // 로그인 정보가 변경되면, 다시 호출
 watch(isAuthenticated, async () => {
-  if (!store.isAuthenticated || !sessionStorage.getItem('token')) {
+  if (!store.isAuthenticated || !sessionStorage.getItem("token")) {
     return;
   }
 
@@ -139,83 +220,99 @@ watch(isAuthenticated, async () => {
 
   // 유저 알림 조회
   await fetchUserNotice();
-})
+});
 
 const reloadComments = async () => {
   await fecthIsNotice();
   await fetchUserNotice();
-}
+};
 
 // 새로운 알림 여부 조회
 const fecthIsNotice = async () => {
-  await axios.get(`http://localhost:8080/api/notifications/has-new`, {
-    headers: {
-      Authorization: `Bearer ${sessionStorage.getItem('token')}`,
-    },
-  }).then(({ data }) => {
-    isNewNotice.value = data.response;
-  })
-}
-
+  await axios
+    .get(`http://localhost:8080/api/notifications/has-new`, {
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      },
+    })
+    .then(({ data }) => {
+      isNewNotice.value = data.response;
+    });
+};
 
 // 유저 알림 조회
 const fetchUserNotice = async () => {
-  await axios.get(`http://localhost:8080/api/notifications`, {
-    headers: {
-      Authorization: `Bearer ${sessionStorage.getItem('token')}`,
-    },
-  }).then(({ data }) => {
-    userNotices.value = data.response;
-  })
-}
+  await axios
+    .get(`http://localhost:8080/api/notifications`, {
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      },
+    })
+    .then(({ data }) => {
+      userNotices.value = data.response;
+    });
+};
 
 // 유저 정보 조회
 const fetchUserInfo = async () => {
-  await axios.get(`http://localhost:8080/api/users/${sessionStorage.getItem('loginUserId')}`, {
-    headers: {
-      Authorization: `Bearer ${sessionStorage.getItem('token')}`,
-    },
-  }).then(({ data }) => {
-    userInfo.value = data.response.userInfo;
-    sessionStorage.setItem('profileImage', userInfo.profileImage)
-  })
-}
+  await axios
+    .get(`http://localhost:8080/api/users/${sessionStorage.getItem("loginUserId")}`, {
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      },
+    })
+    .then(({ data }) => {
+      userInfo.value = data.response.userInfo;
+      sessionStorage.setItem("profileImage", userInfo.profileImage);
+    });
+};
 
 // 알림 전체 읽기 기능 추가 필요
 const readAllNotice = async () => {
-  await axios.patch(`http://localhost:8080/api/notifications`, {}, {
-    headers: {
-      Authorization: `Bearer ${sessionStorage.getItem('token')}`,
-    },
-  }).then(() => {
-    fecthIsNotice();
-    fetchUserNotice();
-  })
-}
+  await axios
+    .patch(
+      `http://localhost:8080/api/notifications`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        },
+      }
+    )
+    .then(() => {
+      fecthIsNotice();
+      fetchUserNotice();
+    });
+};
 
 const move = (path) => {
   let moveTo = { name: path };
   switch (path) {
-    case 'login': // 로그인
-      if (sessionStorage.getItem('token')) {
-        alert('이미 로그인 중입니다!');
+    case "login": // 로그인
+      if (sessionStorage.getItem("token")) {
+        alert("이미 로그인 중입니다!");
         return;
       }
       break;
-    case 'logout': // 로그아웃. 토큰과 인증 정보를 초기화
+    case "logout": // 로그아웃. 토큰과 인증 정보를 초기화
       store.getLogout(); // 액션 호출
-      moveTo = { name: 'logout' }
+      moveTo = { name: "logout" };
       break;
-    case 'mapMain':
+    case "mapMain":
       break;
-    case 'user':
-      moveTo = { name: path, params: { 'id': Number(sessionStorage.getItem('loginUserId')) } }
+    case "user":
+      moveTo = { name: path, params: { id: Number(sessionStorage.getItem("loginUserId")) } };
       break;
-    case 'bookmark':
-      moveTo = { name: path }
+    case "bookmark":
+      moveTo = { name: path };
       break;
-    case 'edit':
-      moveTo = { name: 'edit' }
+    case "edit":
+      moveTo = { name: path };
+      break;
+    case "search":
+      moveTo = { name: path, query : {q : searchContent.value}};
+      openSearchBtn.value.click();
+      break;
   }
   // 페이지 이동 시 열려있는 메뉴 전부 닫기
   showUserMenu.value = false;
@@ -237,19 +334,16 @@ function toggleUserMenu(event) {
   if (showUserMenu.value) {
     userMenuStyle.value = {
       top: `${event.clientY + 20}px`,
-      left: `${event.clientX}px`
+      left: `${event.clientX}px`,
     };
   }
 }
 
 const closeNotice = () => {
-  const modal = new bootstrap.Modal(document.getElementById('exampleModal'));
+  const modal = new bootstrap.Modal(document.getElementById("exampleModal"));
   modal.hide();
 };
-
-
 </script>
-
 
 <style>
 p {
@@ -590,5 +684,65 @@ a {
 
 .badge {
   right: 0px;
+}
+
+.card-body {
+  width: 100%;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.serach-icon {
+  height: 40px;
+  width: 40px;
+  color : rgb(162, 162, 162);
+}
+
+.search-box {
+  width: 50%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.search-input {
+  height: 100%;
+  width: 100%;
+  border: none;
+  border-bottom: #aacdff 3px solid;
+  font-size: 24px;
+  letter-spacing: 3px;
+}
+.search-input:focus {
+  outline: none;
+  border: none;
+  border-bottom: 3px #2a79ff solid;
+  .serach-icon {
+    color : #2a79ff;
+  }
+}
+
+.search-btn {
+  width: 80px;
+  height: 40px;
+  border-radius: 12px;
+  background-color: #aacdff;
+  border: none;
+  letter-spacing: 3px;
+  transition: 0.2s all;
+}
+.search-btn:active{
+  background-color: #2a79ff;
+  scale: 1.05;
+  transition: 0.2s all;
+}
+.search-btn:hover {
+  box-shadow: 2px 3px 3px 0px;
+  scale: 1.05;
+  transition: 2ms all;
 }
 </style>
