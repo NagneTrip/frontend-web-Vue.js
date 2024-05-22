@@ -16,8 +16,10 @@
         </div>
       </div>
       <div class="img-container">
-        <img class="main-img" onerror="this.src='/src/assets/logo/sad_logo.png'"
+        <img v-if="!isManyImg" class="main-img" onerror="this.src='/src/assets/logo/sad_logo.png'"
           :src="article.imageUrls || './src/assets/logo/logo.png'" />
+        <img v-else class="main-img" onerror="this.src='/src/assets/logo/sad_logo.png'"
+          :src="article.imageUrls[0] || './src/assets/logo/logo.png'" />
         <div class=" image-overlay">
         </div>
         <p class="noto-sans-kr-regular img-container-text">{{ article.content }}</p>
@@ -86,7 +88,7 @@ import { useAuthStore } from "@/store/auth";
 const authStore = useAuthStore();
 
 
-const noImage = ref(true);
+const isManyImg = ref(false);
 
 const article = ref({});
 
@@ -104,12 +106,18 @@ const emit = defineEmits([
 
 
 onMounted(async () => {
+  console.log(props.article)
   article.value = props.article;
   likeCount.value = props.article.likeCount;
   commentCount.value = props.article.commentCount;
   if (!sessionStorage.getItem('token')) {
     isLiked.value = props.isLiked;
     isBookmarked.value = props.isBookmarked;
+  }
+  if (props.article.imageUrls.length > 1) {
+    isManyImg.value = true;
+  } else {
+    isManyImg.value = false;
   }
 })
 

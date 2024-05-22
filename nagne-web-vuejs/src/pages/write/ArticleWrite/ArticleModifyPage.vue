@@ -52,6 +52,7 @@ const getArticleToModify = async () => {
     }
   }).then(({ data }) => {
     modifyArticle.value = data.response.articleInfo; //이거 지우고 article 객체 선언 후 게시글 객체 불러오기
+    console.log(data.response.articleInfo)
   })
 }
 
