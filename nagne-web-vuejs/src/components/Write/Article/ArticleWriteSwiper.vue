@@ -1,8 +1,15 @@
 <template>
-  <swiper :navigation="true" :spaceBetween="300" :centeredSlides="true" :pagination="{
+  <swiper v-if="!props" :navigation="true" :spaceBetween="300" :centeredSlides="true" :pagination="{
     clickable: true,
   }" :modules="modules" class="mySwiper">
     <swiper-slide class="img-wrapper" v-for="(url, index) in tempUrl" :key="index">
+      <img :src="url" class="swipe-img" alt="">
+    </swiper-slide>
+  </swiper>
+  <swiper v-if="props" :navigation="true" :spaceBetween="300" :centeredSlides="true" :pagination="{
+    clickable: true,
+  }" :modules="modules" class="mySwiper">
+    <swiper-slide class="img-wrapper" v-for="(url, index) in imgUrls" :key="index">
       <img :src="url" class="swipe-img" alt="">
     </swiper-slide>
   </swiper>
@@ -22,9 +29,9 @@ const store = useWriteStore();
 const { selectedImg, tempUrl } = storeToRefs(store);
 const modules = ref([Navigation, Pagination]);
 
-watch([selectedImg, tempUrl], () => {
-  // tempUrl이 변경될 때마다 업데이트
-});
+const props = defineProps({
+  imgUrls: Object,
+})
 </script>
 
 <style scoped>
