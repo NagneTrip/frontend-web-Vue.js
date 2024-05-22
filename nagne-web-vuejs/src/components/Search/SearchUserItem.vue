@@ -39,10 +39,6 @@ const props = defineProps({
   user: Object,
 });
 
-onMounted(() => {
-  console.log(props.user);
-});
-
 const moveTo = ()=> {
     router.push({name : 'user', params : {'id' : props.user.id}})
 }
@@ -52,7 +48,8 @@ const moveTo = ()=> {
 .best-article {
   display: flex;
   align-items: center;
-  background-color: #eeeeee;
+  border: 3.5px solid rgb(118, 189, 255);
+  box-shadow: 7px 7px 20px 2px #AACDFF;
   width: 500px;
   height: 80px;
   margin: 0 auto 0 auto;
