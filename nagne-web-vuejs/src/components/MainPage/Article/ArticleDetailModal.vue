@@ -36,7 +36,8 @@
               <span class="content-main noto-sans-kr-bold">
                 {{ newArticle.content }}
               </span>
-              <CommentList :articleid="newArticle.id" ref="commentList" @updateComments="fetchComments = 0" :gencomments="fetchComments"/>
+              <CommentList :articleId="article.id" ref="commentList" @updateComments="fetchComments = 0"
+                :gencomments="fetchComments" />
             </div>
             <div class="right-footer">
               <div class="social-box">
@@ -313,14 +314,6 @@ const postComment = async () => {
   })
 }
 
-
-const handleScroll = () => {
-  const { scrollTop, scrollHeight, clientHeight } = modalRightWrapper.value;
-  if (scrollTop + clientHeight >= scrollHeight - 5) {
-    commentList.value.fetchComments();
-  }
-};
-
 </script>
 
 
@@ -379,6 +372,8 @@ const handleScroll = () => {
 
 .modal-wrapper {
   height: 90%;
+  overflow-y: scroll;
+  scrollbar-width: none
 }
 
 .modal-box {
@@ -429,11 +424,11 @@ const handleScroll = () => {
   .modal-right-wrapper {
     overflow-y: auto;
     /* 내용이 넘칠 경우 세로 스크롤 활성화 */
-    /* scrollbar-width: none; */
+    scrollbar-width: none;
 
-    /* ::-webkit-scrollbar {
+    ::-webkit-scrollbar {
       display: none;
-    } */
+    }
   }
 }
 
@@ -610,7 +605,7 @@ const handleScroll = () => {
 @media screen and (max-width: 1300px) {
   .modal-wrapper {
     height: 80%;
-    overflow-y: scroll;
+    /* overflow-y: scroll; */
     display: flex;
     justify-content: center;
     align-items: flex-start;
@@ -619,11 +614,11 @@ const handleScroll = () => {
     background-color: #fff;
 
     /* 배경색 설정 */
-    ::-webkit-scrollbar {
+    /* ::-webkit-scrollbar {
       display: none;
-    }
+    } */
 
-    scrollbar-width: none;
+    /* scrollbar-width: none; */
     border-radius: 8px 8px 8px 8px;
   }
 
