@@ -3,7 +3,7 @@
         <div class="user-info">
             <div class="user-profile-img">
                 <img :src="userInfo.profileImage || '@/assets/logo/logo_img.png'"
-                    onerror="this.src='/src/assets/logo/sad_logo.png' alt="" :width="200" :height="200">
+                    onerror="this.src='/src/assets/logo/sad_logo.png'" alt="" :width="200" :height="200">
             </div>
             <div class="info-box">
                 <div class="info-box-top">
@@ -21,12 +21,7 @@
             </div>
         </div>
         <div class="article-section">
-            <template v-if="tabState === 'grid'">
-                <GridView :bookMarkList="bookMarkList" />
-            </template>
-            <template v-if="tabState === 'page'">
-                <PageView :bookMarkList="bookMarkList" />
-            </template>
+            <GridView :bookMarkList="bookMarkList" />
         </div>
 
     </div>
