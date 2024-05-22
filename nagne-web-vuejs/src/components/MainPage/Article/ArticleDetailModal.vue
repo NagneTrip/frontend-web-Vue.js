@@ -5,7 +5,7 @@
       <div class="modal-box" @click.stop>
         <img v-if="isLoading" src="/src/assets/blue_spinner.svg" alt="" class="modal-left" />
         <div v-if="!isLoading" class="modal-left" @click="closeDotMenu">
-          <img :src="newArticle.userProfileImage || './src/assets/logo/logo.png'"
+          <img :src="newArticle.imageUrls || './src/assets/logo/logo.png'"
             onerror="this.src='/src/assets/logo/sad_logo.png'" class="modal-left-img" />
         </div>
         <div class="modal-right" @click="closeDotMenu">
@@ -13,7 +13,7 @@
             <div class="right-header">
               <div class="user-info">
                 <div>
-                  <img :src="newArticle.imageUrls || '@/assets/logo/logo_img.png'"
+                  <img :src="newArticle.userProfileImage || '@/assets/logo/logo_img.png'"
                     onerror="this.src='/src/assets/logo/sad_logo.png'" :width="50" :height="50" alt="" />
                 </div>
                 <div class="user-info-text">
@@ -235,7 +235,7 @@ const clickSocialBtn = async (btnName) => {
     alert('로그인 후 진행하세요!');
     return;
   }
-  console.log(newArticle.value.id)
+
   try {
     switch (btnName) {
       case 'like':
