@@ -88,7 +88,10 @@ const validKey = (event)=> {
   console.log(event.target)
 }
 
-const inputContent = ref(keywordByQuery);
+const inputContent = ref('');
+
+
+
 const moveTo = (path) => {
   let to;
   switch (path) {
@@ -112,6 +115,7 @@ onMounted(async() => {
     moveTo("login");
     return;
   }
+  inputContent.value = keywordByQuery;
   //키워드와 일치하는
   //유저 정보 조회
   await fetchUserByKeyword();
@@ -121,7 +125,7 @@ onMounted(async() => {
   await fetchAttractionByKeyword();
 });
 
-watch(keywordByQuery, async()=>{
+watch(inputContent, async()=>{
   //키워드와 일치하는
   //유저 정보 조회
   await fetchUserByKeyword();
