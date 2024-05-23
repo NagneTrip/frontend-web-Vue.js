@@ -21,7 +21,8 @@
     <button type="button" class="btn btn-secondary gps-btn" @click="setGPSLoca">
       <font-awesome-icon :icon="faLocationCrosshairs" class="icon" id="faArrowUp" />
     </button>
-    <TourList :attractionsList="attractionsList" @load-attraction="loadAttraction" @update-filter="updateFilter" />
+    <TourList :attractionsList="attractionsList" @load-attraction="loadAttraction" @update-filter="updateFilter"
+      @change-keyword="updateKeyword" />
   </div>
 </template>
 
@@ -33,7 +34,10 @@ import { faLocationCrosshairs } from "@fortawesome/free-solid-svg-icons";
 import { ref, onMounted, watch, computed } from 'vue';
 import { useMapStore } from '@/store/map';
 import { useAuthStore } from '@/store/auth';
+import { useAttractionStore } from "@/store/attraction";
 import { KakaoMap, KakaoMapMarker } from 'vue3-kakao-maps';
+import { storeToRefs } from "pinia";
+const attractionStore = useAttractionStore();
 const authStore = useAuthStore();
 const mapStore = useMapStore();
 const map = ref(null);
@@ -74,7 +78,8 @@ const fetchFirstAttractionData = async () => {
     headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` }
   }).then(({ data }) => {
     attractionsList.value = data.response.attractions;
-    lastIndex.value = attractionsList.value[attractionsList.value.length - 1].id;
+    console.log(attractionsList.value)
+    lastIndex.value = (attractionsList.value[attractionsList.value.length - 1]).id;
   })
 }
 
@@ -97,7 +102,14 @@ const fetchMoreAttractionData = async () => {
 
 const updateFilter = async (filterId) => {
   attractionTypeId.value = filterId;
-  console.log(attractionTypeId.value)
+  lastIndex.value = 10000000;
+  //필터 변경되면 다시 초기 부터 로드해야 함
+  attractionsList.value = [];
+  await fetchFirstAttractionData();
+}
+
+const updateKeyword = async (value) => {
+  keyword.value = value;
   lastIndex.value = 10000000;
   //필터 변경되면 다시 초기 부터 로드해야 함
   attractionsList.value = [];
