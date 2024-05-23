@@ -35,7 +35,8 @@ const move = (path) => {
         return;
     }
 
-    router.push(`/map/${path}`);
+    if (path==='find') router.push({name : 'mapFind'})
+    else { router.push({name : 'planWrite'})}
 }
 
 const gpsLocation = ref({});
