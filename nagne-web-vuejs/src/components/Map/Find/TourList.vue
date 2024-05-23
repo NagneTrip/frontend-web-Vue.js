@@ -52,7 +52,7 @@
       </div>
     </div>
     <div class="make-plan-section">
-      <button>계획 만들기</button>
+      <button @click="makePlan()">계획 만들기</button>
     </div>
 
   </div>
@@ -69,9 +69,11 @@ import "v3-infinite-loading/lib/style.css";
 import { useAttractionStore } from "@/store/attraction";
 import { storeToRefs } from "pinia";
 const attractionStore = useAttractionStore();
-const { myAttractions } = storeToRefs(attractionStore);
+const { myAttractions, attractionToPlan } = storeToRefs(attractionStore);
 const { changeKeyword } = attractionStore;
 import { attraction_type } from "@/assets/attraction_type/attraction_type";
+import { useRouter } from "vue-router";
+const router = useRouter();
 
 const attractionByData = ref({});
 const rightBar = ref(false);
@@ -81,6 +83,11 @@ const selectedBtn = ref(''); // 선택된 버튼을 저장할 변수
 const tripDay = ref(1);
 const tripDays = ref(Array(tripDay.value).fill({}));
 const attractionSearch = ref("");
+
+const makePlan = () => {
+  sessionStorage.setItem('myAttraction', JSON.stringify(myAttractions.value))
+  router.push({ name: 'planWrite' });
+}
 
 const SearchAttraction = () => {
   changeKeyword(attractionSearch.value);
