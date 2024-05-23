@@ -10,7 +10,7 @@
               onerror="this.src='/src/assets/logo/sad_logo.png'" class="modal-left-img" />
           </template>
           <template v-if="isManyImg">
-            <ArticleWriteSwiper :imgUrls="imgUrls" class="modal-left-img" :width="650" :height="600" />
+            <ArticleWriteSwiper :imgUrls="imgUrls" class="modal-left-img" />
           </template>
 
         </div>
