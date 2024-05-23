@@ -84,7 +84,7 @@ const truncatedName = (img) => {
   if (img && img.name) {
     return img.name.length > 10 ? img.name.substring(0, 10) + '..' : img.name;
   }
-  return '';
+  return img;
 };
 </script>
 
