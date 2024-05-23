@@ -8,10 +8,8 @@ import PlanWritePage from "@/pages/write/PlanWrite/PlanWritePage.vue";
 import ArticleWritePage from "@/pages/write/ArticleWrite/ArticleWritePage.vue";
 import ArticleModifyPage from "@/pages/write/ArticleWrite/ArticleModifyPage.vue";
 import MapMainPage from "@/pages/map/MapMainPage.vue";
-import FindByMapPage from "@/pages/map/FindByMapPage.vue"; 
-import FindByTagPage from "@/pages/map/FindByTagPage.vue"; 
-import MapSavedPage from "@/pages/map/MapSavedPage.vue"; 
-import MyTripPlanPage from "@/pages/map/MyTripPlanPage.vue"; 
+import FindByMapPage from "@/pages/map/FindByMapPage.vue";
+import MyTripPlanPage from "@/pages/map/MyTripPlanPage.vue";
 import UserInfoPage from "@/pages/User/UserInfoPage.vue";
 import UserFollowing from "@/components/User/UserFollowing.vue";
 import UserFollowers from "@/components/User/UserFollowers.vue";
@@ -67,41 +65,31 @@ const router = createRouter({
           ],
         },
         {
-          path: 'detail/:id',
-          name: 'articleDetail',
-          component: ArticleDetailPage
-        }
+          path: "detail/:id",
+          name: "articleDetail",
+          component: ArticleDetailPage,
+        },
       ],
     },
     {
-      path : "/map",
-      name : 'mapMain',
+      path: "/map",
+      name: "mapMain",
       component: MapMainPage,
     },
     {
-      path : "/map",
-      children : [
+      path: "/map",
+      children: [
         {
-          path : "find",
-          name: 'mapFind',
-          component: FindByMapPage
+          path: "find",
+          name: "mapFind",
+          component: FindByMapPage,
         },
         {
-          path : 'tag',
-          name: 'mapTag',
-          component: FindByTagPage
+          path: "plan",
+          name: "mapPlan",
+          component: MyTripPlanPage,
         },
-        {
-          path : 'save',
-          name: 'mapSave',
-          component: MapSavedPage
-        },
-        {
-          path : 'plan',
-          name: 'mapPlan',
-          component: MyTripPlanPage
-        },
-      ]
+      ],
     },
     {
       path: "/plans/write",
@@ -115,18 +103,19 @@ const router = createRouter({
     },
     {
       path: "/bookmark",
-      name: 'bookmark',
+      name: "bookmark",
       component: BookMarkPage,
     },
     {
       path: "/editProfile",
-      name: 'edit',
+      name: "edit",
       component: EditProfile,
-    },{
+    },
+    {
       path: "/search",
-      name:'search',
-      component: SearchResultPage
-    }
+      name: "search",
+      component: SearchResultPage,
+    },
   ],
 });
 
