@@ -26,7 +26,7 @@
       >
       </KakaoMapMarker>
       <!-- 내 위치 마커 -->
-      <KakaoMapMarker
+      <!-- <KakaoMapMarker
         v-if="gpsLocation.lat"
         :lat="gpsLocation.lat"
         :lng="gpsLocation.lng"
@@ -37,7 +37,7 @@
           imageOption: {},
         }"
       >
-      </KakaoMapMarker>
+      </KakaoMapMarker> -->
       <!-- 로드된 관광지 목록으로 마커 -->
       <KakaoMapMarker
         v-for="(attraction, index) in attractionsList"
@@ -122,7 +122,7 @@ const closeModal = () => {
 
 const onLoadKakaoMap = async (mapRef) => {
   map.value = mapRef;
-  isGps.value = true;
+  // isGps.value = true;
   await getLoaction();
 
   //초기 관광지 데이터 호출

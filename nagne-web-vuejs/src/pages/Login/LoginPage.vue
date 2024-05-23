@@ -54,8 +54,8 @@ const socialNeedToJoin = ref(false);
 const sosicialToken = ref('');
 
 
-const googleLoginUrl = ref('/oauth2/authorization/google');
-const kakaoLoginUrl = ref('/oauth2/authorization/kakao');
+const googleLoginUrl = ref('http://ec2-54-79-199-126.ap-southeast-2.compute.amazonaws.com:8080/oauth2/authorization/google');
+const kakaoLoginUrl = ref('http://ec2-54-79-199-126.ap-southeast-2.compute.amazonaws.com:8080/oauth2/authorization/kakao');
 const getSocialLogin = (platform) => {
   let url;
   switch (platform) {
