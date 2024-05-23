@@ -16,6 +16,7 @@ jobs:
           node-version: 16
           
       - run: echo "${{ secrets.ENV }}" > .env
+        working-directory: ./nagne-web-vuejs/
       
       - name: Install dependencies
         run: npm install
