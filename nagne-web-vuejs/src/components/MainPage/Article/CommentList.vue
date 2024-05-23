@@ -85,14 +85,15 @@ const fetchComments = async (id) => {
       Authorization: `Bearer ${sessionStorage.getItem('token')}`,
     },
   }).then(({ data }) => {
-    const commentsData = data.response.comments;
-    if (commentsData.length < 10) {
-      noMoreData.value = true;
+    if (data.response.comments.length != 0) {
+      const commentsData = data.response.comments;
+      if (commentsData.length < 10) {
+        noMoreData.value = true;
+      }
+      comments.value.push(...commentsData);
+
+      lastIndex.value = (commentsData[commentsData.length - 1]).id;
     }
-
-    comments.value.push(...commentsData);
-
-    lastIndex.value = commentsData[commentsData.length - 1].id;
   }).finally(() => {
     isLoading.value = false;
   });
