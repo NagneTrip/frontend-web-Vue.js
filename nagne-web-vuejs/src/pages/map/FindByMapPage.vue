@@ -205,23 +205,21 @@ const updateKeyword = async (newVal) => {
 };
 
 const getLoaction = async () => {
-  await navigator.geolocation.getCurrentPosition(
-    (position) => {
-      let lat = position.coords.latitude;
-      let lng = position.coords.longitude;
-      mapStore.userLocation = { lat, lng };
-      gpsLocation.value = mapStore.userLocation;
-    },
-    (error) => {
-      console.error("Geolocation error:", error);
-    }
-  );
+  // await navigator.geolocation.getCurrentPosition(
+  //   (position) => {
+  //     let lat = position.coords.latitude;
+  //     let lng = position.coords.longitude;
+  //     mapStore.userLocation = { lat, lng };
+  //     gpsLocation.value = mapStore.userLocation;
+  //   },
+  //   (error) => {
+  //     console.error("Geolocation error:", error);
+  //   }
+  // );
 };
 
 const setGPSLoca = () => {
-  if (map.value && gpsLocation.value.lat && gpsLocation.value.lng) {
-    map.value.panTo(new kakao.maps.LatLng(gpsLocation.value.lat, gpsLocation.value.lng));
-  }
+    map.value.panTo(new kakao.maps.LatLng(ssafyLocation.value.lat, ssafyLocation.value.lng));
 };
 
 const visibleRef = ref(false);
