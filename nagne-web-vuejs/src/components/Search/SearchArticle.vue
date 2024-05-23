@@ -1,6 +1,5 @@
 <template>
     <div>
-        게시물
     </div>
 </template>
 
