@@ -20,6 +20,8 @@
 
 <script setup>
 import axios from 'axios';
+import apiClient from '@/apiClient.js';
+
 import { faLocationDot, faEarthAsia, faSuitcaseRolling, faHashtag, faLocationCrosshairs } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from 'vue-router';
 import { ref, onMounted, watch } from 'vue';
@@ -56,7 +58,7 @@ const getLoaction = () => {
 }
 
 // const locaToAddress = async () => {
-//     await axios.get(`/map-reversegeocode/v2/gc?coords=${gpsLocation.value.lat},${gpsLocation.value.lng}&output=json`, {
+//     await apiClient.get(`/map-reversegeocode/v2/gc?coords=${gpsLocation.value.lat},${gpsLocation.value.lng}&output=json`, {
 //         headers: {
 //             'X-NCP-APIGW-API-KEY-ID': import.meta.env.VITE_GC_ID,
 //             'X-NCP-APIGW-API-KEY': import.meta.env.VITE_GC_SECRET

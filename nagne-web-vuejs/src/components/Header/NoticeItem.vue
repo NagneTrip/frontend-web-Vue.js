@@ -36,6 +36,7 @@
 
 <script setup>
 import axios from 'axios';
+import apiClient from '@/apiClient.js';
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router'
 const router = useRouter();
@@ -72,7 +73,7 @@ const moveTo = (to) => {
 
 // 알림 읽기
 const readNotice = async () => {
-    await axios.patch(import.meta.env.VITE_EC2_ADDR+`/api/notifications/${props.notice.id}`, {}, {
+    await apiClient.patch(`/api/notifications/${props.notice.id}`, {}, {
         headers: {
             Authorization: `Bearer ${sessionStorage.getItem('token')}`,
         },

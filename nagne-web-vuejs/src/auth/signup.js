@@ -1,8 +1,10 @@
 import axios from "axios";
+import apiClient from '@/apiClient.js';
+
 
 const signup = (user) => {
-  axios
-    .post(import.meta.env.VITE_EC2_ADDR+"/api/users", user, {
+  apiClient
+    .post("/api/users", user, {
       headers: {
         "Content-Type": "application/json",
       },

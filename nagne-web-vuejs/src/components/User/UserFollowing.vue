@@ -16,6 +16,8 @@
 import { ref, onMounted } from 'vue';
 import { useAuthStore } from '@/store/auth';
 import axios from 'axios';
+import apiClient from '@/apiClient.js';
+
 import FollowListItem from './FollowListItem.vue';
 
 const authStore = useAuthStore();
@@ -51,7 +53,7 @@ const fetchUserFollowings = async () => {
   if (!noMoreData.value) {
     try {
       const { data } = await
-        axios.get(import.meta.env.VITE_EC2_ADDR+`/api/users/${props.userInfo.id}/followings?lastIndex=${lastIndex.value}`, {
+      apiClient.get(`/api/users/${props.userInfo.id}/followings?lastIndex=${lastIndex.value}`, {
           headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` }
         });
       if (data.response.userInfo.length < 10) {

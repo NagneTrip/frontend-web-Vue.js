@@ -29,6 +29,8 @@
 <script setup>
 /* global kakao */
 import axios from "axios";
+import apiClient from '@/apiClient.js';
+
 import TourList from "@/components/Map/Find/TourList.vue";
 import { faLocationCrosshairs } from "@fortawesome/free-solid-svg-icons";
 import { ref, onMounted, watch, computed } from 'vue';
@@ -57,7 +59,7 @@ const keyword = ref("광주");
 const lastIndex = ref(100000000);
 const attractionsList = ref([]);
 const attractionTypeId = ref('');
-const baseUrl = ref(import.meta.env.VITE_EC2_ADDR+'/api/attractions?')
+const baseUrl = ref('/api/attractions?')
 
 const onLoadKakaoMap = async (mapRef) => {
   map.value = mapRef;
@@ -75,7 +77,7 @@ const fetchFirstAttractionData = async () => {
     return;
   }
   try {
-    const response = await axios.get(baseUrl.value + `keyword=${keyword.value}&attractionTypeId=${attractionTypeId.value}&lastIndex=${lastIndex.value}&size=100`, {
+    const response = await apiClient.get(baseUrl.value + `keyword=${keyword.value}&attractionTypeId=${attractionTypeId.value}&lastIndex=${lastIndex.value}&size=100`, {
       headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` }
     });
     attractionsList.value = response.data.response.attractions;
@@ -97,7 +99,7 @@ const fetchMoreAttractionData = async () => {
   if (!sessionStorage.getItem('token') || !authStore.isAuthenticated) {
     return;
   }
-  await axios(baseUrl.value + `keyword=${keyword.value}&attractionTypeId=${attractionTypeId.value}&lastIndex=${lastIndex.value}&size=100`, {
+  await apiClient(baseUrl.value + `keyword=${keyword.value}&attractionTypeId=${attractionTypeId.value}&lastIndex=${lastIndex.value}&size=100`, {
     headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` }
   }).then(({ data }) => {
     attractionsList.value.push(...data.response.attractions);

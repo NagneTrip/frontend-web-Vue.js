@@ -29,6 +29,8 @@
 
 <script setup>
 import axios from 'axios';
+import apiClient from '@/apiClient.js';
+
 import { faTableCells, faExpand } from "@fortawesome/free-solid-svg-icons";
 import { useAuthStore } from '@/store/auth';
 import { ref, onMounted } from 'vue';
@@ -51,7 +53,7 @@ onMounted(async () => {
 })
 
 const fetchUserInfo = async () => {
-    await axios.get(import.meta.env.VITE_EC2_ADDR+`/api/users/${sessionStorage.getItem('loginUserId')}`, {
+    await apiClient.get(`/api/users/${sessionStorage.getItem('loginUserId')}`, {
         headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}`, },
     }).then(({ data }) => {
         userInfo.value = data.response.userInfo;
@@ -59,7 +61,7 @@ const fetchUserInfo = async () => {
 }
 
 const fetchBookMarkList = async () => {
-    await axios.get(import.meta.env.VITE_EC2_ADDR+`/api/articles/bookmark?size=9`, {
+    await apiClient.get(`/api/articles/bookmark?size=9`, {
         headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}`, },
     }).then(({ data }) => {
         bookMarkList.value = data.response.articles;
