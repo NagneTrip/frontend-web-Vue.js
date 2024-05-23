@@ -48,7 +48,7 @@ onMounted(async () => {
 })
 
 const getArticleToModify = async () => {
-  await axios.get(`http://localhost:8080/api/articles/${idByParams}`, {
+  await axios.get(import.meta.env.VITE_EC2_ADDR+`/api/articles/${idByParams}`, {
     headers: {
       Authorization: `Bearer ${sessionStorage.getItem('token')}`,
     }

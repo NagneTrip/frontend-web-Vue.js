@@ -177,8 +177,8 @@ const validateInfo = () => {
   router.push({ name: 'main' });
 };
 
-const googleLoginUrl = ref('http://localhost:8080/oauth2/authorization/google');
-const kakaoLoginUrl = ref('http://localhost:8080/oauth2/authorization/kakao');
+const googleLoginUrl = ref(import.meta.env.VITE_EC2_ADDR+'/oauth2/authorization/google');
+const kakaoLoginUrl = ref(import.meta.env.VITE_EC2_ADDR+'/oauth2/authorization/kakao');
 const showModal = ref(false);
 const loginUrl = ref('');
 

@@ -72,7 +72,7 @@ const moveTo = (to) => {
 
 // 알림 읽기
 const readNotice = async () => {
-    await axios.patch(`http://localhost:8080/api/notifications/${props.notice.id}`, {}, {
+    await axios.patch(import.meta.env.VITE_EC2_ADDR+`/api/notifications/${props.notice.id}`, {}, {
         headers: {
             Authorization: `Bearer ${sessionStorage.getItem('token')}`,
         },

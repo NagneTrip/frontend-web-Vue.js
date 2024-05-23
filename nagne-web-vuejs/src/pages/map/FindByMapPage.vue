@@ -57,7 +57,7 @@ const keyword = ref("광주");
 const lastIndex = ref(100000000);
 const attractionsList = ref([]);
 const attractionTypeId = ref('');
-const baseUrl = ref('http://localhost:8080/api/attractions?')
+const baseUrl = ref(import.meta.env.VITE_EC2_ADDR+'/api/attractions?')
 
 const onLoadKakaoMap = async (mapRef) => {
   map.value = mapRef;

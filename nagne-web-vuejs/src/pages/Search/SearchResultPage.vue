@@ -136,7 +136,7 @@ watch(inputContent, async()=>{
 })
 
 const fetchUserByKeyword = async ()=> {
-  await axios.get(`http://localhost:8080/api/users?keyword=${route.query.q.split(" ").join('')}&lastIndex=1000000&size=3`,{
+  await axios.get(import.meta.env.VITE_EC2_ADDR+`/api/users?keyword=${route.query.q.split(" ").join('')}&lastIndex=1000000&size=3`,{
     headers: {
       Authorization: `Bearer ${sessionStorage.getItem('token')}`,
     },
@@ -147,7 +147,7 @@ const fetchUserByKeyword = async ()=> {
 }
 
 const fetchArticleByKeyword = async()=> {
-  await axios.get(`http://localhost:8080/api/articles/tags?tags=%23${route.query.q.trim().split(" ").join('')}&size=3`,{
+  await axios.get(import.meta.env.VITE_EC2_ADDR+`/api/articles/tags?tags=%23${route.query.q.trim().split(" ").join('')}&size=3`,{
     headers: {
       Authorization: `Bearer ${sessionStorage.getItem('token')}`,
     },
@@ -158,7 +158,7 @@ const fetchArticleByKeyword = async()=> {
 }
 
 const fetchAttractionByKeyword = async()=> {
-  await axios.get(`http://localhost:8080/api/attractions?keyword=${route.query.q.split(" ").join('')}&size=3`,{
+  await axios.get(import.meta.env.VITE_EC2_ADDR+`/api/attractions?keyword=${route.query.q.split(" ").join('')}&size=3`,{
     headers: {
       Authorization: `Bearer ${sessionStorage.getItem('token')}`,
     },

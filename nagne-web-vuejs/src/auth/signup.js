@@ -2,7 +2,7 @@ import axios from "axios";
 
 const signup = (user) => {
   axios
-    .post("http://localhost:8080/api/users", user, {
+    .post(import.meta.env.VITE_EC2_ADDR+"/api/users", user, {
       headers: {
         "Content-Type": "application/json",
       },

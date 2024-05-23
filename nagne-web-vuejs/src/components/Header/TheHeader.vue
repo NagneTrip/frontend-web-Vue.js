@@ -230,7 +230,7 @@ const reloadComments = async () => {
 // 새로운 알림 여부 조회
 const fecthIsNotice = async () => {
   await axios
-    .get(`http://localhost:8080/api/notifications/has-new`, {
+    .get(import.meta.env.VITE_EC2_ADDR + `/api/notifications/has-new`, {
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
@@ -243,7 +243,7 @@ const fecthIsNotice = async () => {
 // 유저 알림 조회
 const fetchUserNotice = async () => {
   await axios
-    .get(`http://localhost:8080/api/notifications`, {
+    .get(import.meta.env.VITE_EC2_ADDR + `/api/notifications`, {
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
@@ -256,7 +256,7 @@ const fetchUserNotice = async () => {
 // 유저 정보 조회
 const fetchUserInfo = async () => {
   await axios
-    .get(`http://localhost:8080/api/users/${sessionStorage.getItem("loginUserId")}`, {
+    .get(import.meta.env.VITE_EC2_ADDR + `/api/users/${sessionStorage.getItem("loginUserId")}`, {
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
@@ -271,7 +271,7 @@ const fetchUserInfo = async () => {
 const readAllNotice = async () => {
   await axios
     .patch(
-      `http://localhost:8080/api/notifications`,
+      import.meta.env.VITE_EC2_ADDR + `/api/notifications`,
       {},
       {
         headers: {
