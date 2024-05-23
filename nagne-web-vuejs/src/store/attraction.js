@@ -5,7 +5,7 @@ import { ref, watch } from "vue";
 export const useAttractionStore = defineStore("attraction", () => {
   const myAttractions = ref([]);
   const attractionSearchKeyword = ref("");
-  const attractionToPlan = ref([]);
+
 
   const deleteMyAttractions = (attractionId) => {
     myAttractions.value = myAttractions.value.filter(
