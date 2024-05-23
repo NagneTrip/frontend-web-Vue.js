@@ -13,7 +13,7 @@ jobs:
         with:
           node-version: 16
       - run: echo "${{ secrets.ENV }}" > .env
-      - run: cd .\nagne-web-vuejs\
+      - run: cd .\\nagne-web-vuejs\\
       - run: npm i
       - run: npm run build
 
