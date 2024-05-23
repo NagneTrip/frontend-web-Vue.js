@@ -71,7 +71,7 @@ onMounted(() => {
   if (isLoading.value || noMoreData.value) return;
 
   isLoading.value = true;
-  let url = `http://localhost:8080/api/articles?size=5`;
+  let url = import.meta.env.VITE_EC2_ADDR+`/api/articles?size=5`;
   if (lastIndex.value !== null) {
     url += `&lastIndex=${lastIndex.value}`;
   }
@@ -128,7 +128,7 @@ const handleScroll = () => {
   const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
   if (scrollTop + clientHeight >= scrollHeight - 100 && !isLoading.value && !noMoreData.value) {
     isLoading.value = true;
-    const url = `http://localhost:8080/api/articles?size=5&lastIndex=${lastIndex.value}`;
+    const url = import.meta.env.VITE_EC2_ADDR+`/api/articles?size=5&lastIndex=${lastIndex.value}`;
     if (!sessionStorage.getItem('token') || !authStore.isAuthenticated) {
       fetchArticles(url);
     } else {

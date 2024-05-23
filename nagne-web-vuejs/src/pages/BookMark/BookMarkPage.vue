@@ -51,7 +51,7 @@ onMounted(async () => {
 })
 
 const fetchUserInfo = async () => {
-    await axios.get(`http://localhost:8080/api/users/${sessionStorage.getItem('loginUserId')}`, {
+    await axios.get(import.meta.env.VITE_EC2_ADDR+`/api/users/${sessionStorage.getItem('loginUserId')}`, {
         headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}`, },
     }).then(({ data }) => {
         userInfo.value = data.response.userInfo;
@@ -59,7 +59,7 @@ const fetchUserInfo = async () => {
 }
 
 const fetchBookMarkList = async () => {
-    await axios.get(`http://localhost:8080/api/articles/bookmark?size=9`, {
+    await axios.get(import.meta.env.VITE_EC2_ADDR+`/api/articles/bookmark?size=9`, {
         headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}`, },
     }).then(({ data }) => {
         bookMarkList.value = data.response.articles;

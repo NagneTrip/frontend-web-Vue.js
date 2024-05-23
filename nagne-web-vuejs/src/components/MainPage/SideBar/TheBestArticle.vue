@@ -42,7 +42,7 @@ watch(sortState, async ()=>{
 
 const fetchBestArticles = async () => {
   isLoading.value = true;
-  await axios.get(`http://localhost:8080/api/articles/best?sort=${sortState.value}`, {
+  await axios.get(import.meta.env.VITE_EC2_ADDR+`/api/articles/best?sort=${sortState.value}`, {
     headers: {
       Authorization: `Bearer ${sessionStorage.getItem('token')}`,
     }

@@ -2,7 +2,7 @@ import axios from "axios";
 
 const login = async (username, password) => {
   return await axios
-    .post("http://localhost:8080/api/users/login", {
+    .post(import.meta.env.VITE_EC2_ADDR+"/api/users/login", {
       username: username,
       password: password,
     })

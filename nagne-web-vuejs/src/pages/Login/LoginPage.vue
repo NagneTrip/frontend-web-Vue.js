@@ -54,8 +54,8 @@ const socialNeedToJoin = ref(false);
 const sosicialToken = ref('');
 
 
-const googleLoginUrl = ref('http://localhost:8080/oauth2/authorization/google');
-const kakaoLoginUrl = ref('http://localhost:8080/oauth2/authorization/kakao');
+const googleLoginUrl = ref(import.meta.env.VITE_EC2_ADDR+'/oauth2/authorization/google');
+const kakaoLoginUrl = ref(import.meta.env.VITE_EC2_ADDR+'/oauth2/authorization/kakao');
 const getSocialLogin = (platform) => {
   let url;
   switch (platform) {

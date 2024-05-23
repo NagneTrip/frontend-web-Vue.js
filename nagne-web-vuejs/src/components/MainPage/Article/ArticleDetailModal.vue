@@ -179,7 +179,7 @@ onMounted(async () => {
 });
 
 const fetchArticleDetail = async () => {
-  await axios.get(`http://localhost:8080/api/articles/${newArticle.value.id}`, {
+  await axios.get(import.meta.env.VITE_EC2_ADDR+`/api/articles/${newArticle.value.id}`, {
     headers: {
       Authorization: `Bearer ${sessionStorage.getItem('token')}`,
     }
@@ -230,7 +230,7 @@ const deleteArticle = async () => {
   }
 
   try {
-    await axios.delete(`http://localhost:8080/api/articles/${newArticle.value.id}`, {
+    await axios.delete(import.meta.env.VITE_EC2_ADDR+`/api/articles/${newArticle.value.id}`, {
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem('token')}`,
       }
@@ -251,7 +251,7 @@ const clickSocialBtn = async (btnName) => {
   try {
     switch (btnName) {
       case 'like':
-        await axios.post('http://localhost:8080/api/articles/like', { articleId: newArticle.value.id }, {
+        await axios.post(import.meta.env.VITE_EC2_ADDR+'/api/articles/like', { articleId: newArticle.value.id }, {
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem('token')}`
           }
@@ -263,7 +263,7 @@ const clickSocialBtn = async (btnName) => {
           })
         break;
       case 'unlike':
-        await axios.delete(`http://localhost:8080/api/articles/like/${newArticle.value.id}`, {
+        await axios.delete(import.meta.env.VITE_EC2_ADDR+`/api/articles/like/${newArticle.value.id}`, {
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem('token')}`
           }
@@ -276,7 +276,7 @@ const clickSocialBtn = async (btnName) => {
         break;
       case 'bookMark':
         if (!isBookmarked.value) {
-          await axios.post('http://localhost:8080/api/bookmark', { articleId: newArticle.value.id }, {
+          await axios.post(import.meta.env.VITE_EC2_ADDR+'/api/bookmark', { articleId: newArticle.value.id }, {
             headers: {
               Authorization: `Bearer ${sessionStorage.getItem('token')}`
             }
@@ -286,7 +286,7 @@ const clickSocialBtn = async (btnName) => {
               emit('bookmark');
             })
         } else {
-          await axios.delete(`http://localhost:8080/api/bookmark/${newArticle.value.id}`, {
+          await axios.delete(import.meta.env.VITE_EC2_ADDR+`/api/bookmark/${newArticle.value.id}`, {
             headers: {
               Authorization: `Bearer ${sessionStorage.getItem('token')}`
             }
@@ -327,7 +327,7 @@ const toggleDotMenu = (event) => {
 };
 
 const postComment = async () => {
-  await axios.post(`http://localhost:8080/api/comments`, {
+  await axios.post(import.meta.env.VITE_EC2_ADDR+`/api/comments`, {
     articleId: newArticle.value.id,
     content: commentContent.value,
   }, {

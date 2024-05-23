@@ -51,7 +51,7 @@ const fetchUserFollowings = async () => {
   if (!noMoreData.value) {
     try {
       const { data } = await
-        axios.get(`http://localhost:8080/api/users/${props.userInfo.id}/followings?lastIndex=${lastIndex.value}`, {
+        axios.get(import.meta.env.VITE_EC2_ADDR+`/api/users/${props.userInfo.id}/followings?lastIndex=${lastIndex.value}`, {
           headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` }
         });
       if (data.response.userInfo.length < 10) {

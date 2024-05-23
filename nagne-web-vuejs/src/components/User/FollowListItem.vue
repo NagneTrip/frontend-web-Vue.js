@@ -52,7 +52,7 @@ onMounted(async () => {
         isNowLoginUser.value = true;
     }
 
-    await axios.get(`http://localhost:8080/api/follow/${props.followItem.id}`, {
+    await axios.get(import.meta.env.VITE_EC2_ADDR+`/api/follow/${props.followItem.id}`, {
         headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}`, }
     }).then(({ data }) => {
         isFollow.value = data.response.checkFollow;
@@ -65,7 +65,7 @@ const follow = () => {
         return;
     }
 
-    axios.post(`http://localhost:8080/api/follow`, { 'followId': props.followItem.id }, {
+    axios.post(import.meta.env.VITE_EC2_ADDR+`/api/follow`, { 'followId': props.followItem.id }, {
         headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}`, }
     }).then(({ data }) => {
         isFollow.value = true;
@@ -78,7 +78,7 @@ const unfollow = async () => {
         return;
     }
 
-    axios.delete(`http://localhost:8080/api/follow/${props.followItem.id}`, {
+    axios.delete(import.meta.env.VITE_EC2_ADDR+`/api/follow/${props.followItem.id}`, {
         headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}`, }
     }).then(() => {
         isFollow.value = false;

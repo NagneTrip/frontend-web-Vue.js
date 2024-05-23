@@ -131,7 +131,7 @@ const socialLogin = ref(false);
 const inputFile = ref(null);
 
 const fetchInfo = async () => {
-    await axios.get(`http://localhost:8080/api/users/${sessionStorage.getItem('loginUserId')}/detail`, {
+    await axios.get(import.meta.env.VITE_EC2_ADDR+`/api/users/${sessionStorage.getItem('loginUserId')}/detail`, {
         headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}`, },
     }).then(({ data }) => {
         userInfo.value = data.response.userInfo;
@@ -167,7 +167,7 @@ const makeForm = () => {
 
 const updateInfo = async () => {
     const formData = makeForm();
-    await axios.patch(`http://localhost:8080/api/users/${sessionStorage.getItem('loginUserId')}`, formData, {
+    await axios.patch(import.meta.env.VITE_EC2_ADDR+`/api/users/${sessionStorage.getItem('loginUserId')}`, formData, {
         headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}`, },
     }).then(() => {
         alert("회원 정보가 수정되었습니다!");
@@ -177,7 +177,7 @@ const updateInfo = async () => {
 
 const leaveUser = async () => {
     if (window.confirm('정말로 탈퇴하시겠습니까?')) {
-        await axios.delete(`http://localhost:8080/api/users/${sessionStorage.getItem('loginUserId')}`, {
+        await axios.delete(import.meta.env.VITE_EC2_ADDR+`/api/users/${sessionStorage.getItem('loginUserId')}`, {
             headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}`, },
         }).then(() => {
             alert("회원 탈퇴가 완료되었습니다.");

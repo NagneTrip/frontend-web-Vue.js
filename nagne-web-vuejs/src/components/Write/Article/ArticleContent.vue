@@ -81,7 +81,7 @@ const uploadFile = async () => {
     const body = { 'content': content.value };
 
     try {
-      await axios.patch(`http://localhost:8080/api/articles/${props.modifyArticle.id}`, body, {
+      await axios.patch(import.meta.env.VITE_EC2_ADDR+`/api/articles/${props.modifyArticle.id}`, body, {
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem('token')}`,
           'Content-Type': 'application/json',
@@ -108,7 +108,7 @@ const uploadFile = async () => {
   formData.append('request', blob);
 
   try {
-    await axios.post('http://localhost:8080/api/articles', formData, {
+    await axios.post(import.meta.env.VITE_EC2_ADDR+'/api/articles', formData, {
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem('token')}`,
       },

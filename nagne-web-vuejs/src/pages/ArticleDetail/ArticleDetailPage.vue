@@ -147,7 +147,7 @@ onMounted(async () => {
 const fetchArticleData = async () => {
   if (sessionStorage.getItem('token') !== '') {
     try {
-      const { data } = await axios.get(`http://localhost:8080/api/articles/${articleIdByParams}`, {
+      const { data } = await axios.get(import.meta.env.VITE_EC2_ADDR+`/api/articles/${articleIdByParams}`, {
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem('token')}`,
         },
@@ -195,7 +195,7 @@ const deleteArticle = async () => {
   }
 
   try {
-    await axios.delete(`http://localhost:8080/api/articles/${articleIdByParams}`, {
+    await axios.delete(import.meta.env.VITE_EC2_ADDR+`/api/articles/${articleIdByParams}`, {
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem('token')}`,
       }
@@ -218,19 +218,19 @@ const clickSocialBtn = async (btnName) => {
       case 'like':
         if (!isLiked.value) {
           isLiked.value = true;
-          await axios.post(`http://localhost:8080/api/articles/like`, { articleId: articleIdByParams }, { headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` } });
+          await axios.post(import.meta.env.VITE_EC2_ADDR+`/api/articles/like`, { articleId: articleIdByParams }, { headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` } });
         } else {
           isLiked.value = false;
-          await axios.delete(`http://localhost:8080/api/articles/like/${articleIdByParams}`, { headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` } });
+          await axios.delete(import.meta.env.VITE_EC2_ADDR+`/api/articles/like/${articleIdByParams}`, { headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` } });
         }
         break;
       case 'bookMark':
         if (!isBookmarked.value) {
           isBookmarked.value = true;
-          await axios.post(`http://localhost:8080/api/bookmark`, { articleId: articleIdByParams }, { headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` } });
+          await axios.post(import.meta.env.VITE_EC2_ADDR+`/api/bookmark`, { articleId: articleIdByParams }, { headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` } });
         } else {
           isBookmarked.value = false;
-          await axios.delete(`http://localhost:8080/api/bookmark/${articleIdByParams}`, { headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` } });
+          await axios.delete(import.meta.env.VITE_EC2_ADDR+`/api/bookmark/${articleIdByParams}`, { headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` } });
         }
         break;
       case 'comment':
@@ -266,7 +266,7 @@ const toggleDotMenu = (event) => {
 
 const postComment = async () => {
   try {
-    await axios.post(`http://localhost:8080/api/comments`, {
+    await axios.post(import.meta.env.VITE_EC2_ADDR+`/api/comments`, {
       articleId: articleIdByParams,
       content: commentContent.value,
     }, {
