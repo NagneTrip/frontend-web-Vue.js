@@ -42,6 +42,7 @@ const move = (path) => {
     if (!sessionStorage.getItem('token')) {
         alert('로그인 후 이용하세요!')
         router.push({ name: 'login' });
+        return;
     }
 
     router.push(`/map/${path}`);
