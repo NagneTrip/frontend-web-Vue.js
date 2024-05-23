@@ -1,15 +1,15 @@
 <template>
   <div class="best-article" @click="moveTo('bestArticle')">
     <div class="img-box">
-      <img :src="bestArticle.userProfileImage || '@/assets/logo/logo_img.png'"
-        onerror="this.src='/src/assets/logo/sad_logo.png'" alt="" :width="60" :height="60">
+      <img :src="bestArticle.userProfileImage || '/assets/logo/logo_img.png'"
+        onerror="this.src='/assets/logo/sad_logo.png'" alt="" :width="60" :height="60">
     </div>
     <div class="content-box">
       <p class="jua-regular">{{ truncatedContent }}</p>
       <div class="article-info">
         <div class="user-info">
           <p class="jua-regular nickname">{{ bestArticle.userNickname }}</p>
-          <img :src="`src/assets/tier/${bestArticle.userTier}.svg`" onerror="this.src='/src/assets/logo/sad_logo.png'"
+          <img :src="`/assets/tier/${bestArticle.userTier}.svg`" onerror="this.src='/assets/logo/sad_logo.png'"
             :width="13" :height="13" alt="" class="tier-img" />
         </div>
         <p class="date ">{{ bestArticle?.createdDate.split("T")[0] }}</p>

@@ -3,8 +3,8 @@
     <div class="left-box">
       <div class="img-box">
         <img
-          :src="user.profileImage || '@/assets/logo/logo_img.png'"
-          onerror="this.src='/src/assets/logo/sad_logo.png'"
+          :src="user.profileImage || '/assets/logo/logo_img.png'"
+          onerror="this.src='/assets/logo/sad_logo.png'"
           alt=""
           :width="60"
           :height="60"
@@ -15,8 +15,8 @@
           <div class="user-info">
             <p class="jua-regular nickname" style="font-size: 18px;">{{ user.nickname }}</p>
             <img
-              :src="`src/assets/tier/${user.tier}.svg`"
-              onerror="this.src='/src/assets/logo/sad_logo.png'"
+              :src="`/assets/tier/${user.tier}.svg`"
+              onerror="this.src='/assets/logo/sad_logo.png'"
               :width="13"
               :height="13"
               alt=""

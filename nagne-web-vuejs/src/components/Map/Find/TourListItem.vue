@@ -1,10 +1,10 @@
 <template>
   <div class="list-item">
     <div class="item-img">
-      <img v-if="attraction.imageUrl" :src="attraction.imageUrl" onerror="this.src='/src/assets/blue_spinner.svg'"
+      <img v-if="attraction.imageUrl" :src="attraction.imageUrl" onerror="this.src='/assets/blue_spinner.svg'"
         alt="" />
-      <img v-if="!attraction.imageUrl" class="no-img" :src="'/src/assets/logo/sad_logo.png'"
-        onerror="this.src='/src/assets/blue_spinner.svg'" alt="" />
+      <img v-if="!attraction.imageUrl" class="no-img" :src="'/assets/logo/sad_logo.png'"
+        onerror="this.src='/assets/blue_spinner.svg'" alt="" />
     </div>
     <div class="item-info">
       <div class="info-top">
@@ -13,7 +13,7 @@
           <p class="type jua-regular">{{ attractionByData.name }}</p>
         </div>
         <div class="info-right">
-          <img class="filter-img" :src="`/src/assets/map_marker/${attractionByData.logo}.png`" alt="" />
+          <img class="filter-img" :src="`/assets/map_marker/${attractionByData.logo}.png`" alt="" />
           <button @click="getAttraction">
             <font-awesome-icon :icon="faCartShopping" class="cart" />
           </button>
@@ -30,7 +30,7 @@
 <script setup>
 import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
 import { ref, onMounted } from "vue";
-import { attraction_type } from "@/assets/attraction_type/attraction_type";
+import { attraction_type } from "/src/etc/attraction_type";
 import { useAttractionStore } from "@/store/attraction";
 import { storeToRefs } from "pinia";
 const attractionStore = useAttractionStore();

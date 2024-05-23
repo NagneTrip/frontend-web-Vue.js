@@ -33,7 +33,7 @@
         <img
           :src="selectBtn[0].img"
           :alt="selectBtn[0].name"
-          onerror="this.src='/src/assets/logo/sad_logo.png'"
+          onerror="this.src='/assets/logo/sad_logo.png'"
         />
       </div>
       <transition-group name="slide-fade" tag="div">
@@ -44,7 +44,7 @@
           :class="['select', { selected: btn.isSelected }]"
           @click="toggleSelectButton(btn)"
         >
-          <img :src="btn.img" :alt="btn.name" onerror="this.src='/src/assets/logo/sad_logo.png'" />
+          <img :src="btn.img" :alt="btn.name" onerror="this.src='/assets/logo/sad_logo.png'" />
         </div>
       </transition-group>
     </div>
@@ -160,45 +160,45 @@ const searchAttraction = () => {
 };
 
 const selectBtn = ref([
-  { attractionTypeId: "", name: "all", img: "/src/assets/logo/logo_img.png", isSelected: true },
-  { attractionTypeId: 39, name: "food", img: "/src/assets/map_marker/food.png", isSelected: false },
+  { attractionTypeId: "", name: "all", img: "/assets/logo/logo_img.png", isSelected: true },
+  { attractionTypeId: 39, name: "food", img: "/assets/map_marker/food.png", isSelected: false },
   {
     attractionTypeId: 38,
     name: "shopping",
-    img: "/src/assets/map_marker/shopping.png",
+    img: "/assets/map_marker/shopping.png",
     isSelected: false,
   },
   {
     attractionTypeId: 28,
     name: "activity",
-    img: "/src/assets/map_marker/activity.png",
+    img: "/assets/map_marker/activity.png",
     isSelected: false,
   },
   {
     attractionTypeId: 15,
     name: "festival",
-    img: "/src/assets/map_marker/festival.png",
+    img: "/assets/map_marker/festival.png",
     isSelected: false,
   },
   {
     attractionTypeId: 12,
     name: "nature",
-    img: "/src/assets/map_marker/nature.png",
+    img: "/assets/map_marker/nature.png",
     isSelected: false,
   },
   {
     attractionTypeId: 32,
     name: "sleep",
-    img: "/src/assets/map_marker/sleep.png",
+    img: "/assets/map_marker/sleep.png",
     isSelected: false,
   },
   {
     attractionTypeId: 14,
     name: "culture",
-    img: "/src/assets/map_marker/culture.png",
+    img: "/assets/map_marker/culture.png",
     isSelected: false,
   },
-  { attractionTypeId: 25, name: "trip", img: "/src/assets/map_marker/trip.png", isSelected: false },
+  { attractionTypeId: 25, name: "trip", img: "/assets/map_marker/trip.png", isSelected: false },
 ]);
 
 // 리스트 상태가 변경될 때마다 'all' 버튼 상태를 적절히 설정

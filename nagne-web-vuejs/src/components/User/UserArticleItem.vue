@@ -1,6 +1,6 @@
 <template>
   <div class="user-article-item" @click="move">
-    <img :src="userArticle.imageUrls[0]" onerror="this.src='/src/assets/logo/sad_logo.png'" alt="">
+    <img :src="userArticle.imageUrls[0]" onerror="this.src='/assets/logo/sad_logo.png'" alt="">
   </div>
 </template>
 

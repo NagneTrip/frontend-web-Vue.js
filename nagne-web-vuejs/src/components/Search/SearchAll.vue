@@ -9,7 +9,7 @@
         <SearchUserItem v-for="user in usersByKeyword" :user="user" :key="user.id"></SearchUserItem>
       </div>
       <div v-if="!usersByKeyword[0]" class="result-text-box">
-        <img src="/src/assets/logo/sad_logo.png" class="sad-img" alt="" :width="200" />
+        <img src="/assets/logo/sad_logo.png" class="sad-img" alt="" :width="200" />
         <p class="jua-regular result-text">검색 결과가 없습니다.</p>
       </div>
     </div>
@@ -22,7 +22,7 @@
         <TheArticle v-for="article in articlesByKeyword" :article="article" :key="article.id"></TheArticle>
       </div>
       <div v-if="!articlesByKeyword[0]" class="result-text-box">
-        <img src="/src/assets/logo/sad_logo.png" class="sad-img" alt="" :width="200" />
+        <img src="/assets/logo/sad_logo.png" class="sad-img" alt="" :width="200" />
         <p class="jua-regular result-text">검색 결과가 없습니다.</p>
       </div>
     </div>
@@ -35,7 +35,7 @@
         <TourListItem v-for="attraction in attractionByKeyword" :attraction="attraction" :key="attraction.id"></TourListItem>
       </div>
       <div v-if="!attractionByKeyword[0]" class="result-text-box">
-        <img src="/src/assets/logo/sad_logo.png" class="sad-img" alt="" :width="200" />
+        <img src="/assets/logo/sad_logo.png" class="sad-img" alt="" :width="200" />
         <p class="jua-regular result-text">검색 결과가 없습니다.</p>
       </div>
     </div>

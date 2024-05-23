@@ -3,11 +3,11 @@
     <div class="modal-wrapper">
 
       <div class="modal-box" @click.stop>
-        <img v-if="isLoading" src="/src/assets/blue_spinner.svg" alt="" class="modal-left" />
+        <img v-if="isLoading" src="/assets/blue_spinner.svg" alt="" class="modal-left" />
         <div v-if="!isLoading" class="modal-left" @click="closeDotMenu">
           <template v-if="!isManyImg">
-            <img :src="newArticle.imageUrls || './src/assets/logo/logo.png'"
-              onerror="this.src='/src/assets/logo/sad_logo.png'" class="modal-left-img" />
+            <img :src="newArticle.imageUrls || '/assets/logo/logo.png'"
+              onerror="this.src='/assets/logo/sad_logo.png'" class="modal-left-img" />
           </template>
           <template v-if="isManyImg">
             <ArticleWriteSwiper :imgUrls="imgUrls" class="modal-left-img" />
@@ -19,14 +19,14 @@
             <div class="right-header">
               <div class="user-info">
                 <div>
-                  <img :src="newArticle.userProfileImage || '@/assets/logo/logo_img.png'"
-                    onerror="this.src='/src/assets/logo/sad_logo.png'" :width="50" :height="50" alt="" />
+                  <img :src="newArticle.userProfileImage || '/assets/logo/logo_img.png'"
+                    onerror="this.src='/assets/logo/sad_logo.png'" :width="50" :height="50" alt="" />
                 </div>
                 <div class="user-info-text">
                   <div class="user-info-main">
                     <p class="noto-sans-kr-bold">{{ newArticle.userNickname }}</p>
-                    <img :src="`src/assets/tier/${newArticle.userTier}.svg`"
-                      onerror="this.src='/src/assets/logo/sad_logo.png'" alt="" class="tier-img" :width="17"
+                    <img :src="`/assets/tier/${newArticle.userTier}.svg`"
+                      onerror="this.src='/assets/logo/sad_logo.png'" alt="" class="tier-img" :width="17"
                       :height="17" />
                   </div>
                   <p class="user-info-date noto-sans-kr-regular">{{ newArticle?.createdDate?.split('T')[0] }}</p>

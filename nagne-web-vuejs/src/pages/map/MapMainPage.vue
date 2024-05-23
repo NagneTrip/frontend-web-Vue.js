@@ -77,7 +77,7 @@ const getLoaction = () => {
     flex-direction: column;
     justify-content: flex-start;
     gap: 20px;
-    background-image: url('@/assets/page/map_main.jpg');
+    background-image: url('/assets/page/map_main.jpg');
     background-repeat: no-repeat;
     background-size: cover;
     background-position: bottom, center;

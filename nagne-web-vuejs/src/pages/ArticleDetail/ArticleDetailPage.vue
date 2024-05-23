@@ -2,11 +2,11 @@
   <div class="article-detail-page" @click="closeModal">
     <div class="modal-wrapper">
       <div class="modal-box" @click.stop>
-        <img v-if="isLoading" src="/src/assets/blue_spinner.svg" alt="" class="modal-left" />
+        <img v-if="isLoading" src="/assets/blue_spinner.svg" alt="" class="modal-left" />
         <div v-if="!isLoading" class="modal-left" @click="closeDotMenu">
           <template v-if="!isManyImg">
-            <img :src="article.imageUrls || './src/assets/logo/logo.png'"
-              onerror="this.src='/src/assets/logo/sad_logo.png'" class="modal-left-img" />
+            <img :src="article.imageUrls || '/assets/logo/logo.png'"
+              onerror="this.src='/assets/logo/sad_logo.png'" class="modal-left-img" />
           </template>
           <template v-if="isManyImg">
             <ArticleWriteSwiper :imgUrls="imgUrls" class="modal-left-img" :width="650" :height="600" />
@@ -17,14 +17,14 @@
             <div class="right-header">
               <div class="user-info" @click="moveTo('user')">
                 <div>
-                  <img :src="article?.userProfileImage || './src/assets/logo/logo.png'" :width="50" onerror="this.src='/src/assets/logo/sad_logo.png'"
+                  <img :src="article?.userProfileImage || '/assets/logo/logo.png'" :width="50" onerror="this.src='/assets/logo/sad_logo.png'"
                     :height="50" alt="" />
                 </div>
                 <div class="user-info-text">
                   <div class="user-info-main">
                     <p class="noto-sans-kr-bold">{{ article?.userNickname }}</p>
-                    <img :src="`src/assets/tier/${article.userTier}.svg`"
-                      onerror="this.src='/src/assets/logo/sad_logo.png'" alt="" class="tier-img" :width="17"
+                    <img :src="`/assets/tier/${article.userTier}.svg`"
+                      onerror="this.src='/assets/logo/sad_logo.png'" alt="" class="tier-img" :width="17"
                       :height="17" />
                   </div>
                   <p class="user-info-date noto-sans-kr-regular">{{ article?.createdDate?.split('T')[0] }}</p>

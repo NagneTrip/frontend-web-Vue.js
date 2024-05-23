@@ -45,7 +45,7 @@
           <img
             v-if="userInfo"
             :src="userInfo.profileImage"
-            onerror="this.src='/src/assets/logo/sad_logo.png'"
+            onerror="this.src='/assets/logo/sad_logo.png'"
             id="navbar-profile"
           />
         </div>
@@ -392,14 +392,14 @@ a {
 .left-logo1 {
   width: 70px;
   height: 50px;
-  background-image: url("@/assets/logo/logo_img.png");
+  background-image: url("/assets/logo/logo_img.png");
   background-size: cover;
 }
 
 .left-logo2 {
   width: 140px;
   height: 50px;
-  background-image: url("@/assets/logo/logo_text.png");
+  background-image: url("/assets/logo/logo_text.png");
   background-size: cover;
   margin: 5px;
 }

@@ -2,15 +2,15 @@
     <div class="user-page">
         <div class="user-info">
             <div class="user-profile-img">
-                <img :src="userInfo.profileImage || '@/assets/logo/logo_img.png'"
-                    onerror="this.src='/src/assets/logo/sad_logo.png'" alt="" :width="200" :height="200">
+                <img :src="userInfo.profileImage || '/assets/logo/logo_img.png'"
+                    onerror="this.src='/assets/logo/sad_logo.png'" alt="" :width="200" :height="200">
             </div>
             <div class="info-box">
                 <div class="info-box-top">
                     <div class="info-name">
                         <p class="nickname jua-regular">{{ userInfo.nickname }}</p>
-                        <img :src="`/src/assets/tier/${userInfo.tier}.svg`"
-                            onerror="this.src='/src/assets/logo/sad_logo.png'" :width="25" :height="25" alt=""
+                        <img :src="`/assets/tier/${userInfo.tier}.svg`"
+                            onerror="this.src='/assets/logo/sad_logo.png'" :width="25" :height="25" alt=""
                             class="tier-img" />
                     </div>
                     <button class="edit-profile-btn jua-regular" @click="move">프로필 상세</button>

@@ -3,14 +3,14 @@
     <div class="comment-box">
       <div class="user-info">
         <div class="user-profile-img">
-          <img :src="comment.userProfileImage || '@/assets/logo/logo_img.png'"
-            onerror="this.src='/src/assets/logo/sad_logo.png'" class="profile-img" @click="moveTo" :width="50"
+          <img :src="comment.userProfileImage || '/assets/logo/logo_img.png'"
+            onerror="this.src='/assets/logo/sad_logo.png'" class="profile-img" @click="moveTo" :width="50"
             :height="50" alt="" />
         </div>
         <div class="user-info-text">
           <div class="user-info-main" @click="moveTo">
             <p class="noto-sans-kr-bold user-nickname">{{ comment.userNickname }}</p>
-            <img :src="`src/assets/tier/${comment.userTier}.svg`" onerror="this.src='/src/assets/logo/sad_logo.png'"
+            <img :src="`/assets/tier/${comment.userTier}.svg`" onerror="this.src='/assets/logo/sad_logo.png'"
               alt="" class="tier-img" :width="15" :height="15" />
           </div>
           <p class="user-info-date noto-sans-kr-regular">{{ comment?.createdDate?.split("T")[0] }}</p>

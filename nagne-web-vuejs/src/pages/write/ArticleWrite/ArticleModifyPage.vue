@@ -5,7 +5,7 @@
         <div class="modal-left">
           <template v-if="!isManyImg">
             <img class="modal-left-img" :src="writeStore.tempUrl" alt="" :width="650" :height="600"
-              onerror="this.src='/src/assets/logo/sad_logo.png'">
+              onerror="this.src='/assets/logo/sad_logo.png'">
           </template>
           <template v-if="isManyImg">
             <ArticleWriteSwiper class="modal-left-img" :width="650" :height="600" />
@@ -63,7 +63,7 @@ const getArticleToModify = async () => {
   })
 }
 
-const baseImg = ref("/src/assets/logo/logo.png");
+const baseImg = ref("/assets/logo/logo.png");
 const move = (path) => {
   switch (path) {
     case 'back':

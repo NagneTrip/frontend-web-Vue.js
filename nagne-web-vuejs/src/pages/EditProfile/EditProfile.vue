@@ -4,8 +4,8 @@
             <p class="jua-regular">회원 정보 수정</p>
         </div>
         <div class="profile-img-section">
-            <img src="/src/assets/logo/logo_img.png" class="profile-img" alt=""
-                onerror="this.src='/src/assets/logo/sad_logo.png'">
+            <img src="/assets/logo/logo_img.png" class="profile-img" alt=""
+                onerror="this.src='/assets/logo/sad_logo.png'">
             <input type="file" ref="inputFile" @change="fileChange" />
             <div class="selected">
                 <button class="jua-regular selected-text" @click="imgSelect">Selected</button>

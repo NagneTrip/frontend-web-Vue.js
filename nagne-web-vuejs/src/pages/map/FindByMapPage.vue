@@ -4,18 +4,18 @@
       :height="'89vh'" @onLoadKakaoMap="onLoadKakaoMap">
       <!-- 싸피 마커 -->
       <KakaoMapMarker :lat="ssafyLocation.lat" :lng="ssafyLocation.lng"
-        :image="{ imageSrc: '/src/assets/map_marker/ssafy_logo.png', imageWidth: 60, imageHeight: 30, imageOption: {} }"
+        :image="{ imageSrc: '/assets/map_marker/ssafy_logo.png', imageWidth: 60, imageHeight: 30, imageOption: {} }"
         :infoWindow="{ content: 'SSAFY 광주 캠퍼스', visible: visibleRef }"
         @mouseOverKakaoMapMarker="mouseOverKakaoMapMarker" @mouseOutKakaoMapMarker="mouseOutKakaoMapMarker">
       </KakaoMapMarker>
       <!-- 내 위치 마커 -->
       <KakaoMapMarker v-if="gpsLocation.lat" :lat="gpsLocation.lat" :lng="gpsLocation.lng"
-        :image="{ imageSrc: '/src/assets/logo/logo_img.png', imageWidth: 50, imageHeight: 40, imageOption: {} }">
+        :image="{ imageSrc: '/assets/logo/logo_img.png', imageWidth: 50, imageHeight: 40, imageOption: {} }">
       </KakaoMapMarker>
       <!-- 로드된 관광지 목록으로 마커 -->
       <KakaoMapMarker v-for="(attraction, index) in attractionsList" :key="attraction.id" :lat="attraction.latitude"
         :lng="attraction.longitude"
-        :image="{ imageSrc: `/src/assets/map_marker/${markerLogo}.png`, imageWidth: 50, imageHeight: 40, imageOption: {} }">
+        :image="{ imageSrc: `/assets/map_marker/${markerLogo}.png`, imageWidth: 50, imageHeight: 40, imageOption: {} }">
       </KakaoMapMarker>
     </KakaoMap>
     <button type="button" class="btn btn-secondary gps-btn" @click="setGPSLoca">
@@ -156,45 +156,45 @@ const markerLogo = computed(() => {
 })
 
 const typeData = ref([
-  { attractionTypeId: "", name: "all", img: "@/assets/logo/logo_img.png", isSelected: true },
-  { attractionTypeId: 39, name: "food", img: "@/assets/map_marker/food.png", isSelected: false },
+  { attractionTypeId: "", name: "all", img: "/assets/logo/logo_img.png", isSelected: true },
+  { attractionTypeId: 39, name: "food", img: "/assets/map_marker/food.png", isSelected: false },
   {
     attractionTypeId: 38,
     name: "shopping",
-    img: "@/assets/map_marker/shopping.png",
+    img: "/assets/map_marker/shopping.png",
     isSelected: false,
   },
   {
     attractionTypeId: 28,
     name: "activity",
-    img: "@/assets/map_marker/activity.png",
+    img: "/assets/map_marker/activity.png",
     isSelected: false,
   },
   {
     attractionTypeId: 15,
     name: "festival",
-    img: "@/assets/map_marker/festival.png",
+    img: "/assets/map_marker/festival.png",
     isSelected: false,
   },
   {
     attractionTypeId: 12,
     name: "nature",
-    img: "@/assets/map_marker/nature.png",
+    img: "/assets/map_marker/nature.png",
     isSelected: false,
   },
   {
     attractionTypeId: 32,
     name: "sleep",
-    img: "@/assets/map_marker/sleep.png",
+    img: "/assets/map_marker/sleep.png",
     isSelected: false,
   },
   {
     attractionTypeId: 14,
     name: "culture",
-    img: "@/assets/map_marker/culture.png",
+    img: "/assets/map_marker/culture.png",
     isSelected: false,
   },
-  { attractionTypeId: 25, name: "trip", img: "@/assets/map_marker/trip.png", isSelected: false },
+  { attractionTypeId: 25, name: "trip", img: "/assets/map_marker/trip.png", isSelected: false },
 ]);
 </script>
 

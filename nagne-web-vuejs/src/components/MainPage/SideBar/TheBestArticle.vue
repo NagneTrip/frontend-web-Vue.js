@@ -16,7 +16,7 @@
         <BestArticleItem v-for="(bestArticle, index) in bestArticles" :bestArticle="bestArticle"
           :key="bestArticle.id" />
       </template>
-      <img v-if="isLoading" class="spinner" src="/src/assets/blue_spinner.svg" alt="">
+      <img v-if="isLoading" class="spinner" src="/assets/blue_spinner.svg" alt="">
     </div>
   </div>
 </template>
