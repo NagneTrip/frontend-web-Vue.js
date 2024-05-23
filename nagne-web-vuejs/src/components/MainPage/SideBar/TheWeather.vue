@@ -22,7 +22,7 @@ const userWeather = ref({});
 const isWeatherLoding = ref(true);
 
 const getUserLocaWeather = async ()=>{
-  await axios.get(`https://api.openweathermap.org/data/2.5/weather?lat=${userLocation.value.lat}&lon=${userLocation.value.lon}&units=metric&appid=${import.meta.env.VITE_WEATHER_API_KEY}`)
+  await axios.get(`https://api.openweathermap.org/data/2.5/weather?lat=${35.203949958272645}&lon=${126.81073155701664}&units=metric&appid=${import.meta.env.VITE_WEATHER_API_KEY}`)
     .then(({ data }) => {
       userWeather.value = {
         loaction : data.name === 'Yach’on' ? 'Gwangju' : data.name,
@@ -38,13 +38,14 @@ const getUserLocaWeather = async ()=>{
 }
 onMounted(async() => {
   isWeatherLoding.value = true;
-  navigator.geolocation.getCurrentPosition((position) => {
-      let lat = position.coords.latitude;
-      let lon = position.coords.longitude;
-      userLocation.value = {lat, lon};
-      mapStore.userLocation = {lat, lon};
-      getUserLocaWeather();
-  })
+  // navigator.geolocation.getCurrentPosition((position) => {
+  //     let lat = position.coords.latitude;
+  //     let lon = position.coords.longitude;
+  //     userLocation.value = {lat, lon};
+  //     mapStore.userLocation = {lat, lon};
+  //     getUserLocaWeather();
+  // })
+  getUserLocaWeather();
 })
 </script>
 
