@@ -111,6 +111,7 @@
 <script setup>
 import { faXmark, faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
+
 import { onMounted, ref } from "vue";
 import CommentList from "./CommentList.vue";
 import { useAuthStore } from "@/store/auth";
@@ -179,7 +180,7 @@ onMounted(async () => {
 });
 
 const fetchArticleDetail = async () => {
-  await axios.get(import.meta.env.VITE_EC2_ADDR+`/api/articles/${newArticle.value.id}`, {
+  await apiClient.get(`/api/articles/${newArticle.value.id}`, {
     headers: {
       Authorization: `Bearer ${sessionStorage.getItem('token')}`,
     }
@@ -230,7 +231,7 @@ const deleteArticle = async () => {
   }
 
   try {
-    await axios.delete(import.meta.env.VITE_EC2_ADDR+`/api/articles/${newArticle.value.id}`, {
+    await apiClient.delete(`/api/articles/${newArticle.value.id}`, {
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem('token')}`,
       }
@@ -251,7 +252,7 @@ const clickSocialBtn = async (btnName) => {
   try {
     switch (btnName) {
       case 'like':
-        await axios.post(import.meta.env.VITE_EC2_ADDR+'/api/articles/like', { articleId: newArticle.value.id }, {
+        await apiClient.post('/api/articles/like', { articleId: newArticle.value.id }, {
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem('token')}`
           }
@@ -263,7 +264,7 @@ const clickSocialBtn = async (btnName) => {
           })
         break;
       case 'unlike':
-        await axios.delete(import.meta.env.VITE_EC2_ADDR+`/api/articles/like/${newArticle.value.id}`, {
+        await apiClient.delete(`/api/articles/like/${newArticle.value.id}`, {
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem('token')}`
           }
@@ -276,7 +277,7 @@ const clickSocialBtn = async (btnName) => {
         break;
       case 'bookMark':
         if (!isBookmarked.value) {
-          await axios.post(import.meta.env.VITE_EC2_ADDR+'/api/bookmark', { articleId: newArticle.value.id }, {
+          await apiClient.post('/api/bookmark', { articleId: newArticle.value.id }, {
             headers: {
               Authorization: `Bearer ${sessionStorage.getItem('token')}`
             }
@@ -286,7 +287,7 @@ const clickSocialBtn = async (btnName) => {
               emit('bookmark');
             })
         } else {
-          await axios.delete(import.meta.env.VITE_EC2_ADDR+`/api/bookmark/${newArticle.value.id}`, {
+          await apiClient.delete(`/api/bookmark/${newArticle.value.id}`, {
             headers: {
               Authorization: `Bearer ${sessionStorage.getItem('token')}`
             }
@@ -327,7 +328,7 @@ const toggleDotMenu = (event) => {
 };
 
 const postComment = async () => {
-  await axios.post(import.meta.env.VITE_EC2_ADDR+`/api/comments`, {
+  await apiClient.post(`/api/comments`, {
     articleId: newArticle.value.id,
     content: commentContent.value,
   }, {

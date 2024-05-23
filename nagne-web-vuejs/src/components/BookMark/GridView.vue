@@ -8,7 +8,6 @@
 </template>
 
 <script setup>
-import axios from 'axios';
 import { ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import GridItem from './GridItem.vue';

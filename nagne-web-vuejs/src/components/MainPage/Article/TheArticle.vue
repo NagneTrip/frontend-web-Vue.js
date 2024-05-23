@@ -81,6 +81,8 @@
 <script setup>
 import CommentListItem from "./CommentListItem.vue"
 import axios from "axios";
+import apiClient from '@/apiClient.js';
+
 import { onMounted } from "vue";
 import { ref, watch } from "vue";
 import { useRoute,useRouter } from "vue-router";

@@ -23,6 +23,8 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from "axios";
+import apiClient from '@/apiClient.js';
+
 import { useAuthStore } from "@/store/auth";
 const authStore = useAuthStore();
 const router = useRouter();
@@ -52,7 +54,7 @@ onMounted(async () => {
         isNowLoginUser.value = true;
     }
 
-    await axios.get(import.meta.env.VITE_EC2_ADDR+`/api/follow/${props.followItem.id}`, {
+    await apiClient.get(`/api/follow/${props.followItem.id}`, {
         headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}`, }
     }).then(({ data }) => {
         isFollow.value = data.response.checkFollow;
@@ -65,7 +67,7 @@ const follow = () => {
         return;
     }
 
-    axios.post(import.meta.env.VITE_EC2_ADDR+`/api/follow`, { 'followId': props.followItem.id }, {
+    apiClient.post(`/api/follow`, { 'followId': props.followItem.id }, {
         headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}`, }
     }).then(({ data }) => {
         isFollow.value = true;
@@ -78,7 +80,7 @@ const unfollow = async () => {
         return;
     }
 
-    axios.delete(import.meta.env.VITE_EC2_ADDR+`/api/follow/${props.followItem.id}`, {
+    apiClient.delete(`/api/follow/${props.followItem.id}`, {
         headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}`, }
     }).then(() => {
         isFollow.value = false;

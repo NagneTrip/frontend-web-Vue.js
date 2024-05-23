@@ -25,6 +25,7 @@ import { useWriteStore } from "@/store/write";
 import { useAuthStore } from "@/store/auth";
 import { storeToRefs } from 'pinia';
 import axios from "axios";
+import apiClient from '@/apiClient.js';
 
 const authStore = useAuthStore();
 const writeStore = useWriteStore();
@@ -81,7 +82,7 @@ const uploadFile = async () => {
     const body = { 'content': content.value };
 
     try {
-      await axios.patch(import.meta.env.VITE_EC2_ADDR+`/api/articles/${props.modifyArticle.id}`, body, {
+      await apiClient.patch(`/api/articles/${props.modifyArticle.id}`, body, {
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem('token')}`,
           'Content-Type': 'application/json',
@@ -108,7 +109,7 @@ const uploadFile = async () => {
   formData.append('request', blob);
 
   try {
-    await axios.post(import.meta.env.VITE_EC2_ADDR+'/api/articles', formData, {
+    await apiClient.post('/api/articles', formData, {
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem('token')}`,
       },

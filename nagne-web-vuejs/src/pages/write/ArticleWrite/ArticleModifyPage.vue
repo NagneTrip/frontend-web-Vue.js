@@ -21,6 +21,8 @@
 
 <script setup>
 import axios from 'axios';
+import apiClient from '@/apiClient.js';
+
 import { ref, watch, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import ArticleImgSelect from "@/components/Write/Article/ArticleImgSelect.vue"
@@ -48,7 +50,7 @@ onMounted(async () => {
 })
 
 const getArticleToModify = async () => {
-  await axios.get(import.meta.env.VITE_EC2_ADDR+`/api/articles/${idByParams}`, {
+  await apiClient.get(`/api/articles/${idByParams}`, {
     headers: {
       Authorization: `Bearer ${sessionStorage.getItem('token')}`,
     }

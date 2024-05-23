@@ -57,6 +57,8 @@ import UserPlan from '@/components/User/UserPlan.vue';
 import UserFollowing from '@/components/User/UserFollowing.vue';
 import UserFollowers from '@/components/User/UserFollowers.vue';
 import axios from 'axios';
+import apiClient from '@/apiClient.js';
+
 import { ref, onMounted, computed, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from "@/store/auth";
@@ -139,7 +141,7 @@ watch(isFollow, async () => {
 
 // 유저 정보 로드
 const fetchUserInfo = async () => {
-    await axios.get(import.meta.env.VITE_EC2_ADDR+`/api/users/${userIdByParams.value}`, {
+    await apiClient.get(`/api/users/${userIdByParams.value}`, {
         headers: {
             Authorization: `Bearer ${sessionStorage.getItem('token')}`,
         }
@@ -153,7 +155,7 @@ const fetchUserInfo = async () => {
 
 // 유저가 작성한 게시물 로드
 const fetchUserArticles = async () => {
-    await axios.get(import.meta.env.VITE_EC2_ADDR+`/api/articles/by?userId=${userIdByParams.value}`, {
+    await apiClient.get(`/api/articles/by?userId=${userIdByParams.value}`, {
         headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` }
     }).then(({ data }) => {
         userArticles.value = data.response.articles;
@@ -162,7 +164,7 @@ const fetchUserArticles = async () => {
 
 // 로그인한 유저(자신)가 아니면 팔로우 여부 조회
 const fetchIsFollow = async () => {
-    await axios.get(import.meta.env.VITE_EC2_ADDR+`/api/follow/${userIdByParams.value}`, {
+    await apiClient.get(`/api/follow/${userIdByParams.value}`, {
         headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` }
     }).then(({ data }) => {
         isFollow.value = data.response.checkFollow;
@@ -179,7 +181,7 @@ const follow = async () => {
         return;
     }
 
-    await axios.post(import.meta.env.VITE_EC2_ADDR+`/api/follow`, { "followId": userIdByParams.value }, {
+    await apiClient.post(`/api/follow`, { "followId": userIdByParams.value }, {
         headers: {
             Authorization: `Bearer ${sessionStorage.getItem('token')}`,
         }
@@ -194,7 +196,7 @@ const unfollow = async () => {
         return;
     }
 
-    await axios.delete(import.meta.env.VITE_EC2_ADDR+`/api/follow/${userIdByParams.value}`, {
+    await apiClient.delete(`/api/follow/${userIdByParams.value}`, {
         headers: {
             Authorization: `Bearer ${sessionStorage.getItem('token')}`,
         }

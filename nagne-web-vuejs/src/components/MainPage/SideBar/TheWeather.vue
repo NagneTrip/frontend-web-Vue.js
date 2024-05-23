@@ -11,6 +11,7 @@
 
 <script setup>
 import axios from 'axios';
+
 import { onMounted, ref } from 'vue';
 import {weather_icons} from '/src/etc/weather_icons.js';
 import { useMapStore } from '@/store/map';

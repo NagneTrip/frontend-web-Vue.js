@@ -26,6 +26,8 @@ import axios from "axios";
 import BestArticleItem from './BestArticleItem.vue';
 import { ref, onMounted, watch } from 'vue';
 import { useAuthStore } from '@/store/auth.js'
+import apiClient from '@/apiClient.js';
+
 const authStore = useAuthStore();
 
 const bestArticles = ref([]);
@@ -42,7 +44,7 @@ watch(sortState, async ()=>{
 
 const fetchBestArticles = async () => {
   isLoading.value = true;
-  await axios.get(import.meta.env.VITE_EC2_ADDR+`/api/articles/best?sort=${sortState.value}`, {
+  await apiClient.get(`/api/articles/best?sort=${sortState.value}`, {
     headers: {
       Authorization: `Bearer ${sessionStorage.getItem('token')}`,
     }

@@ -179,6 +179,8 @@ import { useAuthStore } from "@/store/auth";
 const authStore = useAuthStore();
 import { storeToRefs } from "pinia";
 import axios from "axios";
+import apiClient from '@/apiClient.js';
+
 import NoticeItem from "./NoticeItem.vue";
 const { isAuthenticated } = storeToRefs(authStore);
 
@@ -229,8 +231,8 @@ const reloadComments = async () => {
 
 // 새로운 알림 여부 조회
 const fecthIsNotice = async () => {
-  await axios
-    .get(import.meta.env.VITE_EC2_ADDR + `/api/notifications/has-new`, {
+  await apiClient
+    .get(`/api/notifications/has-new`, {
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
@@ -242,8 +244,8 @@ const fecthIsNotice = async () => {
 
 // 유저 알림 조회
 const fetchUserNotice = async () => {
-  await axios
-    .get(import.meta.env.VITE_EC2_ADDR + `/api/notifications`, {
+  await apiClient
+    .get(`/api/notifications`, {
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
@@ -255,8 +257,8 @@ const fetchUserNotice = async () => {
 
 // 유저 정보 조회
 const fetchUserInfo = async () => {
-  await axios
-    .get(import.meta.env.VITE_EC2_ADDR + `/api/users/${sessionStorage.getItem("loginUserId")}`, {
+  await apiClient
+    .get(`/api/users/${sessionStorage.getItem("loginUserId")}`, {
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
@@ -269,9 +271,8 @@ const fetchUserInfo = async () => {
 
 // 알림 전체 읽기 기능 추가 필요
 const readAllNotice = async () => {
-  await axios
-    .patch(
-      import.meta.env.VITE_EC2_ADDR + `/api/notifications`,
+  await apiClient
+    .patch(`/api/notifications`,
       {},
       {
         headers: {

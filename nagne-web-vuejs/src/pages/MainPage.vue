@@ -49,6 +49,8 @@ import TheArticle from "@/components/MainPage/Article/TheArticle.vue";
 import { onMounted, ref, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
+import apiClient from '@/apiClient.js';
+
 import TheWeather from "@/components/MainPage/SideBar/TheWeather.vue";
 import TheNotice from "@/components/MainPage/SideBar/TheNotice.vue";
 import TheBestArticle from "@/components/MainPage/SideBar/TheBestArticle.vue";
@@ -71,7 +73,7 @@ onMounted(() => {
   if (isLoading.value || noMoreData.value) return;
 
   isLoading.value = true;
-  let url = import.meta.env.VITE_EC2_ADDR+`/api/articles?size=5`;
+  let url = `/api/articles?size=5`;
   if (lastIndex.value !== null) {
     url += `&lastIndex=${lastIndex.value}`;
   }
@@ -103,7 +105,7 @@ const fetchArticles = async (url) => {
 };
 
 const getAxiosReq = async (url, hd) => {
-  await axios.get(url, {}, hd)
+  await apiClient.get(url, {}, hd)
     .then(response => {
       const articlesData = response.data.response.articles;
       if (articlesData.length < 5) {
@@ -128,7 +130,7 @@ const handleScroll = () => {
   const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
   if (scrollTop + clientHeight >= scrollHeight - 100 && !isLoading.value && !noMoreData.value) {
     isLoading.value = true;
-    const url = import.meta.env.VITE_EC2_ADDR+`/api/articles?size=5&lastIndex=${lastIndex.value}`;
+    const url = `/api/articles?size=5&lastIndex=${lastIndex.value}`;
     if (!sessionStorage.getItem('token') || !authStore.isAuthenticated) {
       fetchArticles(url);
     } else {

@@ -1,8 +1,9 @@
 import axios from "axios";
+import apiClient from '@/apiClient.js';
 
 const login = async (username, password) => {
-  return await axios
-    .post(import.meta.env.VITE_EC2_ADDR+"/api/users/login", {
+  return await apiClient
+    .post("/api/users/login", {
       username: username,
       password: password,
     })
