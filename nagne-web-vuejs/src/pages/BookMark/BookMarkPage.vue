@@ -16,7 +16,7 @@
                     <button class="edit-profile-btn jua-regular" @click="move">프로필 상세</button>
                 </div>
                 <div class="info-box-social">
-                    <p class="jua-regular">북마크한 게시물 {{ }} < - 갯수</p>
+                    <p class="jua-regular">북마크한 게시물 {{ bookMarkCnt }}</p>
                 </div>
             </div>
         </div>
@@ -42,6 +42,7 @@ const authStore = useAuthStore();
 const tabState = ref('grid');
 const userInfo = ref({});
 const bookMarkList = ref([]);
+const bookMarkCnt = ref(0);
 
 onMounted(async () => {
     if (!sessionStorage.getItem('token') || !authStore.isAuthenticated) {
@@ -50,6 +51,7 @@ onMounted(async () => {
 
     await fetchUserInfo();
     await fetchBookMarkList();
+    await fetchBookMarkCnt();
 })
 
 const fetchUserInfo = async () => {
@@ -65,6 +67,14 @@ const fetchBookMarkList = async () => {
         headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}`, },
     }).then(({ data }) => {
         bookMarkList.value = data.response.articles;
+    })
+}
+
+const fetchBookMarkCnt = async () => {
+    await apiClient.get(`api/bookmark/count?userId=${sessionStorage.getItem('loginUserId')}`, {
+        headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}`, },
+    }).then(({data})=> {
+        bookMarkCnt.value = data.response.count;
     })
 }
 
