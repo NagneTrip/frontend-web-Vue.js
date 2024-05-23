@@ -1,19 +1,10 @@
 <template>
   <div class="list-item">
     <div class="item-img">
-      <img
-        v-if="attraction.imageUrl"
-        :src="attraction.imageUrl"
-        onerror="this.src='/src/assets/logo/sad_logo.png'"
-        alt=""
-      />
-      <img
-        v-if="!attraction.imageUrl"
-        class="no-img"
-        :src="'/src/assets/logo/sad_logo.png'"
-        onerror="this.src='/src/assets/logo/sad_logo.png'"
-        alt=""
-      />
+      <img v-if="attraction.imageUrl" :src="attraction.imageUrl" onerror="this.src='/src/assets/blue_spinner.svg'"
+        alt="" />
+      <img v-if="!attraction.imageUrl" class="no-img" :src="'/src/assets/logo/sad_logo.png'"
+        onerror="this.src='/src/assets/blue_spinner.svg'" alt="" />
     </div>
     <div class="item-info">
       <div class="info-top">
@@ -22,8 +13,8 @@
           <p class="type jua-regular">{{ attractionByData.name }}</p>
         </div>
         <div class="info-right">
-            <img class="filter-img" :src="`/src/assets/map_marker/${attractionByData.logo}.png`" alt="" />
-          <button>
+          <img class="filter-img" :src="`/src/assets/map_marker/${attractionByData.logo}.png`" alt="" />
+          <button @click="getAttraction">
             <font-awesome-icon :icon="faCartShopping" class="cart" />
           </button>
         </div>
@@ -40,6 +31,10 @@
 import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
 import { ref, onMounted } from "vue";
 import { attraction_type } from "@/assets/attraction_type/attraction_type";
+import { useAttractionStore } from "@/store/attraction";
+import { storeToRefs } from "pinia";
+const attractionStore = useAttractionStore();
+const { myAttractions } = storeToRefs(attractionStore);
 
 const props = defineProps({
   attraction: Object,
@@ -50,8 +45,11 @@ onMounted(() => {
   attractionByData.value = attraction_type.filter(
     (item) => item.attractionTypeId === props.attraction.attractionTypeId
   )[0];
-  console.log(attractionByData.value);
 });
+
+const getAttraction = () => {
+  myAttractions.value.push(props.attraction);
+}
 </script>
 
 <style scoped>
@@ -60,7 +58,6 @@ onMounted(() => {
   background-color: white;
   border: 3.5px solid rgb(118, 189, 255);
   width: 95%;
-  height: 550px;
   border-radius: 25px;
   padding: 20px;
   box-shadow: 2px 2px 5px 2px #aacdff;
@@ -155,7 +152,7 @@ button:hover {
 }
 
 .filter-img {
-    width: 50px;
-    height: 50px;
+  width: 50px;
+  height: 50px;
 }
 </style>
