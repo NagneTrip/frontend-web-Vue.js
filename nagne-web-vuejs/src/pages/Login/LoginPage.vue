@@ -26,8 +26,8 @@
       <h4>소셜로그인</h4>
     </div>
     <div class="img-group">
-      <img src="@/assets/social/web_neutral_sq_na.svg" alt="" @click="getSocialLogin('google')">
-      <img src='@/assets/social/480px-KakaoTalk_logo.svg.png' alt="" @click="getSocialLogin('kakao')">
+      <img src="/assets/social/web_neutral_sq_na.svg" alt="" @click="getSocialLogin('google')">
+      <img src='/assets/social/480px-KakaoTalk_logo.svg.png' alt="" @click="getSocialLogin('kakao')">
     </div>
 
     <div class="link-container">

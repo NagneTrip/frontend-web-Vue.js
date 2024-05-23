@@ -10,8 +10,8 @@
     <div class="selected">
       <p class="jua-regular selected-text">Selected</p>
       <div class="selected-imgs-list">
-        <div class="selected-img" v-for="(img, index) in store.selectedImg" :key="index">
-          <p class="img-text noto-sans-kr-regular">{{ truncatedName(img) }}</p>
+        <div v-if="selectedImg" class="selected-img" v-for="(img, index) in selectedImg" :key="index">
+          <p class="img-text noto-sans-kr-regular">{{ truncatedName(img.name) }}</p>
           <button class="delete-img jua-regular" @click="() => deleteImg(index)">삭제</button>
         </div>
       </div>
@@ -37,7 +37,7 @@ import { storeToRefs } from 'pinia';
 import imageCompression from "browser-image-compression";
 
 const store = useWriteStore();
-// const { selectedImg, tempUrl } = storeToRefs(store);
+const { selectedImg, tempUrl } = storeToRefs(store);
 
 const router = useRouter();
 const inputFileRef = ref(null);
@@ -61,28 +61,15 @@ onMounted(() => {
 
 const fileChangeHandler = async (event) => {
   if (event.target.files && event.target.files.length > 0) {
+    console.log(event.target.files[0].name)
     for (let file of event.target.files) {
-      const compressedFile = await compressImage(file);
-      store.selectedImg.push(compressedFile);
-      const url = URL.createObjectURL(compressedFile);
+      store.selectedImg.push(file);
+      const url = URL.createObjectURL(file);
       store.tempUrl.push(url);
     }
   }
 };
 
-const compressImage = async (file) => {
-  const options = {
-    maxSizeMB: 1,
-    maxWidthOrHeight: 1920,
-    useWebWorker: true
-  };
-  try {
-    return await imageCompression(file, options);
-  } catch (error) {
-    console.error(error);
-    return file;
-  }
-};
 
 const inputImg = () => {
   inputFileRef.value.click();

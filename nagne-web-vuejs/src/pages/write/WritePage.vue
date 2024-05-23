@@ -60,7 +60,7 @@ const movePage = (path) => {
     align-items: center;
     flex-direction: column;
     gap: 50px;
-    background-image: url('@/assets/page/0E4A6201.jpg');
+    background-image: url('/assets/page/0E4A6201.jpg');
     background-repeat: no-repeat;
     background-size: cover;
     background-position: bottom, center;

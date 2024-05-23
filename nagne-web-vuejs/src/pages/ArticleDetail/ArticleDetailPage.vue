@@ -2,21 +2,29 @@
   <div class="article-detail-page" @click="closeModal">
     <div class="modal-wrapper">
       <div class="modal-box" @click.stop>
-        <img v-if="isLoading" src="/src/assets/blue_spinner.svg" alt="" class="modal-left" />
+        <img v-if="isLoading" src="/assets/blue_spinner.svg" alt="" class="modal-left" />
         <div v-if="!isLoading" class="modal-left" @click="closeDotMenu">
-          <img :src="'/src/assets/logo/logo.png'" class="modal-left-img" />
+          <template v-if="!isManyImg">
+            <img :src="article.imageUrls || '/assets/logo/logo.png'"
+              onerror="this.src='/assets/logo/sad_logo.png'" class="modal-left-img" />
+          </template>
+          <template v-if="isManyImg">
+            <ArticleWriteSwiper :imgUrls="imgUrls" class="modal-left-img" :width="650" :height="600" />
+          </template>
         </div>
         <div class="modal-right" @click="closeDotMenu">
           <div class="modal-right-wrapper">
             <div class="right-header">
-              <div class="user-info">
+              <div class="user-info" @click="moveTo('user')">
                 <div>
-                  <img src="@/assets/logo/logo_img.png" :width="50" :height="50" alt="" />
+                  <img :src="article?.userProfileImage || '/assets/logo/logo.png'" :width="50" onerror="this.src='/assets/logo/sad_logo.png'"
+                    :height="50" alt="" />
                 </div>
                 <div class="user-info-text">
                   <div class="user-info-main">
                     <p class="noto-sans-kr-bold">{{ article?.userNickname }}</p>
-                    <img :src="`src/assets/tier/${article.userTier}.svg`" alt="" class="tier-img" :width="17"
+                    <img :src="`/assets/tier/${article.userTier}.svg`"
+                      onerror="this.src='/assets/logo/sad_logo.png'" alt="" class="tier-img" :width="17"
                       :height="17" />
                   </div>
                   <p class="user-info-date noto-sans-kr-regular">{{ article?.createdDate?.split('T')[0] }}</p>
@@ -104,6 +112,7 @@ import { onMounted, ref } from "vue";
 import CommentList from "@/components/MainPage/Article/CommentList.vue";
 import { useAuthStore } from "@/store/auth";
 import { useRouter, useRoute } from "vue-router";
+import ArticleWriteSwiper from "@/components/Write/Article/ArticleWriteSwiper.vue";
 const router = useRouter();
 const route = useRoute();
 const store = useAuthStore();
@@ -124,11 +133,12 @@ const dotMenuStyle = ref({});
 const commentInput = ref(null);
 const commentContent = ref("");
 const fetchComments = ref(false);
+const imgUrls = ref([]);
+const isManyImg = ref(false);
 
 onMounted(async () => {
   isLoading.value = true;
   await fetchArticleData();
-  isLoading.value = false;
   if (article.value.userId === Number(sessionStorage.getItem('loginUserId'))) {
     isUsersArticle.value = true;
   }
@@ -145,6 +155,13 @@ const fetchArticleData = async () => {
       article.value = data.response.articleInfo;
       isLiked.value = article.value.isLiked;
       isBookmarked.value = article.value.isBookmarked;
+      isLoading.value = false;
+      imgUrls.value = article.value.imageUrls;
+      if (imgUrls.value.length > 1) {
+        isManyImg.value = true;
+      } else {
+        isManyImg.value = false;
+      }
     } catch (error) {
       console.error(error);
     }
@@ -154,7 +171,7 @@ const fetchArticleData = async () => {
 const moveTo = (action) => {
   switch (action) {
     case 'modify':
-      router.push({ name: 'articleModify', params: { id: props.articleIdByParams } });
+      router.push({ name: 'articleModify', params: { id: articleIdByParams } });
       break;
 
     case 'delete':
@@ -162,6 +179,8 @@ const moveTo = (action) => {
         deleteArticle();
       }
       break;
+    case 'user':
+    router.push({ name: 'user', params: { id: article.value.userId } });
 
     case 'declare':
       // 신고하기

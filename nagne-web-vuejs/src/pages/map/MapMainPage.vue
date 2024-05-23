@@ -1,9 +1,5 @@
 <template>
     <div class="write-page">
-        <!-- <button class="address-btn jua-regular" @click="clickBtn">
-            <font-awesome-icon :icon="faLocationCrosshairs" class="gps-btn" />
-            <p>현 위치로 주소 설정하기</p>
-        </button> -->
         <p class="write-top jua-regular">나그네와 함께 여행을 떠나봐요!</p>
         <div class="write-menu">
             <div class="row-container">
@@ -11,16 +7,8 @@
                     <font-awesome-icon :icon="faLocationDot" class="add-img-icon" />
                     <p class="jua-regular">주변 둘러보기</p>
                 </div>
-                <div class="write" id="hashtag-icon" @click="move('tag')">
-                    <font-awesome-icon :icon="faHashtag" class="add-img-icon " />
-                    <p class="jua-regular">키워드로 찾기</p>
-                </div>
             </div>
             <div class="row-container">
-                <div class="write" id="pin-icon" @click="move('save')">
-                    <font-awesome-icon :icon="faEarthAsia" class="add-img-icon" />
-                    <p class="jua-regular">내 장소 보기</p>
-                </div>
                 <div class="write" id="carrier-icon" @click="move('plan')">
                     <font-awesome-icon :icon="faSuitcaseRolling" class="add-img-icon" />
                     <p class="jua-regular">내 여행 계획</p>
@@ -42,6 +30,7 @@ const move = (path) => {
     if (!sessionStorage.getItem('token')) {
         alert('로그인 후 이용하세요!')
         router.push({ name: 'login' });
+        return;
     }
 
     router.push(`/map/${path}`);
@@ -88,7 +77,7 @@ const getLoaction = () => {
     flex-direction: column;
     justify-content: flex-start;
     gap: 20px;
-    background-image: url('@/assets/page/map_main.jpg');
+    background-image: url('/assets/page/map_main.jpg');
     background-repeat: no-repeat;
     background-size: cover;
     background-position: bottom, center;

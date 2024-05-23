@@ -3,10 +3,11 @@
     <div class="modal-wrapper">
       <div class="modal-box" @click.stop>
         <div class="modal-left">
-          <template v-if="renderBaseImg">
-            <img class="modal-left-img" :src="baseImg" alt="" :width="650" :height="600">
+          <template v-if="!isManyImg">
+            <img class="modal-left-img" :src="!isManyImg" alt="" :width="650" :height="600"
+              onerror="this.src='/assets/logo/sad_logo.png'">
           </template>
-          <template v-if="!renderBaseImg">
+          <template v-if="isManyImg">
             <ArticleWriteSwiper class="modal-left-img" :width="650" :height="600" />
           </template>
         </div>
@@ -31,9 +32,8 @@ const store = useWriteStore();
 const { selectedImg, tempUrl } = storeToRefs(store);
 
 const router = useRouter();
-const renderBaseImg = ref(true);
-
-const baseImg = ref("/src/assets/logo/logo.png");
+const isManyImg = ref(false);
+const renderBaseImg = ref(false);
 
 const move = (path) => {
   switch (path) {
@@ -48,11 +48,11 @@ const move = (path) => {
 };
 
 onMounted(() => {
-  watch(store.tempUrl, (newTempUrl) => {
-    if (newTempUrl && newTempUrl.length >= 1) {
-      renderBaseImg.value = false;
+  watch(tempUrl, (newTempUrl) => {
+    if (newTempUrl && newTempUrl.length > 1) {
+      isManyImg.value = true;
     } else {
-      renderBaseImg.value = true;
+      isManyImg.value = false;
     }
   }, { deep: true });
 });

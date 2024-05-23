@@ -3,12 +3,15 @@
     <div class="comment-box">
       <div class="user-info">
         <div class="user-profile-img">
-          <img src="@/assets/logo/logo_img.png" class="profile-img" @click="moveTo" :width="50" :height="50" alt="" />
+          <img :src="comment.userProfileImage || '/assets/logo/logo_img.png'"
+            onerror="this.src='/assets/logo/sad_logo.png'" class="profile-img" @click="moveTo" :width="50"
+            :height="50" alt="" />
         </div>
         <div class="user-info-text">
           <div class="user-info-main" @click="moveTo">
             <p class="noto-sans-kr-bold user-nickname">{{ comment.userNickname }}</p>
-            <img :src="`src/assets/tier/${comment.userTier}.svg`" alt="" class="tier-img" :width="15" :height="15" />
+            <img :src="`/assets/tier/${comment.userTier}.svg`" onerror="this.src='/assets/logo/sad_logo.png'"
+              alt="" class="tier-img" :width="15" :height="15" />
           </div>
           <p class="user-info-date noto-sans-kr-regular">{{ comment?.createdDate?.split("T")[0] }}</p>
         </div>
@@ -54,8 +57,8 @@ const userInfo = ref({});
 onMounted(async () => {
 })
 
-const moveTo =()=> {
-  router.push({name :'user', params: {'id' : props.comment.userId}})
+const moveTo = () => {
+  router.push({ name: 'user', params: { 'id': props.comment.userId } })
 }
 </script>
 
@@ -146,8 +149,19 @@ p {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 20px;
-  height: 20px;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  border-radius: 15px;
+  transition: 0.3s all;
+
+}
+
+.dot-button-wrapper:hover {
+background-color: rgb(65, 139, 244);
+color: white;
+transition: 0.3s all;
+scale: 1.05;
 }
 
 .like-btn-box {

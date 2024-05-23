@@ -38,11 +38,9 @@ const props = defineProps({
 });
 
 watch(props, () => {
-  console.log(props.modifyArticle)
-  console.log(props.modifyArticle.content)
   if (props.modifyArticle && props.modifyArticle.content) {
     content.value = props.modifyArticle.content;
-    console.log(props.modifyArticle);
+
   }
 });
 
@@ -55,6 +53,11 @@ const move = async (path) => {
       writeStore.step--;
       break;
     case 'next':
+      if (props.modifyArticle && props.modifyArticle.content) {
+        await uploadFile();
+        return;
+      }
+
       if (!content.value) {
         alert('내용을 입력하세요.');
         return;
@@ -73,10 +76,31 @@ const move = async (path) => {
 
 const uploadFile = async () => {
   const formData = new FormData();
+
+  if (props.modifyArticle && props.modifyArticle.content) { //게시글 수정의 경우
+    const body = { 'content': content.value };
+
+    try {
+      await axios.patch(`http://localhost:8080/api/articles/${props.modifyArticle.id}`, body, {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      alert("게시글이 수정되었습니다!");
+      router.push({ name: 'articleDetail', params: { 'id': props.modifyArticle.id } })
+    } catch (error) {
+      alert('게시글 수정 실패!');
+    }
+
+    return;
+  }
+
+
   formData.append('encrypt', "multipart/form-data");
 
   for (let i = 0; i < selectedImg.value.length; i++) {
-    formData.append('images', selectedImg.value[i]);
+    formData.append('images', selectedImg.value[i], selectedImg.value[i].name);
   }
 
   const json = JSON.stringify({ content: content.value });

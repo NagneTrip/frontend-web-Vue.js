@@ -3,18 +3,23 @@
     <div class="article">
       <div class="user-info">
         <div class="user-profile-img">
-          <img src="@/assets/logo/logo_img.png" alt="" />
+          <img :src="article.userProfileImage || '/assets/logo/logo_img.png'"
+            onerror="this.src='/assets/logo/sad_logo.png'" alt="" />
         </div>
         <div class="user-info-text">
           <div class="user-info-main">
             <p class="noto-sans-kr-bold">{{ article.userNickname }}</p>
-            <img :src="`src/assets/tier/${article.userTier}.svg`" alt="" class="tier-img" />
+            <img :src="`/assets/tier/${article.userTier}.svg`" onerror="this.src='/assets/logo/sad_logo.png'"
+              alt="" class="tier-img" />
           </div>
           <p class="user-info-date noto-sans-kr-regular">{{ article?.createdDate?.split('T')[0] }}</p>
         </div>
       </div>
       <div class="img-container">
-        <img class="main-img" :src="'./src/assets/logo/logo.png'" />
+        <img v-if="!isManyImg" class="main-img" onerror="this.src='/assets/logo/sad_logo.png'"
+          :src="article.imageUrls || '/assets/logo/logo.png'" />
+        <img v-else class="main-img" onerror="this.src='/assets/logo/sad_logo.png'"
+          :src="article.imageUrls[0] || '/assets/logo/logo.png'" />
         <div class=" image-overlay">
         </div>
         <p class="noto-sans-kr-regular img-container-text">{{ article.content }}</p>
@@ -78,12 +83,13 @@ import CommentListItem from "./CommentListItem.vue"
 import axios from "axios";
 import { onMounted } from "vue";
 import { ref, watch } from "vue";
-
+import { useRoute,useRouter } from "vue-router";
 import { useAuthStore } from "@/store/auth";
 const authStore = useAuthStore();
+const route = useRoute();
+const router = useRouter();
 
-
-const noImage = ref(true);
+const isManyImg = ref(false);
 
 const article = ref({});
 
@@ -108,11 +114,20 @@ onMounted(async () => {
     isLiked.value = props.isLiked;
     isBookmarked.value = props.isBookmarked;
   }
+  if (props.article.imageUrls.length > 1) {
+    isManyImg.value = true;
+  } else {
+    isManyImg.value = false;
+  }
 })
 
 const openArticleModal = () => {
   if (!authStore.isAuthenticated) {
     alert("게시물 상세보기는 로그인 후 이용하실 수 있습니다!");
+    return;
+  }
+  if (route.query.q){
+    router.push({name : 'articleDetail', params : {'id' : article.value.id}})
     return;
   }
   emit('openArticleModal', article.value.id);

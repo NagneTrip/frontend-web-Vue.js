@@ -4,13 +4,15 @@
             <p class="jua-regular">회원 정보 수정</p>
         </div>
         <div class="profile-img-section">
-            <img src="/src/assets/logo/logo_img.png" class="profile-img" alt="">
-            <input type="file" ref="inputFile" @change="fileChange"/>
+            <img src="/assets/logo/logo_img.png" class="profile-img" alt=""
+                onerror="this.src='/assets/logo/sad_logo.png'">
+            <input type="file" ref="inputFile" @change="fileChange" />
             <div class="selected">
                 <button class="jua-regular selected-text" @click="imgSelect">Selected</button>
                 <div class="selected-imgs-list">
                     <div class="selected-img">
-                        <p v-if="profileImg" class="jua-regular img-text ">{{profileImg.name && (profileImg.name.length > 12 ? profileImg.name.substring(0, 12) + '..' : profileImg.name)}}</p>
+                        <p v-if="profileImg" class="jua-regular img-text ">{{ profileImg.name && (profileImg.name.length
+                            > 12 ? profileImg.name.substring(0, 12) + '..' : profileImg.name) }}</p>
                         <button v-if="profileImg" class="delete-img jua-regular" @click="deleteImg">삭제</button>
                     </div>
                 </div>
@@ -35,7 +37,8 @@
                     <label for="passwordConfirm" class="jua-regular">PW Confirm</label>
                 </div>
                 <input type="password" v-if="!socialLogin" id="passwordConfirm" v-model="passwordConfirm" required>
-                <input type="password" v-else id="passwordConfirm" v-model="passwordConfirm" disabled placeholder="소셜 로그인입니다.">
+                <input type="password" v-else id="passwordConfirm" v-model="passwordConfirm" disabled
+                    placeholder="소셜 로그인입니다.">
             </div>
             <div class="input-box">
                 <div class="label-wrapper">
@@ -105,12 +108,12 @@
 </template>
 
 <script setup>
-import {ref, onMounted} from 'vue';
+import { ref, onMounted } from 'vue';
 import axios from 'axios';
-import {useAuthStore} from '@/store/auth.js'
+import { useAuthStore } from '@/store/auth.js'
 const authStore = useAuthStore();
-import {useRouter} from 'vue-router';
-const router =useRouter();
+import { useRouter } from 'vue-router';
+const router = useRouter();
 
 const userInfo = ref({});
 const profileImg = ref({});
@@ -127,10 +130,10 @@ const socialLogin = ref(false);
 
 const inputFile = ref(null);
 
-const fetchInfo = async ()=> {
+const fetchInfo = async () => {
     await axios.get(`http://localhost:8080/api/users/${sessionStorage.getItem('loginUserId')}/detail`, {
-        headers: {Authorization: `Bearer ${sessionStorage.getItem('token')}`,},
-    }).then(({data})=>{
+        headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}`, },
+    }).then(({ data }) => {
         userInfo.value = data.response.userInfo;
         email.value = userInfo.value.username;
         nickname.value = userInfo.value.nickname
@@ -138,11 +141,11 @@ const fetchInfo = async ()=> {
     })
 }
 
-onMounted(async ()=>{
+onMounted(async () => {
     if (!sessionStorage.getItem("token") || !authStore.isAuthenticated) {
         return;
     }
-    if (sessionStorage.getItem('socialLogin')==='true') {
+    if (sessionStorage.getItem('socialLogin') === 'true') {
         socialLogin.value = true;
     }
     await fetchInfo();
@@ -150,15 +153,11 @@ onMounted(async ()=>{
 
 const makeForm = () => {
     const formData = new FormData();
-    formData.append('nickname', nickname.value);
-    formData.append('birth', birth.value);
-    formData.append('phone', `${phone1.value}${phone2.value}${phone3.value}`);
-    formData.append('gender', gender.value);
-
-    if (!socialLogin.value && password.value) {
-        formData.append('password', password.value);
+    const userObj = {
+        nickname: nickname.value,
+        phone: `${phone1.value}${phone2.value}${phone3.value}`
     }
-
+    formData.append('request', new Blob([JSON.stringify(userObj)], { type: 'application/json' }));
     if (profileImg.value) {
         formData.append('profileImage', profileImg.value);
     }
@@ -166,32 +165,34 @@ const makeForm = () => {
     return formData;
 }
 
-const updateInfo = async ()=> {
+const updateInfo = async () => {
     const formData = makeForm();
-    await axios.patch(`http://localhost:8080/api/users/${sessionStorage.getItem('LoginUserId')}`, formData, {
-        headers: {Authorization: `Bearer ${sessionStorage.getItem('token')}`,},
-    }).then(()=> {
+    await axios.patch(`http://localhost:8080/api/users/${sessionStorage.getItem('loginUserId')}`, formData, {
+        headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}`, },
+    }).then(() => {
         alert("회원 정보가 수정되었습니다!");
-    }).catch((err)=>console.log(err))
+        router.push({ name: 'main' })
+    }).catch((err) => alert('회원 정보를 다시 확인해주세요!'))
 }
 
-const leaveUser = async()=> {
-    if(window.confirm('정말로 탈퇴하시겠습니까?')) {
-        await axios.delete(`http://localhost:8080/api/users/${sessionStorage.getItem('LoginUserId')}`, {
-        headers: {Authorization: `Bearer ${sessionStorage.getItem('token')}`,},
-    }).then(()=> {
-        alert("회원 탈퇴가 완료되었습니다.");
-        router.push({name : 'main'})
-    }).catch((err)=>console.log(err))
+const leaveUser = async () => {
+    if (window.confirm('정말로 탈퇴하시겠습니까?')) {
+        await axios.delete(`http://localhost:8080/api/users/${sessionStorage.getItem('loginUserId')}`, {
+            headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}`, },
+        }).then(() => {
+            alert("회원 탈퇴가 완료되었습니다.");
+            authStore.getLogout();
+            router.push({ name: 'logout' })
+        }).catch((err) => console.log(err))
     }
-    
+
 }
 
-const imgSelect =()=> {
+const imgSelect = () => {
     inputFile.value.click();
 }
 
-const fileChange = (event)=> {
+const fileChange = (event) => {
     profileImg.value = event.target.files[0]
 }
 
@@ -218,7 +219,7 @@ input {
     transition: all 0.05s;
 }
 
- input:focus {
+input:focus {
     outline: none;
     border-bottom: 3px solid #0068FF;
     transition: all 0.05s;
@@ -586,6 +587,7 @@ label {
     border: 2px solid #ee6767;
     color: #ee6767
 }
+
 .delete-btn:hover {
     background-color: #ee6767;
     color: white;
@@ -596,7 +598,7 @@ label {
     font-size: 16px;
     font-weight: 600;
     background-color: white;
-    border :#0068FF 2px solid;
+    border: #0068FF 2px solid;
     width: 100%;
     height: 40px;
     border-radius: 10px;

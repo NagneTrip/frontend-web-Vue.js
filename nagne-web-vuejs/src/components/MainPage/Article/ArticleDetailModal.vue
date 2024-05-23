@@ -3,21 +3,30 @@
     <div class="modal-wrapper">
 
       <div class="modal-box" @click.stop>
-        <img v-if="isLoading" src="/src/assets/blue_spinner.svg" alt="" class="modal-left" />
+        <img v-if="isLoading" src="/assets/blue_spinner.svg" alt="" class="modal-left" />
         <div v-if="!isLoading" class="modal-left" @click="closeDotMenu">
-          <img :src="'./src/assets/logo/logo.png'" class="modal-left-img" />
+          <template v-if="!isManyImg">
+            <img :src="newArticle.imageUrls || '/assets/logo/logo.png'"
+              onerror="this.src='/assets/logo/sad_logo.png'" class="modal-left-img" />
+          </template>
+          <template v-if="isManyImg">
+            <ArticleWriteSwiper :imgUrls="imgUrls" class="modal-left-img" />
+          </template>
+
         </div>
         <div class="modal-right" @click="closeDotMenu">
           <div class="modal-right-wrapper" ref="modalRightWrapper" @scroll="handleScroll">
             <div class="right-header">
               <div class="user-info">
                 <div>
-                  <img src="@/assets/logo/logo_img.png" :width="50" :height="50" alt="" />
+                  <img :src="newArticle.userProfileImage || '/assets/logo/logo_img.png'"
+                    onerror="this.src='/assets/logo/sad_logo.png'" :width="50" :height="50" alt="" />
                 </div>
                 <div class="user-info-text">
                   <div class="user-info-main">
                     <p class="noto-sans-kr-bold">{{ newArticle.userNickname }}</p>
-                    <img :src="`src/assets/tier/${newArticle.userTier}.svg`" alt="" class="tier-img" :width="17"
+                    <img :src="`/assets/tier/${newArticle.userTier}.svg`"
+                      onerror="this.src='/assets/logo/sad_logo.png'" alt="" class="tier-img" :width="17"
                       :height="17" />
                   </div>
                   <p class="user-info-date noto-sans-kr-regular">{{ newArticle?.createdDate?.split('T')[0] }}</p>
@@ -36,7 +45,8 @@
               <span class="content-main noto-sans-kr-bold">
                 {{ newArticle.content }}
               </span>
-              <CommentList :articleid="newArticle.id" ref="commentList" @updateComments="fetchComments = 0" :gencomments="fetchComments"/>
+              <CommentList :articleId="article.id" ref="commentList" @updateComments="fetchComments = 0"
+                :gencomments="fetchComments" />
             </div>
             <div class="right-footer">
               <div class="social-box">
@@ -105,11 +115,13 @@ import { onMounted, ref } from "vue";
 import CommentList from "./CommentList.vue";
 import { useAuthStore } from "@/store/auth";
 import { useWriteStore } from "@/store/write";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 const router = useRouter();
+const route = useRoute();
 const store = useAuthStore();
 const writeStore = useWriteStore();
 import { storeToRefs } from "pinia";
+import ArticleWriteSwiper from "@/components/Write/Article/ArticleWriteSwiper.vue";
 const { getComment } = storeToRefs(writeStore);
 const { genComments, resetComments } = writeStore
 
@@ -141,20 +153,22 @@ const modalRightWrapper = ref(null);
 const noMoreData = ref(false);
 const lastIndex = ref(1000000000);
 const commentList = ref(null);
+const imgUrls = ref([]);
+const isManyImg = ref(false);
+
+const idByParams = route.params.id;
 
 onMounted(async () => {
 
   isLoading.value = true;
-  setTimeout(() => {
-    isLoading.value = false;
-  }, 500);
-
-  newArticle.value = props.article;
-  isLiked.value = props.article.isLiked;
-  commentCount.value = props.article.commentCount;
-  isBookmarked.value = props.article.isBookmarked;
-  likeCount.value = props.article.likeCount;
-  commentContent.value = props.article.commentContent;
+  if (props) {
+    newArticle.value = props.article;
+    isLiked.value = props.article.isLiked;
+    commentCount.value = props.article.commentCount;
+    isBookmarked.value = props.article.isBookmarked;
+    likeCount.value = props.article.likeCount;
+    commentContent.value = props.article.commentContent;
+  }
 
   //게시글 작성자가 현재 로그인한 유저와 일치하는지 확인
   if (newArticle.value.userId === Number(sessionStorage.getItem('loginUserId'))) {
@@ -165,7 +179,7 @@ onMounted(async () => {
 });
 
 const fetchArticleDetail = async () => {
-  await axios.get(`http://localhost:8080/api/articles/${props.article.id}`, {
+  await axios.get(`http://localhost:8080/api/articles/${newArticle.value.id}`, {
     headers: {
       Authorization: `Bearer ${sessionStorage.getItem('token')}`,
     }
@@ -176,13 +190,25 @@ const fetchArticleDetail = async () => {
     isBookmarked.value = newArticle.value.isBookmarked;
     likeCount.value = newArticle.value.likeCount;
     commentContent.value = newArticle.value.commentContent;
+    isLoading.value = false;
+    imgUrls.value = newArticle.value.imageUrls;
+    if (imgUrls.value.length > 1) {
+      isManyImg.value = true;
+    } else {
+      isManyImg.value = false;
+    }
   })
 }
 
 const moveTo = (action) => {
   switch (action) {
     case 'modify':
-      router.push({ name: 'articleModify', params: { id: newArticle.value.id } });
+      if (!idByParams) {
+        router.push({ name: 'articleModify', params: { id: newArticle.value.id } });
+      } else {
+        router.push({ name: 'articleModify', params: { id: idByParams } });
+      }
+
       break;
 
     case 'delete':
@@ -221,7 +247,7 @@ const clickSocialBtn = async (btnName) => {
     alert('로그인 후 진행하세요!');
     return;
   }
-  console.log(newArticle.value.id)
+
   try {
     switch (btnName) {
       case 'like':
@@ -313,14 +339,6 @@ const postComment = async () => {
   })
 }
 
-
-const handleScroll = () => {
-  const { scrollTop, scrollHeight, clientHeight } = modalRightWrapper.value;
-  if (scrollTop + clientHeight >= scrollHeight - 5) {
-    commentList.value.fetchComments();
-  }
-};
-
 </script>
 
 
@@ -379,6 +397,8 @@ const handleScroll = () => {
 
 .modal-wrapper {
   height: 90%;
+  overflow-y: scroll;
+  scrollbar-width: none
 }
 
 .modal-box {
@@ -404,6 +424,7 @@ const handleScroll = () => {
 .modal-left-img {
   width: 100%;
   height: 100%;
+  border-radius: 20px;
 }
 
 .modal-right {
@@ -429,11 +450,11 @@ const handleScroll = () => {
   .modal-right-wrapper {
     overflow-y: auto;
     /* 내용이 넘칠 경우 세로 스크롤 활성화 */
-    /* scrollbar-width: none; */
+    scrollbar-width: none;
 
-    /* ::-webkit-scrollbar {
+    ::-webkit-scrollbar {
       display: none;
-    } */
+    }
   }
 }
 
@@ -610,7 +631,7 @@ const handleScroll = () => {
 @media screen and (max-width: 1300px) {
   .modal-wrapper {
     height: 80%;
-    overflow-y: scroll;
+    /* overflow-y: scroll; */
     display: flex;
     justify-content: center;
     align-items: flex-start;
@@ -619,11 +640,11 @@ const handleScroll = () => {
     background-color: #fff;
 
     /* 배경색 설정 */
-    ::-webkit-scrollbar {
+    /* ::-webkit-scrollbar {
       display: none;
-    }
+    } */
 
-    scrollbar-width: none;
+    /* scrollbar-width: none; */
     border-radius: 8px 8px 8px 8px;
   }
 

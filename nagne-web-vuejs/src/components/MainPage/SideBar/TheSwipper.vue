@@ -41,19 +41,19 @@ const modules = ref([Navigation, Pagination, Autoplay]);
   margin: 30px 0px 10px 0px;
 }
 .bg-1 {
-  background-image: url("./src/assets/swipe/bg1.jpg");
+  background-image: url("/assets/swipe/bg1.jpg");
 }
 .bg-2 {
-  background-image: url("./src/assets/swipe/bg2.jpg");
+  background-image: url("/assets/swipe/bg2.jpg");
 }
 .bg-3 {
-  background-image: url("./src/assets/swipe/bg3.jpg");
+  background-image: url("/assets/swipe/bg3.jpg");
 }
 .bg-4 {
-  background-image: url("./src/assets/swipe/bg4.jpg");
+  background-image: url("/assets/swipe/bg4.jpg");
 }
 .bg-5 {
-  background-image: url("./src/assets/swipe/bg5.jpg");
+  background-image: url("/assets/swipe/bg5.jpg");
 }
 
 .swipe-img {

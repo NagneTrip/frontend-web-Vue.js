@@ -2,13 +2,16 @@
     <div class="user-page">
         <div class="user-info">
             <div class="user-profile-img">
-                <img src="@/assets/logo/logo_img.png" alt="" :width="150" :height="150">
+                <img :src="userInfo.profileImage || '/assets/logo/logo_img.png'"
+                    onerror="this.src='/assets/logo/sad_logo.png'" alt="" :width="200" :height="200">
             </div>
             <div class="info-box">
                 <div class="info-box-top">
                     <div class="info-name">
-                        <p class="nickname jua-regular">{{ userInfo.nickname}}</p>
-                        <img :src="`/src/assets/tier/${userInfo.tier}.svg`" :width="25" :height="25" alt="" class="tier-img" />
+                        <p class="nickname jua-regular">{{ userInfo.nickname }}</p>
+                        <img :src="`/assets/tier/${userInfo.tier}.svg`"
+                            onerror="this.src='/assets/logo/sad_logo.png'" :width="25" :height="25" alt=""
+                            class="tier-img" />
                     </div>
                     <button class="edit-profile-btn jua-regular" @click="move">프로필 상세</button>
                 </div>
@@ -18,12 +21,7 @@
             </div>
         </div>
         <div class="article-section">
-            <template v-if="tabState === 'grid'">
-                <GridView :bookMarkList="bookMarkList"/>
-            </template>
-            <template v-if="tabState === 'page'">
-                <PageView :bookMarkList="bookMarkList"/>
-            </template>
+            <GridView :bookMarkList="bookMarkList" />
         </div>
 
     </div>
@@ -34,7 +32,7 @@ import axios from 'axios';
 import { faTableCells, faExpand } from "@fortawesome/free-solid-svg-icons";
 import { useAuthStore } from '@/store/auth';
 import { ref, onMounted } from 'vue';
-import {useRouter } from "vue-router"
+import { useRouter } from "vue-router"
 const router = useRouter();
 import GridView from '@/components/BookMark/GridView.vue';
 const authStore = useAuthStore();
@@ -54,22 +52,22 @@ onMounted(async () => {
 
 const fetchUserInfo = async () => {
     await axios.get(`http://localhost:8080/api/users/${sessionStorage.getItem('loginUserId')}`, {
-            headers: {Authorization: `Bearer ${sessionStorage.getItem('token')}`,},
-        }).then(({data})=>{
-            userInfo.value = data.response.userInfo;
-        })
+        headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}`, },
+    }).then(({ data }) => {
+        userInfo.value = data.response.userInfo;
+    })
 }
 
 const fetchBookMarkList = async () => {
     await axios.get(`http://localhost:8080/api/articles/bookmark?size=9`, {
-            headers: {Authorization: `Bearer ${sessionStorage.getItem('token')}`,},
-        }).then(({data})=>{
-            bookMarkList.value = data.response.articles;
-        })
+        headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}`, },
+    }).then(({ data }) => {
+        bookMarkList.value = data.response.articles;
+    })
 }
 
 const move = () => {
-    router.push({name : 'user', params : {'id' : userInfo.value.id}})
+    router.push({ name: 'user', params: { 'id': userInfo.value.id } })
 }
 
 
@@ -106,8 +104,13 @@ p {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: antiquewhite;
+    overflow: hidden;
     border-radius: 100px
+}
+
+.user-profile-img {
+    width: 200px;
+    height: 200px;
 }
 
 .info-box {

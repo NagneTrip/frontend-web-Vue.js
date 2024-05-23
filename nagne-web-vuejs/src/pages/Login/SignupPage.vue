@@ -90,8 +90,8 @@
     <div class="social-icons">
       <p>소셜아이디로 가입하기</p>
       <div class="social-icons-img">
-        <img src="@/assets/social/web_neutral_sq_na.svg" @click="() => getSocialLogin('google')" alt="">
-        <img src="@/assets/social/480px-KakaoTalk_logo.svg.png" @click="() => getSocialLogin('kakao')" alt="">
+        <img src="/assets/social/web_neutral_sq_na.svg" @click="() => getSocialLogin('google')" alt="">
+        <img src="/assets/social/480px-KakaoTalk_logo.svg.png" @click="() => getSocialLogin('kakao')" alt="">
       </div>
     </div>
     <div class=" link-container">

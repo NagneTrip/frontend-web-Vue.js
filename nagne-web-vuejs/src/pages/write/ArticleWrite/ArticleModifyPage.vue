@@ -3,11 +3,12 @@
     <div class="modal-wrapper">
       <div class="modal-box" @click.stop>
         <div class="modal-left">
-          <template v-if="renderBaseImg">
-            <img class="modal-left-img" :src="baseImg" alt="" :width="650" :height="600">
+          <template v-if="!isManyImg">
+            <img class="modal-left-img" :src="writeStore.tempUrl" alt="" :width="650" :height="600"
+              onerror="this.src='/assets/logo/sad_logo.png'">
           </template>
-          <template v-if="!renderBaseImg">
-            <ArticleWriteSwiper class="modal-left-img" v-if="!renderBaseImg" :width="650" :height="600" />
+          <template v-if="isManyImg">
+            <ArticleWriteSwiper class="modal-left-img" :width="650" :height="600" />
           </template>
         </div>
         <div class="modal-right">
@@ -30,17 +31,19 @@ import { useAuthStore } from "@/store/auth";
 import { storeToRefs } from 'pinia'
 const writeStore = useWriteStore();
 const authStore = useAuthStore();
+const { selectedImg, tempUrl } = storeToRefs(writeStore);
 
 const route = useRoute();
 const router = useRouter();
 
-const renderBaseImg = ref(true);
-//S3 업로드 전까진 기본 이미지 사용.
-
 const idByParams = route.params.id;
-
 const modifyArticle = ref({});
+const isManyImg = ref(false);
+
 onMounted(async () => {
+  console.log()
+  writeStore.selectedImg = [];
+  writeStore.tempUrl = [];
   await getArticleToModify();
 })
 
@@ -51,10 +54,16 @@ const getArticleToModify = async () => {
     }
   }).then(({ data }) => {
     modifyArticle.value = data.response.articleInfo; //이거 지우고 article 객체 선언 후 게시글 객체 불러오기
+    writeStore.tempUrl = modifyArticle.value.imageUrls
+    if (writeStore.tempUrl.length > 1) {
+      isManyImg.value = true;
+    } else {
+      isManyImg.value = false;
+    }
   })
 }
 
-const baseImg = ref("/src/assets/logo/logo.png");
+const baseImg = ref("/assets/logo/logo.png");
 const move = (path) => {
   switch (path) {
     case 'back':

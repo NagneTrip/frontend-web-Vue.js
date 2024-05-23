@@ -1,7 +1,7 @@
 <template>
   <div class="side-weather">
     <img v-if="!isWeatherLoding" class="weather-icon" :src="userWeather.icon" alt="">
-    <img v-else class="weather-loading-spinner" src="@/assets/blue_spinner.svg" alt="">
+    <img v-else class="weather-loading-spinner" src="/assets/blue_spinner.svg" alt="">
     <div class="weather-text jua-regular-large">
     <p v-if="!isWeatherLoding">기온 : {{ userWeather.temp }} °C</p>
     <p v-if="!isWeatherLoding">습도 : {{ userWeather.humidity }} %</p>
@@ -12,7 +12,7 @@
 <script setup>
 import axios from 'axios';
 import { onMounted, ref } from 'vue';
-import {weather_icons} from '@/assets/weather_icon/weather_icons.js';
+import {weather_icons} from '/src/etc/weather_icons.js';
 import { useMapStore } from '@/store/map';
 const mapStore = useMapStore();
 

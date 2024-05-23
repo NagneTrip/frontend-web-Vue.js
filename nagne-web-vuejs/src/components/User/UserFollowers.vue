@@ -6,7 +6,7 @@
                 <FollowListItem v-for="follower in followers" :followItem="follower" @follow-changed="followChanged"
                     :key="follower.id">{{ follower.nickname }}</FollowListItem>
             </ul>
-            <img v-if="isLoading" src="@/assets/blue_spinner.svg" alt="Loading" class="spinner" />
+            <img v-if="isLoading" src="/assets/blue_spinner.svg" alt="Loading" class="spinner" />
             <button v-if="!isLoading" class="close-btn jua-regular" @click="closeFollowModal">Close</button>
         </div>
     </div>

@@ -1,6 +1,7 @@
 <template>
   <div class="comment-list" v-if="comments.length">
     <CommentListItem v-for="comment in comments" :comment="comment" :key="comment.id" />
+    <InfiniteLoading @infinite="loadData" v-if="showInfinity" />
   </div>
   <div class="comment-list" v-else>
     <h2 class="jua-regular">아직 댓글이 없어요!</h2>
@@ -13,25 +14,34 @@ import { ref, watch, onMounted } from "vue";
 import CommentListItem from "./CommentListItem.vue";
 import { useWriteStore } from "@/store/write";
 import { storeToRefs } from "pinia";
+import InfiniteLoading from "v3-infinite-loading";
+import "v3-infinite-loading/lib/style.css";
 
 const writeStore = useWriteStore();
 const { getComment } = storeToRefs(writeStore);
 
 const props = defineProps({
-  articleid: Number,
-  gencomments: Number,
+  articleId: {
+    type: Number,
+    required: true,
+  }
 });
 
 const isLoading = ref(false);
-const lastIndex = ref(1000000000);
+const lastIndex = ref(null); // 초기값을 null로 설정합니다.
 const comments = ref([]);
 const noMoreData = ref(false);
+const showInfinity = ref(true);
 
-const fetchComments = async () => {
-  if (isLoading.value || noMoreData.value) return;
+const loadData = async ($state) => {
+  if (isLoading.value || noMoreData.value) {
+    $state.complete();
+    showInfinity.value = false;
+    return;
+  }
 
   isLoading.value = true;
-  let url = `http://localhost:8080/api/comments?articleId=${props.articleid}&size=10`;
+  let url = `http://localhost:8080/api/comments?articleId=${props.articleId}&size=10`;
   if (lastIndex.value !== null) {
     url += `&lastIndex=${lastIndex.value}`;
   }
@@ -42,49 +52,52 @@ const fetchComments = async () => {
     },
   }).then(({ data }) => {
     const commentsData = data.response.comments;
-    if (commentsData.length < 10) {
-      noMoreData.value = true;
-    }
+    $state.loaded();
 
     comments.value.push(...commentsData);
 
-    if (commentsData.length > 0) {
-      lastIndex.value = commentsData[commentsData.length - 1].id;
-    }
+    lastIndex.value = commentsData[commentsData.length - 1].id;
+
+  }).catch(() => {
+    $state.error();
   }).finally(() => {
     isLoading.value = false;
   });
 };
 
 onMounted(async () => {
-  if (props.articleid) {
-    await fetchComments();
+  if (props.articleId) {
+    await fetchComments(props.articleId);
   }
 });
 
-watch(() => props.articleid, async (newId) => {
-  if (newId) {
-    comments.value = [];
-    lastIndex.value = 1000000000;
-    noMoreData.value = false;
-    await fetchComments();
-  }
-});
+const fetchComments = async (id) => {
+  if (isLoading.value || noMoreData.value) return;
 
-watch(() => props.gencomments, async (newVal) => {
-  if (newVal) {
-    await fetchComments();
+  isLoading.value = true;
+  let url = `http://localhost:8080/api/comments?articleId=${id}&size=10`;
+  if (lastIndex.value !== null) {
+    url += `&lastIndex=${lastIndex.value}`;
   }
-});
 
-watch(getComment, async (newVal) => {
-  if (newVal) {
-    comments.value = [];
-    lastIndex.value = 1000000000;
-    noMoreData.value = false;
-    await fetchComments();
-  }
-});
+  await axios.get(url, {
+    headers: {
+      Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+    },
+  }).then(({ data }) => {
+    if (data.response.comments.length != 0) {
+      const commentsData = data.response.comments;
+      if (commentsData.length < 10) {
+        noMoreData.value = true;
+      }
+      comments.value.push(...commentsData);
+
+      lastIndex.value = (commentsData[commentsData.length - 1]).id;
+    }
+  }).finally(() => {
+    isLoading.value = false;
+  });
+};
 </script>
 
 <style scoped>
