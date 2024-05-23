@@ -57,13 +57,21 @@
       <button v-show="!isRightOpen" class="btns" id="close-btn" @click="toggleRightBar">
         <font-awesome-icon :icon="faBars" />
       </button>
-      <p class="jua-regular" style="margin-right: 20px;">선택된 여행지 0개</p>
+      <p class="jua-regular" style="margin-right: 20px">
+        선택된 여행지 {{ myAttractions.length }}개
+      </p>
       <div class="white-space" :width="30"></div>
     </div>
-    <div class="tripSection" v-for="(day, index) in tripDay" :key="day">
-      <div class="trip-item">아아</div>
+    <div class="tripSection">
+      <div class="trip-item" v-for="(myAttraction, index) in myAttractions" :key="myAttraction.id">
+        <div class="item-left">
+          <img class="item-img":src="myAttraction.imageUrl" alt="" />
+          <p class="item-text jua-regular">{{ truncateText(myAttraction.title) }}</p>
+        </div>
+        <button @click="attractionStore.deleteMyAttractions(myAttraction.id)">삭제</button>
+      </div>
     </div>
-    <button class="makePlan">계획 만들기</button>
+    <button class="makePlan jua-regular" @click="makePlan">계획 만들기</button>
   </div>
 </template>
 
@@ -73,13 +81,33 @@ import TourListItem from "./TourListItem.vue";
 import { ref, watch } from "vue";
 import InfiniteLoading from "v3-infinite-loading";
 import "v3-infinite-loading/lib/style.css";
+import { useAttractionStore } from "@/store/attraction";
+import { storeToRefs } from "pinia";
+import {useRouter} from 'vue-router';
+const router = useRouter();
+const attractionStore = useAttractionStore();
+const { myAttractions } = storeToRefs(attractionStore);
 
 const isRightOpen = ref(false);
 const isOpen = ref(true);
 const isExpanded = ref(false); // 초기값을 false로 설정하여 처음에는 숨겨진 상태로 시작
 const selectedBtn = ref(null); // 선택된 버튼을 저장할 변수
 const tripDay = ref(1);
-const searchKeyword = ref('');
+const searchKeyword = ref("");
+
+// computed 속성을 사용하여 잘린 문자열 반환
+
+const makePlan = ()=> {
+  sessionStorage.setItem('myAttractions', JSON.stringify(myAttractions.value));
+  router.push({name : 'planWrite'});
+}
+
+const truncateText = (text) => {
+  if (text.length > 7) {
+    return text.substring(0, 7) + '...';
+  }
+  return text;
+};
 
 const toggleRightBar = () => {
   isRightOpen.value = !isRightOpen.value;
@@ -128,7 +156,7 @@ const toggleSelectButton = (btn) => {
 };
 
 const searchAttraction = () => {
-  emit('changeKeyword', searchKeyword.value);
+  emit("changeKeyword", searchKeyword.value);
 };
 
 const selectBtn = ref([
@@ -189,7 +217,6 @@ watch(isExpanded, (newVal) => {
   }
 });
 </script>
-
 
 <style scoped>
 .sidebar {
@@ -358,16 +385,23 @@ watch(isExpanded, (newVal) => {
   border-radius: 18px;
   padding: 20px;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   margin-bottom: 20px;
+  flex-direction: column;
+  align-items: center;
+  gap : 20px;
+  overflow-y: scroll;
+  scrollbar-width: none;
 }
 
 .trip-item {
-  width: 90%;
-  height: 100px;
-  background-color: rgb(112, 220, 252);
-  border-radius: 12px;
+  width: 100%;
+  background-color: rgb(186, 186, 186);
+  border-radius: 16px;
   padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .search-keyword {
@@ -378,6 +412,12 @@ watch(isExpanded, (newVal) => {
   letter-spacing: 2px;
   padding-left: 10px;
 }
+
+.search-keyword:focuse {
+  outline: none;
+  border: 2px solid rgb(89, 147, 255);
+}
+
 .search-btn {
   width: 75px;
   height: 40px;
@@ -396,7 +436,7 @@ watch(isExpanded, (newVal) => {
   width: 95%;
   display: flex;
   justify-content: space-between;
-  margin: 0;
+  margin: 20px 0 0 0;
 }
 
 .cart-btns p {
@@ -418,6 +458,31 @@ watch(isExpanded, (newVal) => {
   width: 95%;
   height: 50px;
   border: none;
-  background-color: #5a96fc;
+  background-color: #94bafb;
+  transition: 0.2s all;
+}
+
+.makePlan:hover {
+  background-color: #4388ff;
+  scale: 1.05;
+  transition: 0.2s all;
+}
+
+.item-left {
+  display: flex;
+  gap : 10px;
+  font-size: 24px;
+}
+
+.item-img {
+  width: 180px;
+  height: 120px;
+  border-radius: 12px;
+}
+
+.item-text {
+  width: 100%;
+  display: flex;
+  align-items: center;
 }
 </style>

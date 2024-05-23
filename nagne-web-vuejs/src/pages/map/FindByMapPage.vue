@@ -83,7 +83,7 @@ const fetchFirstAttractionData = async () => {
       lastIndex.value = attractionsList.value[attractionsList.value.length - 1].id;
     }
   } catch (error) {
-    console.error('Error fetching attractions:', error);
+    alert('잘못된 키워드입니다! 다시 확인해주세요.')
   }
 };
 
@@ -102,6 +102,8 @@ const fetchMoreAttractionData = async () => {
   }).then(({ data }) => {
     attractionsList.value.push(...data.response.attractions);
     lastIndex.value = attractionsList.value[attractionsList.value.length - 1].id;
+  }).catch(()=>{
+    alert('잘못된 키워드입니다! 다시 확인해주세요.')
   })
 }
 
