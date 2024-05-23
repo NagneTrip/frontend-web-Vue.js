@@ -1,6 +1,5 @@
 <template>
     <div>
-        플렌 컴포넌트임
     </div>
 </template>
 
