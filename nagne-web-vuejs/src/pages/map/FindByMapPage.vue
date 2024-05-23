@@ -53,7 +53,7 @@ const mapLocation = ref({
 const gpsLocation = ref({});
 
 
-const keyword = ref("");
+const keyword = ref("광주");
 const lastIndex = ref(100000000);
 const attractionsList = ref([]);
 const attractionTypeId = ref('');
@@ -74,14 +74,19 @@ const fetchFirstAttractionData = async () => {
   if (!sessionStorage.getItem('token') || !authStore.isAuthenticated) {
     return;
   }
-  await axios(baseUrl.value + `keyword=${keyword.value}&attractionTypeId=${attractionTypeId.value}&lastIndex=${lastIndex.value}&size=100`, {
-    headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` }
-  }).then(({ data }) => {
-    attractionsList.value = data.response.attractions;
-    console.log(attractionsList.value)
-    lastIndex.value = (attractionsList.value[attractionsList.value.length - 1]).id;
-  })
-}
+  try {
+    const response = await axios.get(baseUrl.value + `keyword=${keyword.value}&attractionTypeId=${attractionTypeId.value}&lastIndex=${lastIndex.value}&size=100`, {
+      headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` }
+    });
+    attractionsList.value = response.data.response.attractions;
+    if (attractionsList.value.length > 0) {
+      lastIndex.value = attractionsList.value[attractionsList.value.length - 1].id;
+    }
+  } catch (error) {
+    console.error('Error fetching attractions:', error);
+  }
+};
+
 
 //무한 스크롤 이벤트가 동작할때 호출
 const loadAttraction = async () => {
@@ -102,16 +107,17 @@ const fetchMoreAttractionData = async () => {
 
 const updateFilter = async (filterId) => {
   attractionTypeId.value = filterId;
+  console.log(attractionTypeId.value)
   lastIndex.value = 10000000;
   //필터 변경되면 다시 초기 부터 로드해야 함
   attractionsList.value = [];
   await fetchFirstAttractionData();
 }
 
-const updateKeyword = async (value) => {
-  keyword.value = value;
+const updateKeyword = async (newVal) => {
+  keyword.value = newVal;
   lastIndex.value = 10000000;
-  //필터 변경되면 다시 초기 부터 로드해야 함
+  //키워드 변경되면 다시 초기 부터 로드해야 함
   attractionsList.value = [];
   await fetchFirstAttractionData();
 }
