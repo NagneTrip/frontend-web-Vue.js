@@ -11,10 +11,10 @@
           />
           <button class="jua-regular search-btn" @click="searchAttraction">검색</button>
         </div>
-        <button v-show="isOpen" class="btns" id="close-btn" @click="toggleSidebar">
+        <button v-show="isOpen" class="btns" id="close-btn" @click="isOpen=false">
           <font-awesome-icon :icon="faXmark" />
         </button>
-        <button v-show="!isOpen" class="btns" id="close-btn" @click="toggleSidebar">
+        <button v-show="!isOpen" class="btns" id="close-btn" @click="isOpen=true">
           <font-awesome-icon :icon="faBars" />
         </button>
       </div>
