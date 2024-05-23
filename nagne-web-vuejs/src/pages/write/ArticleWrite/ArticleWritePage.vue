@@ -4,7 +4,7 @@
       <div class="modal-box" @click.stop>
         <div class="modal-left">
           <template v-if="!isManyImg">
-            <img class="modal-left-img" :src="!isManyImg" alt="" :width="650" :height="600"
+            <img class="modal-left-img" :src="store.tempUrl[0] || '/assets/logo/sad_logo.png'" alt="" :width="650" :height="600"
               onerror="this.src='/assets/logo/sad_logo.png'">
           </template>
           <template v-if="isManyImg">
@@ -21,7 +21,7 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from "vue";
+import { ref, watch, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import ArticleImgSelect from "@/components/Write/Article/ArticleImgSelect.vue";
 import ArticleContent from "@/components/Write/Article/ArticleContent.vue";
@@ -56,6 +56,10 @@ onMounted(() => {
     }
   }, { deep: true });
 });
+
+onUnmounted(() => {
+  store.step = 1;
+})
 </script>
 
 
