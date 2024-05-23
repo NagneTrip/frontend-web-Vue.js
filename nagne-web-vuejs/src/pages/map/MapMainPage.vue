@@ -1,9 +1,5 @@
 <template>
     <div class="write-page">
-        <!-- <button class="address-btn jua-regular" @click="clickBtn">
-            <font-awesome-icon :icon="faLocationCrosshairs" class="gps-btn" />
-            <p>현 위치로 주소 설정하기</p>
-        </button> -->
         <p class="write-top jua-regular">나그네와 함께 여행을 떠나봐요!</p>
         <div class="write-menu">
             <div class="row-container">
