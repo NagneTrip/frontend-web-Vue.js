@@ -9,7 +9,7 @@
   <swiper v-if="props" :navigation="true" :spaceBetween="300" :centeredSlides="true" :pagination="{
     clickable: true,
   }" :modules="modules" class="mySwiper">
-    <swiper-slide class="img-wrapper" v-for="(url, index) in imgUrls" :key="index">
+    <swiper-slide class="img-wrapper" v-for="(url, index) in tempUrl" :key="index">
       <img :src="url" class="swipe-img" alt="">
     </swiper-slide>
   </swiper>
@@ -21,7 +21,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { Navigation, Pagination } from "swiper/modules";
-import { ref, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { useWriteStore } from "@/store/write";
 import { storeToRefs } from 'pinia';
 
@@ -29,9 +29,6 @@ const store = useWriteStore();
 const { selectedImg, tempUrl } = storeToRefs(store);
 const modules = ref([Navigation, Pagination]);
 
-const props = defineProps({
-  imgUrls: Object,
-})
 </script>
 
 <style scoped>

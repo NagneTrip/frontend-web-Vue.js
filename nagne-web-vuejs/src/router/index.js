@@ -9,10 +9,7 @@ import ArticleWritePage from "@/pages/write/ArticleWrite/ArticleWritePage.vue";
 import ArticleModifyPage from "@/pages/write/ArticleWrite/ArticleModifyPage.vue";
 import MapMainPage from "@/pages/map/MapMainPage.vue";
 import FindByMapPage from "@/pages/map/FindByMapPage.vue";
-import MyTripPlanPage from "@/pages/map/MyTripPlanPage.vue";
 import UserInfoPage from "@/pages/User/UserInfoPage.vue";
-import UserFollowing from "@/components/User/UserFollowing.vue";
-import UserFollowers from "@/components/User/UserFollowers.vue";
 import BookMarkPage from "@/pages/BookMark/BookMarkPage.vue";
 import ArticleDetailPage from "@/pages/ArticleDetail/ArticleDetailPage.vue";
 import EditProfile from "@/pages/EditProfile/EditProfile.vue";
@@ -83,11 +80,6 @@ const router = createRouter({
           path: "find",
           name: "mapFind",
           component: FindByMapPage,
-        },
-        {
-          path: "plan",
-          name: "mapPlan",
-          component: MyTripPlanPage,
         },
       ],
     },

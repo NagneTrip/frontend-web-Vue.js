@@ -27,9 +27,7 @@
         <div class="side" ref="sideSection">
           <div class="side-content">
             <TheWeather />
-            <TheNotice />
             <TheBestArticle />
-            <TheFooter />
           </div>
         </div>
       </div>

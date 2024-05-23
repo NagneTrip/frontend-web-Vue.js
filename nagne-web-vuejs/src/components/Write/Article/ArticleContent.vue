@@ -38,6 +38,12 @@ const props = defineProps({
   modifyArticle: Object,
 });
 
+onMounted(()=>{
+  if (sessionStorage.getItem('plan')) {
+    content.value = sessionStorage.getItem('plan');
+  }
+})
+
 watch(props, () => {
   if (props.modifyArticle && props.modifyArticle.content) {
     content.value = props.modifyArticle.content;
@@ -115,6 +121,9 @@ const uploadFile = async () => {
       },
     });
     alert("게시글이 등록되었습니다!");
+    if (sessionStorage.getItem('plan')) {
+      sessionStorage.removeItem('plan');
+    }
     move('main');
   } catch (error) {
     alert('게시글 작성 실패!');

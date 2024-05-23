@@ -1,6 +1,5 @@
 <template>
     <div>
-        유저
     </div>
 </template>
 

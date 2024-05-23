@@ -12,7 +12,7 @@
             </div>
             <div class="write" @click="() => movePage('planWrite')">
                 <font-awesome-icon :icon="faEarthAsia" class="add-img-icon" />
-                <p class="jua-regular">계획 공유하기</p>
+                <p class="jua-regular">계획 작성하기</p>
             </div>
         </div>
     </div>
